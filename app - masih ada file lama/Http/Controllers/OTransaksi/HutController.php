@@ -1,0 +1,584 @@
+<?php
+
+namespace App\Http\Controllers\OTransaksi;
+
+use App\Http\Controllers\Controller;
+// ganti 1
+
+use App\Models\OTransaksi\Hut;
+use App\Models\OTransaksi\HutDetail;
+use Illuminate\Http\Request;
+use DataTables;
+use Auth;
+use DB;
+use Carbon\Carbon;
+
+include_once base_path() . "/vendor/simitgroup/phpjasperxml/version/1.1/PHPJasperXML.inc.php";
+
+use PHPJasperXML;
+
+// ganti 2
+class HutController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    var $judul = '';
+    var $FLAGZ = '';
+	
+    function setFlag(Request $request)
+    {
+        if ( $request->flagz == 'B' ) {
+            $this->judul = "Pembayaran Hutang";
+        } 
+		
+        $this->FLAGZ = $request->flagz;
+
+
+    }
+
+// ganti 4
+    public function index(Request $request)
+    {
+
+	    $this->setFlag($request);
+        // ganti 3
+        return view('otransaksi_hut.index')->with(['judul' => $this->judul, 'flagz' => $this->FLAGZ ]);
+	
+	
+    }
+	
+    public function getHut(Request $request)
+    {
+// ganti 5
+
+	if ($request->session()->has('periode')) 
+		{
+			$periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
+		} else
+		{
+			$periode = '';
+		}
+
+		$this->setFlag($request);	
+		
+       $hut = DB::SELECT("SELECT NO_ID, NO_BUKTI, 
+	   TGL, KODES, NAMAS, KOTA, TOTAL, BAYAR, NOTES, POSTED, FLAG,
+	   USRNM from hut 
+	   where PER = '$periode' ORDER BY NO_BUKTI ");
+	   	
+		
+// ganti 6
+		
+        return Datatables::of($hut)
+                ->addIndexColumn()
+                ->addColumn('action', function($row) {
+                    if ( Auth::user()->divisi=="programmer" ) 
+                    {
+
+						$btnEdit =   ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' href="hut/edit/?idx=' . $row->NO_ID . '&tipx=edit&flagz=' . $row->FLAG . '&judul=' . $this->judul . '"';					
+						$btnDelete = ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' onclick="return confirm(&quot; Apakah anda yakin ingin hapus? &quot;)" href="hut/delete/' . $row->NO_ID . '/?flagz=' . $row->FLAG . '" ';
+
+
+ 						 												 
+                        $btnPrivilege = 
+                        '
+                                <a class="dropdown-item" '.$btnEdit.'>
+                                <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>	
+                                <a class="dropdown-item btn btn-danger" href="hut/print/' . $row->NO_ID . '">
+                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                    Print
+                                </a> 									
+                                <hr></hr>
+                                <a class="dropdown-item btn btn-danger" onclick="return confirm(&quot; Apakah anda yakin ingin hapus? &quot;)" ' . $btnDelete . '>
+   
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    Delete
+                                </a> 
+                        ';
+                    } 
+                    else
+                    {
+                        $btnPrivilege = '';
+                    }
+
+                    $actionBtn = 
+                    '
+                    <div class="dropdown show" style="text-align: center">
+                        <a class="btn btn-secondary dropdown-toggle btn-sm" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-bars"></i>
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            
+
+                            '.$btnPrivilege.'
+                        </div>
+                    </div>
+                    ';
+                    
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+    }
+
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
+        
+        $this->validate($request,
+// GANTI 9
+
+        [
+ 
+                'TGL'      => 'required',
+
+            ]
+        );
+
+//////     nomer otomatis
+
+		$this->setFlag($request);
+        $FLAGZ = $this->FLAGZ;
+        $judul = $this->judul;
+		
+		
+        $periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
+		
+        $bulan	= session()->get('periode')['bulan'];
+		$tahun	= substr(session()->get('periode')['tahun'],-2);
+
+        $query = DB::table('hut')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ  )->orderByDesc('NO_BUKTI')->limit(1)->get();
+
+        if ($query != '[]') {
+            $query = substr($query[0]->NO_BUKTI, -4);
+            $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
+            $no_bukti = 'HT' . $tahun . $bulan . '-' . $query;
+        } else {
+            $no_bukti = 'HT' . $tahun . $bulan . '-0001';
+        }
+		
+        // Insert Header
+
+// ganti 10
+		
+        $hut = Hut::create(
+            [
+                'NO_BUKTI'         => $no_bukti,
+				'TGL'              => date('Y-m-d', strtotime($request['TGL'])),		
+                'PER'              => $periode,
+                'KODES'            => ($request['KODES']==null) ? "" : $request['KODES'],			
+                'NAMAS'            => ($request['NAMAS']==null) ? "" : $request['NAMAS'],
+                'NOREK'            => ($request['NOREK']==null) ? "" : $request['NOREK'],						
+				'FLAG'             => 'B',
+				'NOTES'            => ($request['NOTES']==null) ? "" : $request['NOTES'],
+                'BAYAR'            => (float) str_replace(',', '', $request['TBAYAR']),
+                'LAIN'             => (float) str_replace(',', '', $request['TLAIN']),
+				'USRNM'            => Auth::user()->username,
+				'TG_SMP'           => Carbon::now()
+            ]
+        );
+
+
+		$REC	    = $request->input('REC');
+		$NO_FAKTUR	= $request->input('NO_FAKTUR');
+		$TOTAL	= $request->input('TOTAL');
+		$BAYAR	= $request->input('BAYAR');		
+		$SISA	= $request->input('SISA');
+		
+		// Check jika value detail ada/tidak
+		if ($REC) {
+			foreach ($REC as $key => $value) {
+				// Declare new data di Model
+				$detail	= new HutDetail;
+				
+				// Insert ke Database
+				$detail->NO_BUKTI = $no_bukti;			
+				$detail->REC	= $REC[$key];
+				$detail->PER	= $periode;
+				$detail->FLAG	= 'B';
+				$detail->NO_FAKTUR = ($NO_FAKTUR[$key]==null) ? "" :  $NO_FAKTUR[$key];
+				$detail->TOTAL	= (float) str_replace(',', '', $TOTAL[$key]);
+				$detail->BAYAR	= (float) str_replace(',', '', $BAYAR[$key]);					
+				$detail->save();
+			}
+		}
+		
+
+
+
+
+
+//  ganti 11
+		// $variablell = DB::select('call hutins(?)',array($no_bukti));
+
+       $no_buktix = $no_bukti;
+		
+		$hut = Hut::where('NO_BUKTI', $no_buktix )->first();
+
+
+        DB::SELECT("UPDATE hut, hutd
+                            SET hutd.ID = hut.NO_ID  WHERE hut.NO_BUKTI = hutd.NO_BUKTI 
+							AND hut.NO_BUKTI='$no_buktix';");
+
+        return redirect('/hut/edit/?idx=' . $hut->NO_ID . '&tipx=edit&flagz=' . $FLAGZ . '&judul=' . $this->judul . '');
+
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Master\Rute  $rute
+     * @return \Illuminate\Http\Response
+     */
+	 
+// ganti 12
+	 
+   
+   public function edit( Request $request , Hut $hut )
+    {
+
+
+		$per = session()->get('periode')['bulan'] . '/' . session()->get('periode')['tahun'];
+		
+				
+        $cekperid = DB::SELECT("SELECT POSTED from perid WHERE PERIO='$per'");
+        if ($cekperid[0]->POSTED==1)
+        {
+            return redirect('/hut')
+			       ->with('status', 'Maaf Periode sudah ditutup!')
+                   ->with(['judul' => $judul, 'flagz' => $FLAGZ]);
+        }
+		
+
+		$this->setFlag($request);
+		
+        $tipx = $request->tipx;
+
+		$idx = $request->idx;
+			
+
+		
+		if ( $idx =='0' && $tipx=='undo'  )
+	    {
+			$tipx ='top';
+			
+		   }
+		   
+		 
+		   
+		if ($tipx=='search') {
+			
+		   	
+    	   $buktix = $request->buktix;
+		   
+		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
+		                 where PER ='$per'  and NO_BUKTI = '$buktix'						 
+		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
+						 
+			
+			if(!empty($bingco)) 
+			{
+				$idx = $bingco[0]->NO_ID;
+			  }
+			else
+			{
+				$idx = 0; 
+			  }
+		
+					
+		}
+		
+		if ($tipx=='top') {
+			
+
+		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
+		                 where PER ='$per'   
+		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
+						 
+		
+			if(!empty($bingco)) 
+			{
+				$idx = $bingco[0]->NO_ID;
+			  }
+			else
+			{
+				$idx = 0; 
+			  }
+		
+					
+		}
+		
+		
+		if ($tipx=='prev' ) {
+			
+    	   $buktix = $request->buktix;
+			
+		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut     
+		             where PER ='$per' and NO_BUKTI < 
+					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+			
+
+			if(!empty($bingco)) 
+			{
+				$idx = $bingco[0]->NO_ID;
+			  }
+			else
+			{
+				$idx = $idx; 
+			  }
+			  
+		}
+		
+		
+		if ($tipx=='next' ) {
+			
+				
+      	   $buktix = $request->buktix;
+	   
+		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut    
+		             where PER ='$per'  and NO_BUKTI > 
+					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 
+			if(!empty($bingco)) 
+			{
+				$idx = $bingco[0]->NO_ID;
+			  }
+			else
+			{
+				$idx = $idx; 
+			  }
+			  
+			
+		}
+
+		if ($tipx=='bottom') {
+		  
+    		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
+						where PER ='$per' 
+		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+					 
+			if(!empty($bingco)) 
+			{
+				$idx = $bingco[0]->NO_ID;
+			  }
+			else
+			{
+				$idx = 0; 
+			  }
+			  
+			
+		}
+
+        
+		if ( $tipx=='undo' || $tipx=='search' )
+	    {
+        
+			$tipx ='edit';
+			
+		   }
+		
+		
+
+       	if ( $idx != 0 ) 
+		{
+			$hut = Hut::where('NO_ID', $idx )->first();	
+	     }
+		 else
+		 {
+				$hut = new Hut;
+                $hut->TGL = Carbon::now();
+      
+				
+		 }
+
+        $no_bukti = $hut->NO_BUKTI;
+	    $hutDetail = DB::table('hutd')->where('NO_BUKTI', $no_bukti)->get();	
+	
+		
+		$data = [
+            'header'        => $hut,
+            'detail'        => $hutDetail,
+			
+        ];
+ 
+         
+         return view('otransaksi_hut.edit', $data)
+		 ->with(['tipx' => $tipx, 'idx' => $idx, 'flagz' =>$this->FLAGZ, 'judul', $this->judul ]);
+      	 
+         
+    }
+
+
+// ganti 18
+
+    public function update(Request $request, Hut $hut )
+    {
+		
+        $this->validate($request,
+        [
+		
+// ganti 19
+  //              'NO_PO'       => 'required',
+                'TGL'      => 'required'
+
+            ]
+        );
+		
+// ganti 20
+		// $variablell = DB::select('call hutdel(?)',array($hut['NO_BUKTI']));		
+
+        // ganti 20
+        $periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
+
+		$this->setFlag($request);
+        $FLAGZ = $this->FLAGZ;
+        $judul = $this->judul;
+		
+		
+	
+        $hut->update(
+            [
+				'TGL'              => date('Y-m-d', strtotime($request['TGL'])),
+                'KODES'            => ($request['KODES']==null) ? "" : $request['KODES'],	
+				'NAMAS'				=>($request['NAMAS']==null) ? "" : $request['NAMAS'],
+				'NOTES'            => ($request['NOTES']==null) ? "" : $request['NOTES'],
+                'BAYAR'            => (float) str_replace(',', '', $request['TBAYAR']),
+                'LAIN'            => (float) str_replace(',', '', $request['TLAIN']),
+				'USRNM'            => Auth::user()->username,
+				'TG_SMP'           => Carbon::now()	
+            ]
+        );
+
+
+
+		$no_buktix = $hut->NO_BUKTI;
+		
+        // Update Detail
+        $length = sizeof($request->input('REC'));
+        $NO_ID  = $request->input('NO_ID');
+		
+        $REC	= $request->input('REC');
+		$NO_FAKTUR = $request->input('NO_FAKTUR');
+		$BAYAR	= $request->input('BAYAR');
+		$TOTAL	= $request->input('TOTAL');
+
+         $query = DB::table('hutd')->where('NO_BUKTI', $request->NO_BUKTI)->whereNotIn('NO_ID',  $NO_ID)->delete();
+
+        // Update / Insert
+        for ($i=0;$i<$length;$i++) {
+            // Insert jika NO_ID baru
+            if ($NO_ID[$i] == 'new') {
+                $insert = HutDetail::create(
+                    [
+                        'NO_BUKTI'   => $request->NO_BUKTI,
+                        'REC'        => $REC[$i],
+				        'PER'        => $periode,
+                        'FLAG'       => 'B',	  							
+                        'NO_FAKTUR'  => ($NO_FAKTUR[$i]==null) ? "" :  $NO_FAKTUR[$i],
+                        'TOTAL'      => (float) str_replace(',', '', $TOTAL[$i]),
+                        'BAYAR'      => (float) str_replace(',', '', $BAYAR[$i]),
+
+                    ]
+                );
+            } else {
+                // Update jika NO_ID sudah ada
+                $upsert = HutDetail::updateOrCreate(
+                    [
+                        'NO_BUKTI'  => $request->NO_BUKTI,
+                        'NO_ID'     => (int) str_replace(',', '', $NO_ID[$i])
+                    ],
+    
+                    [
+                        'REC'        => $REC[$i],
+                        'NO_FAKTUR'  => ($NO_FAKTUR[$i]==null) ? "" :  $NO_FAKTUR[$i],	
+                        'TOTAL'      => (float) str_replace(',', '', $TOTAL[$i]),
+                        'BAYAR'      => (float) str_replace(',', '', $BAYAR[$i]),
+
+                    ]
+                );
+            }
+        }
+
+
+///////////////////////////////////////////
+
+
+
+        // Update Detail
+	
+	
+
+
+//  ganti 21
+		// $variablell = DB::select('call hutins(?)',array($hut['NO_BUKTI']));
+		
+
+ 		$hut = Hut::where('NO_BUKTI', $no_buktix )->first();
+					 
+        return redirect('/hut/edit/?idx=' . $hut->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');	
+	
+	
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Master\Rute  $rute
+     * @return \Illuminate\Http\Response
+     */
+	 
+// ganti 22
+	 
+    public function destroy(Request $request,  Hut $hut)
+    {
+
+		$this->setFlag($request);
+        $FLAGZ = $this->FLAGZ;
+        $judul = $this->judul;
+		
+		$per = session()->get('periode')['bulan'] . '/' . session()->get('periode')['tahun'];
+        $cekperid = DB::SELECT("SELECT POSTED AS POSTED from perid WHERE PERIO='$per'");
+        if ($cekperid[0]->POSTED==1)
+        {
+            return redirect()->route('hut')
+                ->with('status', 'Maaf Periode sudah ditutup!')
+                ->with(['judul' => $this->judul, 'flagz' => $this->FLAGZ]);
+        }
+		
+		// $variablell = DB::select('call hutdel(?)',array($hut['NO_BUKTI']));
+		
+		
+// ganti 23
+        $deleteHut = Hut::find($hut->NO_ID);
+
+// ganti 24
+
+        $deleteHut->delete();
+
+       return redirect('/hut?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ ])->with('statusHapus', 'Data '.$hut->NO_BUKTI.' berhasil dihapus');
+	
+    }
+    
+   
+    public function cetak(Hut $hut)
+    {
+       
+    }
+ 
+    
+}
