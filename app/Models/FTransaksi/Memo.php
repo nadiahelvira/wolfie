@@ -20,6 +20,6 @@ class Memo extends Model
     protected $fillable = 
     [
         "NO_BUKTI","TGL", "PER","JUMLAH","KET", "DEBET", "KREDIT", "JUMLAH", "FLAG",
-		"USRNM", "TG_SMP"
+		"USRNM", "TG_SMP", "CBG"
     ];
 }

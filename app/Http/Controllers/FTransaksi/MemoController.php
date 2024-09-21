@@ -66,8 +66,10 @@ class MemoController extends Controller
         //   $po = DB::table('po')->select('*')->where('PER', $periode)->where('GOL', 'Y')->orderBy('NO_PO', 'ASC')->get();
 
         $this->setFlag($request);
-		
-        $memo = DB::SELECT("SELECT * from memo  where  PER ='$periode' and FLAG ='$this->FLAGZ' ORDER BY NO_BUKTI ");
+
+		$CBG = Auth::user()->CBG;
+
+        $memo = DB::SELECT("SELECT * from memo  where  PER ='$periode' and FLAG ='$this->FLAGZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	  
         // ganti 6
 
@@ -154,11 +156,13 @@ class MemoController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;	
 		
+        $CBG = Auth::user()->CBG;
+
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query = DB::table('memo')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'M')->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('memo')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'M')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
@@ -185,6 +189,7 @@ class MemoController extends Controller
                 'KREDIT'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'created_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );
@@ -423,6 +428,7 @@ class MemoController extends Controller
 
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
+        $CBG = Auth::user()->CBG;
 
         $memo->update(
             [
@@ -434,6 +440,7 @@ class MemoController extends Controller
                 'KET'              => ($request['KET'] == null) ? "" : $request['KET'],
                 'USRNM'            => Auth::user()->username,
                 'updated_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );

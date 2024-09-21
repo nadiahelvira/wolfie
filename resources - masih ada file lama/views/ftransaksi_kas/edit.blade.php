@@ -46,7 +46,7 @@
         
                             <div class="form-group row">
                                 <div class="col-md-1">
-                                    <label for="NO_BUKTI" class="form-label">Bukti#.</label>
+                                    <label for="NO_BUKTI" class="form-label">Bukti#. XXX</label>
                                 </div>
 								
 				

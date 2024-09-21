@@ -83,10 +83,12 @@ class KasController extends Controller
         } else {
             $periode = '';
         }
-		
+
+		$CBG = Auth::user()->CBG;
+
         $this->setFlag($request);
 		
-        $kas = DB::SELECT("SELECT * from kas  where  PER ='$periode' and TYPE ='$this->FLAGZ' ORDER BY NO_BUKTI ");
+        $kas = DB::SELECT("SELECT * from kas  where  PER ='$periode' and TYPE ='$this->FLAGZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	   
 
         // ganti 6
@@ -167,7 +169,6 @@ class KasController extends Controller
      */
     public function store(Request $request, Kas $kas )
     {
-
 		
         $this->validate(
             $request,
@@ -189,10 +190,12 @@ class KasController extends Controller
         $judul = $this->judul;	
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
+        
+        $CBG = Auth::user()->CBG;
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query = DB::table('kas')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('kas')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         // Check apakah No Bukti terakhir NULL
         if ($query != '[]') {
@@ -223,6 +226,7 @@ class KasController extends Controller
                 'JUMLAH'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'created_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
 
             ]
@@ -483,7 +487,7 @@ class KasController extends Controller
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
-      
+        $CBG = Auth::user()->CBG;
 	  
         $kas->update(
             [
@@ -495,6 +499,7 @@ class KasController extends Controller
                 'KET'              => ($request['KET'] == null) ? "" : $request['KET'],
                 'USRNM'            => Auth::user()->username,
                 'updated_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
 
             ]

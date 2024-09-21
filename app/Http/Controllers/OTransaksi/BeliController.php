@@ -116,7 +116,10 @@ class BeliController extends Controller
         }
 
 		$this->setFlag($request);	
-        $beli = DB::SELECT("SELECT * from beli  WHERE PER='$periode' and FLAG = '$this->FLAGZ' and GOL = '$this->GOLZ' ORDER BY NO_BUKTI ");
+        
+		$CBG = Auth::user()->CBG;
+
+        $beli = DB::SELECT("SELECT * from beli  WHERE PER='$periode' and FLAG = '$this->FLAGZ' and GOL = '$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6
@@ -226,12 +229,14 @@ class BeliController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('beli')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->where('GOL', $GOLZ )->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('beli')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->where('GOL', $GOLZ )->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if( $GOLZ=='B'){
 
@@ -298,6 +303,7 @@ class BeliController extends Controller
                 'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'created_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
             ]
         );
 
@@ -588,6 +594,7 @@ class BeliController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
@@ -614,6 +621,7 @@ class BeliController extends Controller
 				'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'updated_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
             ]
         );
 

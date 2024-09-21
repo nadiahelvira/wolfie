@@ -65,9 +65,12 @@ class BankController extends Controller
             $periode = '';
         }
 
+		$CBG = Auth::user()->CBG;
+
+
         $this->setFlag($request);
 		
-        $bank = DB::SELECT("SELECT * from bank  where  PER ='$periode' and TYPE ='$this->FLAGZ' ORDER BY NO_BUKTI ");
+        $bank = DB::SELECT("SELECT * from bank  where  PER ='$periode' and TYPE ='$this->FLAGZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	  
         // ganti 6
 
@@ -157,14 +160,17 @@ class BankController extends Controller
 
 		$this->setFlag($request);
         $FLAGZ = $this->FLAGZ;
-        $judul = $this->judul;			
+        $judul = $this->judul;		
+
+        $CBG = Auth::user()->CBG;
+	
         //////     nomer otomatis
 
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
@@ -195,6 +201,7 @@ class BankController extends Controller
                 'JUMLAH'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'created_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );
@@ -423,6 +430,8 @@ class BankController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;	
 		
+        $CBG = Auth::user()->CBG;
+	  
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
 
@@ -438,6 +447,7 @@ class BankController extends Controller
                 'JUMLAH'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'updated_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );

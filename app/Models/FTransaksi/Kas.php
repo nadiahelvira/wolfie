@@ -20,6 +20,6 @@ class Kas extends Model
     protected $fillable = 
     [
         "NO_BUKTI","TGL", "PER","BACNO", "BNAMA", "JUMLAH","TYPE", "FLAG", "KET",
-		"USRNM", "TG_SMP"
+		"USRNM", "TG_SMP", "CBG"
     ];
 }

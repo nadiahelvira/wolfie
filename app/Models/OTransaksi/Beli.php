@@ -21,6 +21,6 @@ class Beli extends Model
     [
         "NO_BUKTI","TGL", "NO_PO", "FLAG", "GOL", "PER","KODES", "NAMAS", "TOTAL_QTY", "TOTAL", "NOTES",
 		"USRNM", "TG_SMP", "ALAMAT", "KOTA", "ACNOA", "NACNOA", "NO_BANK", "BACNO", "BNAMA", "TOTAL", "PPN", 
-        "NETT", "GOL", "NO_BELI", "TYPE", "PKP"
+        "NETT", "GOL", "NO_BELI", "TYPE", "PKP", "CBG"
     ];
 }
