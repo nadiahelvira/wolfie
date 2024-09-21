@@ -109,7 +109,7 @@ class JualController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
    
-       $jual = DB::SELECT("SELECT * from jual  where PER = '$periode' and FLAG ='$this->FLAGZ' AND GOL ='$this->GOLZ' ORDER BY NO_BUKTI ");
+       $jual = DB::SELECT("SELECT * from jual  where PER = '$periode' and FLAG ='$this->FLAGZ' AND GOL ='$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	   
         // ganti 6
 
@@ -209,12 +209,14 @@ class JualController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('jual')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('jual')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if( $GOLZ=='B'){
 
@@ -274,6 +276,7 @@ class JualController extends Controller
                 'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'created_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
             ]
         );
 
@@ -542,6 +545,8 @@ class JualController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         // ganti 20
       $variablell = DB::select('call jualdel(?)', array($jual['NO_BUKTI']));
 
@@ -573,6 +578,7 @@ class JualController extends Controller
 				'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'updated_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'FLAG'             => $FLAGZ,						
                 'GOL'              => $GOLZ,
             ]

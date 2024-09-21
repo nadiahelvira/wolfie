@@ -299,6 +299,8 @@ class KasController extends Controller
 		
         $tipx = $request->tipx;
 
+        $CBG = Auth::user()->CBG;
+
 		$idx = $request->idx;
 			
 
@@ -318,7 +320,7 @@ class KasController extends Controller
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from kas 
 		                 where PER ='$per' and TYPE ='$this->FLAGZ' 
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix' and CBG = '$CBG'					 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -338,7 +340,7 @@ class KasController extends Controller
 			
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from kas 
-		                 where PER ='$per' and TYPE ='$this->FLAGZ'     
+		                 where PER ='$per' and TYPE ='$this->FLAGZ' and CBG = '$CBG'	    
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -360,7 +362,7 @@ class KasController extends Controller
     	   $buktix = $request->buktix;
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS      
-		             where PER ='$per' and TYPE ='$this->FLAGZ'  and NO_BUKTI < 
+		             where PER ='$per' and TYPE ='$this->FLAGZ' and CBG = '$CBG' and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -382,7 +384,7 @@ class KasController extends Controller
       	   $buktix = $request->buktix;
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS    
-		             where PER ='$per' and TYPE ='$this->FLAGZ'  and NO_BUKTI > 
+		             where PER ='$per' and TYPE ='$this->FLAGZ' and CBG = '$CBG' and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -400,8 +402,8 @@ class KasController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS  where PER ='$per'
-            			and TYPE ='$this->FLAGZ'    
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+            			and TYPE ='$this->FLAGZ' and CBG = '$CBG'   
+		                ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
