@@ -64,10 +64,12 @@ class HutController extends Controller
 
 		$this->setFlag($request);	
 		
+		$CBG = Auth::user()->CBG;
+
        $hut = DB::SELECT("SELECT NO_ID, NO_BUKTI, 
 	   TGL, KODES, NAMAS, KOTA, TOTAL, BAYAR, NOTES, POSTED, FLAG,
 	   USRNM from hut 
-	   where PER = '$periode' ORDER BY NO_BUKTI ");
+	   where PER = '$periode' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	   	
 		
 // ganti 6
@@ -155,13 +157,14 @@ class HutController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
 		
         $bulan	= session()->get('periode')['bulan'];
 		$tahun	= substr(session()->get('periode')['tahun'],-2);
 
-        $query = DB::table('hut')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('hut')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
@@ -207,6 +210,7 @@ class HutController extends Controller
                 
                 'NO_BANK'          => $no_bukti2,				
 				'USRNM'            => Auth::user()->username,
+                'CBG'              => $CBG,
 				'TG_SMP'           => Carbon::now()
             ]
         );
@@ -468,6 +472,7 @@ class HutController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
 		
 	
         $hut->update(
@@ -482,6 +487,7 @@ class HutController extends Controller
 				'BNAMA'            => ($request['BNAMA']==null) ? "" : $request['BNAMA'],
 				'TYPE'            => ($request['TYPE']==null) ? "" : $request['TYPE'],
 				'USRNM'            => Auth::user()->username,
+                'CBG'              => $CBG,
 				'TG_SMP'           => Carbon::now()	
             ]
         );

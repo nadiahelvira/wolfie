@@ -119,7 +119,8 @@ class BeliController extends Controller
         
 		$CBG = Auth::user()->CBG;
 
-        $beli = DB::SELECT("SELECT * from beli  WHERE PER='$periode' and FLAG = '$this->FLAGZ' and GOL = '$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+        $beli = DB::SELECT("SELECT * from beli  WHERE PER='$periode' and FLAG = '$this->FLAGZ' 
+                nd GOL = '$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6

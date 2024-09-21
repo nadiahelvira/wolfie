@@ -20,6 +20,6 @@ class Hut extends Model
     protected $fillable = 
     [
         "NO_BUKTI", "POSTED", "TGL", "BAYAR", "NO_BG", "NOTES", "PER","KODES", "NAMAS", "BACNO", "BNAMA",
-		"USRNM", "TG_SMP", "NO_BANK", "TYPE", "FLAG"
+		"USRNM", "TG_SMP", "NO_BANK", "TYPE", "FLAG", "CBG"
     ];
 }
