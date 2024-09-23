@@ -43,7 +43,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Transaksi {{$judul}}  </h1>
+            <h1 class="m-0">Transaksi {{$judul}} </h1>
           </div>
         </div>
       </div>
@@ -63,8 +63,8 @@
             <div class="card">
               <div class="card-body">
 
-				        <input name="flagz"  class="form-control flagz" id="flagz" value="{{$flagz}}" hidden >
-				        <input name="golz"  class="form-control golz" id="golz" value="{{$golz}}" hidden >
+              <input name="flagz"  class="form-control flagz" id="flagz" value="{{$flagz}}" hidden >
+              <input name="golz"  class="form-control golz" id="golz" value="{{$golz}}" hidden >
 
                 <table class="table table-fixed table-striped table-border table-hover nowrap datatable" id="datatable">
                     <thead class="table-dark">
@@ -73,7 +73,6 @@
 				     	              <th scope="col" style="text-align: center">-</th>							
                             <th scope="col" style="text-align: center">Bukti#</th>
                             <th scope="col" style="text-align: center">Tgl</th>
-                            <th scope="col" style="text-align: center">Qty</th>
                             <th scope="col" style="text-align: center">Suplier#</th>
                             <th scope="col" style="text-align: center">Nama</th>
                             <th scope="col" style="text-align: center">Total-Qty</th>
@@ -111,8 +110,8 @@
             "order": [[ 0, "asc" ]],
             ajax: 
             {
-                url: "{{ route('get-beli') }}",
-				data: 
+                url: "{{ route('get-po') }}",
+				        data: 
                 {
                     flagz : $('#flagz').val(),
                     golz : $('#golz').val(),
@@ -126,7 +125,6 @@
 			          { data: 'action', name: 'action'},
                 { data: 'NO_BUKTI', name: 'NO_BUKTI'},
                 { data: 'TGL', name: 'TGL'},
-                { data: 'TOTAL_QTY', name: 'TOTAL_QTY', render: $.fn.dataTable.render.number( ',', '.', 0, '' )},			
                 { data: 'KODES', name: 'KODES'},
                 { data: 'NAMAS', name: 'NAMAS'},
                 { data: 'TOTAL_QTY', name: 'TOTAL_QTY', render: $.fn.dataTable.render.number( ',', '.', 0, '' )},			
@@ -156,7 +154,7 @@
 
         });
 		
-        $("div.test_btn").html('<a class="btn btn-lg btn-md btn-success" href="{{url('beli/edit?flagz='.$flagz.'&golz='.$golz.'&idx=0&tipx=new')}}"> <i class="fas fa-plus fa-sm md-3" ></i></a');
+        $("div.test_btn").html('<a class="btn btn-lg btn-md btn-success" href="{{url('po/edit?flagz='.$flagz.'&golz='.$golz.'&idx=0&tipx=new')}}"> <i class="fas fa-plus fa-sm md-3" ></i></a');
     });
 	
 </script>
