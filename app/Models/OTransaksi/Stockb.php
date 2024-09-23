@@ -20,6 +20,6 @@ class Stockb extends Model
     protected $fillable = 
     [
         "NO_BUKTI", "TGL", "PER", "FLAG", "NOTES", "TOTAL_QTY", 
-		"USRNM", "TG_SMP"
+		"USRNM", "TG_SMP", "CBG"
     ];
 }

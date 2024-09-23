@@ -20,6 +20,6 @@ class Surats extends Model
     protected $fillable = 
     [
         "NO_BUKTI", "TGL", "PER", "FLAG", "TRUCK", "SOPIR", "VIA", "KODEC", "NAMAC", "ALAMAT", "KOTA", "NOTES", 
-        "TOTAL_QTY", "TOTAL", "USRNM", "TG_SMP", "GOL", "NO_SO", "JTEMPO"
+        "TOTAL_QTY", "TOTAL", "USRNM", "TG_SMP", "GOL", "NO_SO", "JTEMPO", "CBG"
     ];
 }

@@ -15,7 +15,10 @@ class Terima extends Model
 
     protected $fillable = 
     [
-        "NO_BUKTI", "TGL", "JTEMPO", "FLAG", "NO_SO", "KD_BRG", "NA_BRG", "QTY", "KD_BHN", "NA_BHN", "QTY_BHN", "SATUAN", "NO_SERI", "NO_FO", "KODEC", "NAMAC", "ALAMAT", "KOTA", "NOTES", "TOTAL_QTYA", "TOTAL_QTY", "SISA", "USRNM", "PER", "TG_SMP", "ID_SOD", "HASIL", "NO_PAKAI", "NO_ORDER", "FIN"
+        "NO_BUKTI", "TGL", "JTEMPO", "FLAG", "NO_SO", "KD_BRG", "NA_BRG", "QTY", "KD_BHN", "NA_BHN",
+        "QTY_BHN", "SATUAN", "NO_SERI", "NO_FO", "KODEC", "NAMAC", "ALAMAT", "KOTA", 
+        "NOTES", "TOTAL_QTYA", "TOTAL_QTY", "SISA", "USRNM", "PER", "TG_SMP", "ID_SOD", 
+        "HASIL", "NO_PAKAI", "NO_ORDER", "FIN", "CBG"
     ];
 }
 

@@ -66,6 +66,8 @@ class TerimaController extends Controller
 
 		$filterkodec = '';
 	   
+        $CBG = Auth::user()->CBG;
+		
 		if($request->KODEC)
 		{
 	
@@ -75,7 +77,7 @@ class TerimaController extends Controller
 		
 		$terima = DB::SELECT("SELECT NO_BUKTI, TGL, KODEC, 
                         NAMAC, NETT AS TOTAL, BAYAR, SISA from terima
-                        $filterkodec ORDER BY NO_BUKTI ");
+                        $filterkodec AND CBG = '$CBG' ORDER BY NO_BUKTI ");
  
         return response()->json($terima);
     }
@@ -86,9 +88,11 @@ class TerimaController extends Controller
     {
         $flag = $request->FLAG;
 
+        $CBG = Auth::user()->CBG;
+		
 		$pakai = DB::SELECT("SELECT KODEC, NAMAC, NO_BUKTI, NO_ORDER, NO_SO, NO_FO, KD_PRS, NA_PRS, NO_PRS, KD_BRG, NA_BRG, KD_BHN, NA_BHN, QTY_OUT, SATUAN, NOTES 
         from pakai 
-        WHERE FLAG='".$flag."' AND KD_PRS in (SELECT KD_PRS from fod2 WHERE AKHIR=1);");
+        WHERE FLAG='".$flag."' AND CBG = '$CBG' AND KD_PRS in (SELECT KD_PRS from fod2 WHERE AKHIR=1);");
 		return response()->json($pakai);
 	}
 
@@ -118,7 +122,10 @@ class TerimaController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
    
-       $terima = DB::SELECT("SELECT * from terima  where PER = '$periode' and FLAG ='$this->FLAGZ' AND GOL ='$this->GOLZ' ORDER BY NO_BUKTI ");
+        $CBG = Auth::user()->CBG;
+		
+        $terima = DB::SELECT("SELECT * from terima  where PER = '$periode' and FLAG ='$this->FLAGZ' 
+                AND GOL ='$this->GOLZ' AND CBG = '$CBG' ORDER BY NO_BUKTI ");
 	   
         // ganti 6
 
@@ -218,20 +225,23 @@ class TerimaController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('terima')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('terima')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->where('CBG', $CBG )
+                ->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]')
         {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'HP'.$tahun.$bulan.'-'.$query;
+            $no_bukti = 'HP'. $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'HP'.$tahun.$bulan.'-0001';
+            $no_bukti = 'HP'. $CBG . $tahun . $bulan . '-0001';
         }
 		
 //////////////////////////////////////////////////////////////////////////
@@ -248,6 +258,7 @@ class TerimaController extends Controller
                 'PER'              => $periode,
                 'FLAG'             => $FLAGZ,						
                 'GOL'              => $GOLZ,
+                'CBG'              => $CBG,
 
                 'KODEC'            => ($request['KODEC']==null) ? "" : $request['KODEC'],
                 'NAMAC'            => ($request['NAMAC']==null) ? "" : $request['NAMAC'],
@@ -354,8 +365,8 @@ class TerimaController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -373,7 +384,8 @@ class TerimaController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from terima
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
                          and GOL ='$this->GOLZ' 
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix'
+                         AND CBG = '$CBG'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -394,7 +406,7 @@ class TerimaController extends Controller
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from terima
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ'     
+                         and GOL ='$this->GOLZ' AND CBG = '$CBG'    
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -416,9 +428,9 @@ class TerimaController extends Controller
     	   $buktix = $request->buktix;
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from terima     
-		             where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ' and NO_BUKTI < 
-					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+		                where PER ='$per' and FLAG ='$this->FLAGZ'
+                        and GOL ='$this->GOLZ' AND CBG = '$CBG' and NO_BUKTI < 
+					    '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -439,9 +451,10 @@ class TerimaController extends Controller
       	   $buktix = $request->buktix;
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from terima    
-		             where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ' and NO_BUKTI > 
-					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+		                where PER ='$per' and FLAG ='$this->FLAGZ'
+                        and GOL ='$this->GOLZ' AND CBG = '$CBG' 
+                        and NO_BUKTI > 
+					    '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -459,8 +472,8 @@ class TerimaController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from terima
 						where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ'  
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+                        and GOL ='$this->GOLZ' AND CBG = '$CBG' 
+		                ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -536,8 +549,10 @@ class TerimaController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         // ganti 20
-      $variablell = DB::select('call terimadel(?)', array($terima['NO_BUKTI']));
+        $variablell = DB::select('call terimadel(?)', array($terima['NO_BUKTI']));
 
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
@@ -572,6 +587,7 @@ class TerimaController extends Controller
 				'updated_by'       => Auth::user()->username,
                 'FLAG'             => $FLAGZ,						
                 'GOL'              => $GOLZ,
+                'CBG'              => $CBG,
             ]
         );
 

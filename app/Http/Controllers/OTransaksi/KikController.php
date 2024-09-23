@@ -66,7 +66,10 @@ class KikController extends Controller
 			$filterwilayah = " and WILAYAH1 ='".$request->wilayah."' ";
 		}
 
+        $CBG = Auth::user()->CBG;
+		
         $kik = DB::SELECT("SELECT * from orderkd
+                    WHERE CBG = '$CBG'
                     ORDER BY NO_BUKTI ");
 	  
        

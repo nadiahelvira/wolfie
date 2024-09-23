@@ -169,23 +169,23 @@ class HutController extends Controller
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'HT' . $tahun . $bulan . '-' . $query;
+            $no_bukti = 'HT' . $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'HT' . $tahun . $bulan . '-0001';
+            $no_bukti = 'HT' . $CBG . $tahun . $bulan . '-0001';
         }
 
         /////////////////////////////////////////////////////////////////////////////////
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query2 = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', 'BBK')->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query2 = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', 'BBK')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query2 != '[]') {
             $query2 = substr($query2[0]->NO_BUKTI, -4);
             $query2 = str_pad($query2 + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti2 = 'BBK' . $tahun . $bulan . '-' . $query2;
+            $no_bukti2 = 'BBK' . $CBG . $tahun . $bulan . '-' . $query2;
         } else {
-            $no_bukti2 = 'BBK' . $tahun . $bulan . '-0001';
+            $no_bukti2 = 'BBK' . $CBG . $tahun . $bulan . '-0001';
         }
 		
         // Insert Header
@@ -293,8 +293,8 @@ class HutController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -310,7 +310,8 @@ class HutController extends Controller
     	   $buktix = $request->buktix;
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
-		                 where PER ='$per'  and NO_BUKTI = '$buktix'						 
+		                 where PER ='$per'  and NO_BUKTI = '$buktix'	
+                         AND CBG = '$CBG'					 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -330,7 +331,8 @@ class HutController extends Controller
 			
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
-		                 where PER ='$per'   
+		                 where PER ='$per' 	
+                         AND CBG = '$CBG'  
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -353,7 +355,8 @@ class HutController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut     
 		             where PER ='$per' and NO_BUKTI < 
-					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+					 '$buktix'	
+                     AND CBG = '$CBG' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -375,7 +378,8 @@ class HutController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut    
 		             where PER ='$per'  and NO_BUKTI > 
-					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 '$buktix'	
+                     AND CBG = '$CBG' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -393,7 +397,7 @@ class HutController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
 						where PER ='$per' 
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+                        AND CBG = '$CBG'ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{

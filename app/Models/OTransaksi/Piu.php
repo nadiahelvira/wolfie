@@ -20,6 +20,6 @@ class Piu extends Model
     protected $fillable = 
     [
        "NO_BUKTI", "TGL", "NO_SO", "PER","KODEC", "NAMAC",  "TOTAL", "BAYAR",
-		"USRNM", "TG_SMP"
+		"USRNM", "TG_SMP", "CBG"
     ];
 }

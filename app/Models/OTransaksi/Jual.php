@@ -20,6 +20,6 @@ class Jual extends Model
     protected $fillable = 
     [
         "NO_BUKTI", "TGL", "PER", "FLAG", "NO_JUAL", "TRUCK", "SOPIR", "KODEC", "NAMAC", "ALAMAT", "KOTA", 
-        "NOTES", "TOTAL_QTY", "TOTAL", "PPN", "NETT", "USRNM", "TG_SMP", "NO_SO", "GOL", "NO_SURAT"
+        "NOTES", "TOTAL_QTY", "TOTAL", "PPN", "NETT", "USRNM", "TG_SMP", "NO_SO", "GOL", "NO_SURAT", "CBG"
     ];
 }

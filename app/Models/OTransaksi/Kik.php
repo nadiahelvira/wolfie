@@ -21,6 +21,6 @@ class Beli extends Model
     [
         "NO_BUKTI","TGL", "NO_PO", "PER","KODES", "NAMAS", "KD_BRG","NA_BRG", "KG", "HARGA", "TOTAL",
 		"USRNM", "TG_SMP",
-		"USRNM_ED", "TG_SMP_ED"
+		"USRNM_ED", "TG_SMP_ED", "CBG"
     ];
 }

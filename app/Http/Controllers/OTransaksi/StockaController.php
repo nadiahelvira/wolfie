@@ -55,17 +55,22 @@ class StockaController extends Controller
     {
         $golz = $request->GOL;
 
+        $CBG = Auth::user()->CBG;
+		
         $stocka = DB::SELECT("SELECT distinct PO.NO_BUKTI , PO.KODES, PO.NAMAS, 
 		                  PO.ALAMAT, PO.KOTA from stocka, stockad 
-                          WHERE PO.NO_BUKTI = POD.NO_BUKTI AND PO.GOL ='$golz' AND POD.SISA > 0	");
+                          WHERE PO.NO_BUKTI = POD.NO_BUKTI AND PO.GOL ='$golz'
+                          AND po.CBG = '$CBG' AND POD.SISA > 0");
         return resstockanse()->json($stocka);
     }
 
     public function browseuang(Request $request)
     {
+        $CBG = Auth::user()->CBG;
+		
 		$stocka = DB::SELECT("SELECT NO_BUKTI,TGL,  KODES, NAMAS, TOTAL,  BAYAR, 
-                        (TOTAL-BAYAR) AS SISA, ALAMAT, KOTA from stocka
-		WHERE LNS <> 1 ORDER BY NO_BUKTI; ");
+                                (TOTAL-BAYAR) AS SISA, ALAMAT, KOTA from stocka
+		                    WHERE LNS <> 1 AND CBG = '$CBG' ORDER BY NO_BUKTI; ");
 
         return response()->json($stocka);
     }
@@ -131,7 +136,10 @@ class StockaController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 
-        $stocka = DB::SELECT("SELECT * from stocka  WHERE PER='$periode' and FLAG ='$this->FLAGZ' ORDER BY NO_BUKTI ");
+        $CBG = Auth::user()->CBG;
+		
+        $stocka = DB::SELECT("SELECT * from stocka  WHERE PER='$periode' and FLAG ='$this->FLAGZ' 
+                            AND CBG = '$CBG' ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6
@@ -227,19 +235,22 @@ class StockaController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('stocka')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'KB')->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('stocka')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'KB')->where('CBG', $CBG)
+                ->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'KB' . $tahun . $bulan . '-' . $query;
+            $no_bukti = 'KB' . $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'KB' . $tahun . $bulan . '-0001';
+            $no_bukti = 'KB' . $CBG . $tahun . $bulan . '-0001';
         }		
 
         $stocka = Stocka::create(
@@ -253,6 +264,7 @@ class StockaController extends Controller
                 'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'created_by'       => Auth::user()->username,
+				'CBG'              => $CBG,
             ]
         );
 
@@ -323,8 +335,8 @@ class StockaController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -341,7 +353,7 @@ class StockaController extends Controller
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stocka
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix' AND CBG = '$CBG'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -362,7 +374,8 @@ class StockaController extends Controller
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stocka
 		                 where PER ='$per' 
-						 and FLAG ='$this->FLAGZ'    
+						 and FLAG ='$this->FLAGZ'  
+                         AND CBG = '$CBG'  
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -385,7 +398,9 @@ class StockaController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stocka     
 		             where PER ='$per' 
-					 and FLAG ='$this->FLAGZ'  and NO_BUKTI < 
+					 and FLAG ='$this->FLAGZ'
+                     AND CBG = '$CBG'
+                     and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -408,7 +423,9 @@ class StockaController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stocka    
 		             where PER ='$per'  
-					 and FLAG ='$this->FLAGZ' and NO_BUKTI > 
+					 and FLAG ='$this->FLAGZ'
+                     AND CBG = '$CBG'
+                     and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -427,8 +444,9 @@ class StockaController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stocka
 						where PER ='$per'
-						and FLAG ='$this->FLAGZ'  
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+						and FLAG ='$this->FLAGZ'
+                        AND CBG = '$CBG'  
+		                ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -508,6 +526,7 @@ class StockaController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
@@ -521,6 +540,7 @@ class StockaController extends Controller
                 'TG_SMP'           => Carbon::now(),
 				'updated_by'       => Auth::user()->username,
                 'FLAG'             => 'KB',	
+                'CBG'              => $CBG,	
             ]
         );
 

@@ -73,9 +73,13 @@ class BeliController extends Controller
     {
         $golz = $request->GOL;
 
+		$CBG = Auth::user()->CBG;
+
         $beli = DB::SELECT("SELECT distinct beli.NO_BUKTI , beli.KODES, beli.NAMAS, 
 		                  beli.ALAMAT, beli.KOTA, beli.PKP, beli.NO_PO from beli, belid 
-                          WHERE beli.NO_BUKTI = beliD.NO_BUKTI AND beli.FLAG='BL' AND beli.GOL ='$golz'");
+                          WHERE beli.NO_BUKTI = beliD.NO_BUKTI AND beli.FLAG='BL' 
+                          AND beli.GOL ='$golz'
+                          AND beli.CBG = '$CBG'");
         return response()->json($beli);
     }
 	
@@ -85,6 +89,8 @@ class BeliController extends Controller
         //	$beli = DB::table('beli')->select('NO_BUKTI', 'TGL', 'KODES','NAMAS', 'ALAMAT','KOTA', 'PERB','PERBB', 'SISA' )->where('PERB', '<>' ,'PERBB')->where('LNS', '<>',1)->where('GOL', 'Y')->orderBy('KODES', 'ASC')->get();
         $filterkodes = '';
 	   
+		$CBG = Auth::user()->CBG;
+
 		if($request->KODES)
 		{
 	
@@ -94,7 +100,9 @@ class BeliController extends Controller
 		
 		$beli = DB::SELECT("SELECT NO_BUKTI, TGL, KODES, 
 		            NAMAS, TOTAL, BAYAR, SISA from beli
-		            $filterkodes ORDER BY NO_BUKTI ");
+		            $filterkodes 
+                    AND beli.CBG = '$CBG'
+                    ORDER BY NO_BUKTI ");
  
         return response()->json($beli);
     }
@@ -120,7 +128,7 @@ class BeliController extends Controller
 		$CBG = Auth::user()->CBG;
 
         $beli = DB::SELECT("SELECT * from beli  WHERE PER='$periode' and FLAG = '$this->FLAGZ' 
-                nd GOL = '$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+                and GOL = '$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6
@@ -244,9 +252,9 @@ class BeliController extends Controller
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $tahun . $bulan . '-' . $query;
+                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $tahun . $bulan . '-0001';
+                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-0001';
             }
 
         } elseif($GOLZ=='J') {
@@ -254,9 +262,9 @@ class BeliController extends Controller
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = $this->FLAGZ .  $tahun . $bulan . '-' . $query;
+                $no_bukti = $this->FLAGZ . $CBG .  $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = $this->FLAGZ .  $tahun . $bulan . '-0001';
+                $no_bukti = $this->FLAGZ . $CBG .  $tahun . $bulan . '-0001';
             }
 
         } elseif($GOLZ=='N') {
@@ -264,9 +272,9 @@ class BeliController extends Controller
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $tahun . $bulan . '-' . $query;
+                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $tahun . $bulan . '-0001';
+                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-0001';
             }
 
         }
@@ -403,13 +411,13 @@ class BeliController extends Controller
 
 		$idx = $request->idx;
 			
-
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
 			$tipx ='top';
 			
-		   }
+		}
 		   
 		 
 		   
@@ -421,7 +429,7 @@ class BeliController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from beli
 		                 where PER ='$per' and FLAG ='$this->FLAGZ' and GOL ='$this->GOLZ' 
 						 and NO_BUKTI = '$buktix'						 
-		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
+		                 and CBG = '$CBG' ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
 			if(!empty($bingco)) 
@@ -442,7 +450,7 @@ class BeliController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from beli 
 		                 where PER ='$per' 
 						 and FLAG ='$this->FLAGZ' and GOL ='$this->GOLZ'    
-		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
+		                 and CBG = '$CBG' ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
 			if(!empty($bingco)) 
@@ -465,7 +473,7 @@ class BeliController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from beli     
 		             where PER ='$per' 
 					 and FLAG ='$this->FLAGZ' and GOL ='$this->GOLZ'  and NO_BUKTI < 
-					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+					 '$buktix' and CBG = '$CBG' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -488,7 +496,7 @@ class BeliController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from beli    
 		             where PER ='$per'  
 					 and FLAG ='$this->FLAGZ' and GOL ='$this->GOLZ' and NO_BUKTI > 
-					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 '$buktix' and CBG = '$CBG' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -507,7 +515,7 @@ class BeliController extends Controller
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from beli
 						where PER ='$per'
 						and FLAG ='$this->FLAGZ' and GOL ='$this->GOLZ'   
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+		                and CBG = '$CBG' ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -588,7 +596,7 @@ class BeliController extends Controller
         );
 
         // ganti 20
-      $variablell = DB::select('call belidel(?)', array($beli['NO_BUKTI']));
+        $variablell = DB::select('call belidel(?)', array($beli['NO_BUKTI']));
 
 		$this->setFlag($request);
         $FLAGZ = $this->FLAGZ;

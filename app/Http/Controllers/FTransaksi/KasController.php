@@ -201,9 +201,9 @@ class KasController extends Controller
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-' . $query;
+            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-0001';
+            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-0001';
         }
 
 
@@ -340,7 +340,8 @@ class KasController extends Controller
 			
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from kas 
-		                 where PER ='$per' and TYPE ='$this->FLAGZ' and CBG = '$CBG'	    
+		                 where PER ='$per' and TYPE ='$this->FLAGZ' 
+                         and CBG = '$CBG'	    
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -362,7 +363,8 @@ class KasController extends Controller
     	   $buktix = $request->buktix;
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS      
-		             where PER ='$per' and TYPE ='$this->FLAGZ' and CBG = '$CBG' and NO_BUKTI < 
+		             where PER ='$per' and TYPE ='$this->FLAGZ' 
+                     and CBG = '$CBG' and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -384,7 +386,8 @@ class KasController extends Controller
       	   $buktix = $request->buktix;
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS    
-		             where PER ='$per' and TYPE ='$this->FLAGZ' and CBG = '$CBG' and NO_BUKTI > 
+		             where PER ='$per' and TYPE ='$this->FLAGZ' 
+                     and CBG = '$CBG' and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -402,7 +405,8 @@ class KasController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS  where PER ='$per'
-            			and TYPE ='$this->FLAGZ' and CBG = '$CBG'   
+            			and TYPE ='$this->FLAGZ' 
+                        and CBG = '$CBG'   
 		                ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 

@@ -55,17 +55,22 @@ class StockbController extends Controller
     {
         $golz = $request->GOL;
 
+        $CBG = Auth::user()->CBG;
+		
         $stockb = DB::SELECT("SELECT distinct PO.NO_BUKTI , PO.KODES, PO.NAMAS, 
 		                  PO.ALAMAT, PO.KOTA from stockb, stockbd 
-                          WHERE PO.NO_BUKTI = POD.NO_BUKTI AND PO.GOL ='$golz' AND POD.SISA > 0	");
+                          WHERE PO.NO_BUKTI = POD.NO_BUKTI AND PO.GOL ='$golz' AND CBG = '$CBG'
+                          AND POD.SISA > 0	");
         return resstockbnse()->json($stockb);
     }
 
     public function browseuang(Request $request)
     {
+        $CBG = Auth::user()->CBG;
+		
 		$stockb = DB::SELECT("SELECT NO_BUKTI,TGL,  KODES, NAMAS, TOTAL,  BAYAR, 
                         (TOTAL-BAYAR) AS SISA, ALAMAT, KOTA from stockb
-		WHERE LNS <> 1 ORDER BY NO_BUKTI; ");
+		                WHERE LNS <> 1 AND CBG = '$CBG' ORDER BY NO_BUKTI; ");
 
         return response()->json($stockb);
     }
@@ -131,7 +136,10 @@ class StockbController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 
-        $stockb = DB::SELECT("SELECT * from stockb  WHERE PER='$periode' and FLAG ='$this->FLAGZ' ORDER BY NO_BUKTI ");
+        $CBG = Auth::user()->CBG;
+		
+        $stockb = DB::SELECT("SELECT * from stockb  WHERE PER='$periode' and FLAG ='$this->FLAGZ' AND CBG = '$CBG'
+                            ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6
@@ -227,19 +235,22 @@ class StockbController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('stockb')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'KZ')->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('stockb')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'KZ')->where('CBG', $CBG)
+                ->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'KZ' . $tahun . $bulan . '-' . $query;
+            $no_bukti = 'KZ' . $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'KZ' . $tahun . $bulan . '-0001';
+            $no_bukti = 'KZ' . $CBG . $tahun . $bulan . '-0001';
         }		
 
         $stockb = Stockb::create(
@@ -253,6 +264,7 @@ class StockbController extends Controller
                 'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'created_by'       => Auth::user()->username,
+				'CBG'              => $CBG,
             ]
         );
 
@@ -323,8 +335,8 @@ class StockbController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -341,7 +353,7 @@ class StockbController extends Controller
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stockb
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix' AND CBG = '$CBG'					 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -362,7 +374,7 @@ class StockbController extends Controller
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stockb
 		                 where PER ='$per' 
-						 and FLAG ='$this->FLAGZ'    
+						 and FLAG ='$this->FLAGZ' AND CBG = '$CBG'  
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -385,7 +397,8 @@ class StockbController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stockb     
 		             where PER ='$per' 
-					 and FLAG ='$this->FLAGZ'  and NO_BUKTI < 
+					 and FLAG ='$this->FLAGZ' AND CBG = '$CBG'
+                     and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -408,7 +421,8 @@ class StockbController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stockb    
 		             where PER ='$per'  
-					 and FLAG ='$this->FLAGZ' and NO_BUKTI > 
+					 and FLAG ='$this->FLAGZ' AND CBG = '$CBG'
+                     and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -427,7 +441,7 @@ class StockbController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from stockb
 						where PER ='$per'
-						and FLAG ='$this->FLAGZ'  
+						and FLAG ='$this->FLAGZ' AND CBG = '$CBG'  
 		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -508,6 +522,7 @@ class StockbController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
@@ -521,6 +536,7 @@ class StockbController extends Controller
                 'TG_SMP'           => Carbon::now(),
 				'updated_by'       => Auth::user()->username,
                 'FLAG'             => 'KZ',	
+                'CBG'              => $CBG,	
             ]
         );
 

@@ -62,9 +62,12 @@ class SuratsController extends Controller
     {
         $golz = $request->GOL;
 
+        $CBG = Auth::user()->CBG;
+		
         $surats = DB::SELECT("SELECT distinct surats.NO_BUKTI, surats.NO_SO, surats.KODEC, surats.NAMAC, 
 		                  surats.ALAMAT, surats.KOTA from surats, suratsd 
-                          WHERE surats.NO_BUKTI = suratsD.NO_BUKTI AND surats.GOL ='$golz' AND suratsd.SISA > 0	");
+                          WHERE surats.NO_BUKTI = suratsD.NO_BUKTI AND surats.GOL ='$golz' 
+                          AND surats.CBG = '$CBG' AND suratsd.SISA > 0	");
         return response()->json($surats);
     }
 	
@@ -81,9 +84,12 @@ class SuratsController extends Controller
     {
         $golz = $request->GOL;
 
+        $CBG = Auth::user()->CBG;
+		
 		$so = DB::SELECT("SELECT sod.NO_ID, so.NO_BUKTI, so.TGL, so.NAMAC, sod.KD_BRG, sod.NA_BRG, sod.SATUAN, sod.QTY, SOD.KIRIM, sod.HARGA,
                                 SOD.SISA from so, sod 
-                        WHERE so.NO_BUKTI=sod.NO_BUKTI and sod.SISA>0 and so.KODEC='".$request->kodec."' AND so.GOL ='$golz' ");
+                        WHERE so.NO_BUKTI=sod.NO_BUKTI AND so.CBG = '$CBG' 
+                        and sod.SISA>0 and so.KODEC='".$request->kodec."' AND so.GOL ='$golz' ");
 		return response()->json($so);
 	}
 	
@@ -140,7 +146,10 @@ class SuratsController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 
-        $surats = DB::SELECT("SELECT * from surats  WHERE PER='$periode' and FLAG ='$this->FLAGZ' and GOL ='$this->GOLZ' ORDER BY NO_BUKTI ");
+        $CBG = Auth::user()->CBG;
+		
+        $surats = DB::SELECT("SELECT * from surats  WHERE PER='$periode' and FLAG ='$this->FLAGZ' 
+                            and GOL ='$this->GOLZ' AND CBG = '$CBG' ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6
@@ -241,12 +250,15 @@ class SuratsController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('surats')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'SJ')->where('GOL', $this->GOLZ)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('surats')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'SJ')
+                ->where('GOL', $this->GOLZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 		
         if( $GOLZ=='B'){
 
@@ -254,9 +266,9 @@ class SuratsController extends Controller
             {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = 'SJ'. $this->GOLZ . $tahun . $bulan . '-' . $query;
+                $no_bukti = 'SJ'. $this->GOLZ . $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = 'SJ'. $this->GOLZ . $tahun . $bulan . '-0001' ;
+                $no_bukti = 'SJ'. $this->GOLZ . $CBG . $tahun . $bulan . '-0001' ;
             }	
 
         } elseif($GOLZ=='J') {
@@ -265,9 +277,9 @@ class SuratsController extends Controller
             {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = 'SJ'.  $tahun . $bulan . '-' . $query;
+                $no_bukti = 'SJ'. $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = 'SJ'. $tahun . $bulan . '-0001' ;
+                $no_bukti = 'SJ'. $CBG . $tahun . $bulan . '-0001' ;
             }	
 
         }
@@ -296,6 +308,7 @@ class SuratsController extends Controller
                 'TOTAL'      	=> (float) str_replace(',', '', $request['TTOTAL']),
 				'USRNM'         => Auth::user()->username,
 				'TG_SMP'        => Carbon::now(),
+				'CBG'           => $CBG,
             ]
         );
 
@@ -386,8 +399,8 @@ class SuratsController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -404,7 +417,7 @@ class SuratsController extends Controller
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from surats
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix' AND CBG = '$CBG'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -425,7 +438,7 @@ class SuratsController extends Controller
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from surats
 		                 where PER ='$per' 
-						 and FLAG ='$this->FLAGZ'   
+						 and FLAG ='$this->FLAGZ' AND CBG = '$CBG'  
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -448,7 +461,7 @@ class SuratsController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from surats     
 		             where PER ='$per' 
-					 and FLAG ='$this->FLAGZ'  and NO_BUKTI < 
+					 and FLAG ='$this->FLAGZ' AND CBG = '$CBG' and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -471,7 +484,7 @@ class SuratsController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from surats    
 		             where PER ='$per'  
-					 and FLAG ='$this->FLAGZ' and NO_BUKTI > 
+					 and FLAG ='$this->FLAGZ' AND CBG = '$CBG' and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -490,7 +503,7 @@ class SuratsController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from surats
 						where PER ='$per'
-						and FLAG ='$this->FLAGZ'  
+						and FLAG ='$this->FLAGZ' AND CBG = '$CBG'  
 		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -576,6 +589,7 @@ class SuratsController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
@@ -599,6 +613,7 @@ class SuratsController extends Controller
                 'GOL'           => $GOLZ,
                 'FLAG'          => $FLAGZ,
 				'TG_SMP'        => Carbon::now(),					
+				'CBG'           => $CBG,					
                 
             ]
         );

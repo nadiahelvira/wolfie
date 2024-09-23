@@ -66,9 +66,12 @@ class UtjualController extends Controller
             $inutbeli = " and NO_BUKTI not in ($listutbeli) ";
         }
 
-        $utjual = DB::SELECT("SELECT NO_BUKTI,TGL,KODEC,NAMAC,ALAMAT,KOTA,TOTAL,BAYAR,SISA,TRUCK,if(DATEDIFF(date(now()),TGL)>=30,'Y','') as LEBIH30 from jual
-		WHERE NO_SO='" . $request['NO_SO'] . "' and SISA<>0 and GOL='Y' " . $inutbeli . " 
-		ORDER BY KODEC;");
+        $CBG = Auth::user()->CBG;
+		
+        $utjual = DB::SELECT("SELECT NO_BUKTI,TGL,KODEC,NAMAC,ALAMAT,KOTA,TOTAL,BAYAR,SISA,TRUCK,if(DATEDIFF(date(now()),TGL)>=30,'Y','') as LEBIH30 
+        from jual
+		WHERE NO_SO='" . $request['NO_SO'] . "' and SISA<>0 and GOL='Y' " . $inutbeli . " AND CBG = '$CBG' 
+        ORDER BY KODEC;");
 
         return response()->json($utjual);
     }
@@ -83,8 +86,11 @@ class UtjualController extends Controller
             $inutbeli = " and NO_BUKTI not in ($listutbeli) ";
         }
 
+        $CBG = Auth::user()->CBG;
+		
         $utjual = DB::SELECT("SELECT NO_BUKTI,TGL, NO_SO, KODEC, NAMAC, RPTOTAL AS TOTAL, RPBAYAR AS BAYAR, RPSISA AS SISA  from jual
-		WHERE  NO_SO='" . $request['NO_SO'] . "' AND RPSISA<>0  ORDER BY NO_BUKTI; ");
+		WHERE  NO_SO='" . $request['NO_SO'] . "' AND RPSISA<>'0'  AND CBG = '$CBG'
+        ORDER BY NO_BUKTI; ");
 
         return response()->json($utjual);
     }
@@ -107,7 +113,10 @@ class UtjualController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;	
 		
-        $utjual = DB::SELECT("SELECT * from jual  where  PER ='$periode' and FLAG ='$this->FLAGZ' AND GOL ='$this->GOLZ'  ORDER BY NO_BUKTI ");
+        $CBG = Auth::user()->CBG;
+		
+        $utjual = DB::SELECT("SELECT * from jual  where  PER ='$periode' and FLAG ='$this->FLAGZ' 
+                AND GOL ='$this->GOLZ' AND CBG = '$CBG' ORDER BY NO_BUKTI ");
 
   
         // ganti 6
@@ -200,6 +209,8 @@ class UtjualController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;	
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
@@ -211,58 +222,58 @@ class UtjualController extends Controller
 		if ( $request->flagz == 'JL' && $request->golz == 'Y' ) {
 
             $query = DB::table('jual')->select(DB::raw("TRIM(NO_BUKTI) AS NO_BUKTI"))->where('PER', $periode)
-			         ->where('FLAG', 'JL')->where('GOL', 'Y')->orderByDesc('NO_BUKTI')->limit(1)->get();
+			         ->where('FLAG', 'JL')->where('GOL', 'Y')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 			
 			if ($query != '[]') {
             
 				$query = substr($query[0]->NO_BUKTI, -4);
 				$query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-				$no_bukti = 'JY' . $tahun . $bulan . '-' . $query;
+				$no_bukti = 'JY' . $CBG . $tahun . $bulan . '-' . $query;
 			
 			} else {
-				$no_bukti = 'JY' . $tahun . $bulan . '-0001';
+				$no_bukti = 'JY' . $CBG . $tahun . $bulan . '-0001';
 				}
 		
         } else if ( $request->flagz == 'TP' ) {
 
             $query = DB::table('jual')->select(DB::raw("TRIM(NO_BUKTI) AS NO_BUKTI"))->where('PER', $periode)
-			         ->where('FLAG', 'TP')->orderByDesc('NO_BUKTI')->limit(1)->get();
+			         ->where('FLAG', 'TP')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 			
 			if ($query != '[]') {
             
 				$query = substr($query[0]->NO_BUKTI, -4);
 				$query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-				$no_bukti = 'TPY' . $tahun . $bulan . '-' . $query;
+				$no_bukti = 'TPY' . $CBG . $tahun . $bulan . '-' . $query;
 			
 			} else {
-				$no_bukti = 'TPY' . $tahun . $bulan . '-0001';
+				$no_bukti = 'TPY' . $CBG . $tahun . $bulan . '-0001';
 				}
 				
         } else if ( $request->flagz == 'UM' ) {
  
             $query = DB::table('jual')->select(DB::raw("TRIM(NO_BUKTI) AS NO_BUKTI"))->where('PER', $periode)
-			         ->where('FLAG', 'UM')->orderByDesc('NO_BUKTI')->limit(1)->get();
+			         ->where('FLAG', 'UM')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 			
 			if ($query != '[]') {
             
 				$query = substr($query[0]->NO_BUKTI, -4);
 				$query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-				$no_bukti = 'UJ' . $tahun . $bulan . '-' . $query;
+				$no_bukti = 'UJ' . $CBG . $tahun . $bulan . '-' . $query;
 			
 			} else {
-				$no_bukti = 'UJ' . $tahun . $bulan . '-0001';
+				$no_bukti = 'UJ' . $CBG . $tahun . $bulan . '-0001';
 				}
  
  			$bulan    = session()->get('periode')['bulan'];
             $tahun    = substr(session()->get('periode')['tahun'], -2);
-            $query2 = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', 'BBM')->orderByDesc('NO_BUKTI')->limit(1)->get();
+            $query2 = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', 'BBM')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
             if ($query2 != '[]') {
                 $query2 = substr($query2[0]->NO_BUKTI, -4);
                 $query2 = str_pad($query2 + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti2 = 'BBM' . $tahun . $bulan . '-' . $query2;
+                $no_bukti2 = 'BBM' . $CBG . $tahun . $bulan . '-' . $query2;
             } else {
-                $no_bukti2 = 'BBM' . $tahun . $bulan . '-0001';
+                $no_bukti2 = 'BBM' . $CBG . $tahun . $bulan . '-0001';
             }
 			
 			
@@ -295,19 +306,20 @@ class UtjualController extends Controller
                 'KD_BRG'           => ($request['KD_BRG'] == null) ? "" : $request['KD_BRG'],
                 'NA_BRG'           => ($request['NA_BRG'] == null) ? "" : $request['NA_BRG'],
 				'GUDANG'           => ($request['GUDANG'] == null) ? "" : $request['GUDANG'],
-                'QTY'            => (float) str_replace(',', '', $request['QTY']),
-                'KG'            => (float) str_replace(',', '', $request['KG']),
+                'QTY'              => (float) str_replace(',', '', $request['QTY']),
+                'KG'               => (float) str_replace(',', '', $request['KG']),
                 'HARGA'            => (float) str_replace(',', '', $request['HARGA']),
                 'TOTAL'            => (float) str_replace(',', '', $request['TOTAL']),
-                'DPP'            => (float) str_replace(',', '', $request['DPP']),
-                'PPN'            => (float) str_replace(',', '', $request['PPN']),				
-                'RPSISA'             => ($FLAGZ == 'UM') ? (float) str_replace(',', '', $request['TOTAL'] ) * -1  : (float) str_replace(',', '', $request['TOTAL'] ),      
-                'RPTOTAL'            => ($FLAGZ == 'UM') ? (float) str_replace(',', '', $request['TOTAL'] ) * -1  : (float) str_replace(',', '', $request['TOTAL'] ), 
-                'BACNO'              => ($request['BACNO'] == null) ? "" : $request['BACNO'],
-                'BNAMA'               => ($request['BNAMA'] == null) ? "" : $request['BNAMA'],				
-                'NO_BANK'               => $no_bukti2,
+                'DPP'              => (float) str_replace(',', '', $request['DPP']),
+                'PPN'              => (float) str_replace(',', '', $request['PPN']),				
+                'RPSISA'           => ($FLAGZ == 'UM') ? (float) str_replace(',', '', $request['TOTAL'] ) * -1  : (float) str_replace(',', '', $request['TOTAL'] ),      
+                'RPTOTAL'          => ($FLAGZ == 'UM') ? (float) str_replace(',', '', $request['TOTAL'] ) * -1  : (float) str_replace(',', '', $request['TOTAL'] ), 
+                'BACNO'            => ($request['BACNO'] == null) ? "" : $request['BACNO'],
+                'BNAMA'            => ($request['BNAMA'] == null) ? "" : $request['BNAMA'],				
+                'NO_BANK'          => $no_bukti2,
                 'USRNM'            => Auth::user()->username,
                 'created_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );
@@ -364,8 +376,8 @@ class UtjualController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -382,7 +394,7 @@ class UtjualController extends Controller
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix' AND CBG = '$CBG'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -403,7 +415,7 @@ class UtjualController extends Controller
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual 
 		                 where PER ='$per'
-						 and FLAG ='$this->FLAGZ'     
+						 and FLAG ='$this->FLAGZ' AND CBG = '$CBG'    
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -426,7 +438,8 @@ class UtjualController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual      
 		             where PER ='$per'
-					 and FLAG ='$this->FLAGZ'  and NO_BUKTI < 
+					 and FLAG ='$this->FLAGZ' AND CBG = '$CBG' 
+                     and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -449,7 +462,8 @@ class UtjualController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual    
 		             where PER ='$per'
-					 and FLAG ='$this->FLAGZ'  and NO_BUKTI > 
+					 and FLAG ='$this->FLAGZ' AND CBG = '$CBG' 
+                     and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -467,7 +481,7 @@ class UtjualController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual  where PER ='$per'
-            		  and FLAG ='$this->FLAGZ'   
+            		  and FLAG ='$this->FLAGZ' AND CBG = '$CBG'  
 		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -547,7 +561,8 @@ class UtjualController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;	
 		
-
+        $CBG = Auth::user()->CBG;
+		
 		if ( $FLAGZ == 'UM' ) {
 
             // $variablell = DB::select('call ujdel(?,?)', array($utjual['NO_BUKTI'], '0'));
@@ -573,20 +588,21 @@ class UtjualController extends Controller
                 'KD_BRG'           => ($request['KD_BRG'] == null) ? "" : $request['KD_BRG'],
                 'NA_BRG'           => ($request['NA_BRG'] == null) ? "" : $request['NA_BRG'],
 				'GUDANG'           => ($request['GUDANG'] == null) ? "" : $request['GUDANG'],
-                'QTY'            => (float) str_replace(',', '', $request['QTY']),
-                'KG'            => (float) str_replace(',', '', $request['KG']),				
+                'QTY'              => (float) str_replace(',', '', $request['QTY']),
+                'KG'               => (float) str_replace(',', '', $request['KG']),				
                 'HARGA'            => (float) str_replace(',', '', $request['HARGA']),
                 'TOTAL'            => (float) str_replace(',', '', $request['TOTAL']),
-                'DPP'            => (float) str_replace(',', '', $request['DPP']),
-                'PPN'            => (float) str_replace(',', '', $request['PPN']),				
+                'DPP'              => (float) str_replace(',', '', $request['DPP']),
+                'PPN'              => (float) str_replace(',', '', $request['PPN']),				
                 'RPSISA'           => ($FLAGZ == 'UM') ? (float) str_replace(',', '', $request['TOTAL'] ) * -1  : (float) str_replace(',', '', $request['TOTAL'] ),      
                 'RPTOTAL'          => ($FLAGZ == 'UM') ? (float) str_replace(',', '', $request['TOTAL'] ) * -1  : (float) str_replace(',', '', $request['TOTAL'] ),      
                 'ACNOB'            => ($request['ACNOB'] == null) ? "" : $request['ACNOB'],
                 'NACNOB'           => ($request['NACNOB'] == null) ? "" : $request['NACNOB'],			
-                'BACNO'              => ($request['BACNO'] == null) ? "" : $request['BACNO'],
-                'BNAMA'               => ($request['BNAMA'] == null) ? "" : $request['BNAMA'],				
+                'BACNO'            => ($request['BACNO'] == null) ? "" : $request['BACNO'],
+                'BNAMA'            => ($request['BNAMA'] == null) ? "" : $request['BNAMA'],				
                 'USRNM'            => Auth::user()->username,
                 'updated_by'       => Auth::user()->username,
+                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );

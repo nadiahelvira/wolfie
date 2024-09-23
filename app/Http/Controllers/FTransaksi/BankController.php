@@ -175,9 +175,9 @@ class BankController extends Controller
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-' . $query;
+            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-0001';
+            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-0001';
         }
 
 
@@ -268,8 +268,8 @@ class BankController extends Controller
 	    $tipx = $request->tipx;
 
 		$idx = $request->idx;
-					
 
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -283,7 +283,8 @@ class BankController extends Controller
 			
 		   	
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from BANK 
-		                 where PER ='$per' and TYPE ='$this->FLAGZ'     
+		                 where PER ='$per' and TYPE ='$this->FLAGZ' 
+                         AND CGB = '$CGB'    
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 					
@@ -307,7 +308,9 @@ class BankController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from BANK      
 		             where PER ='$per' and TYPE ='$this->FLAGZ' and NO_BUKTI < 
-					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+					 '$buktix' 
+                     AND CGB = '$CGB'
+                     ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -329,7 +332,9 @@ class BankController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from BANK    
 		             where PER ='$per' and TYPE ='$this->FLAGZ' and NO_BUKTI > 
-					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 '$buktix'
+                     AND CGB = '$CGB'     
+                     ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -347,7 +352,8 @@ class BankController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from Bank
             		  where PER ='$per' and TYPE ='$this->FLAGZ'   
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+		              AND CGB = '$CGB'
+                      ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{

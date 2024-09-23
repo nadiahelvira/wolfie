@@ -66,9 +66,13 @@ class OrderkController extends Controller
     {
         $golz = $request->GOL;
 
+        $CBG = Auth::user()->CBG;
+		
 		$so = DB::SELECT("SELECT sod.NO_ID, so.NO_BUKTI, so.TGL, so.KODEC, so.NAMAC, so.ALAMAT, so.KOTA, so.TOTAL_QTY AS QTY, sod.KD_BRG, sod.NA_BRG, sod.SATUAN,
                                 sod.SISA from so, sod 
-                        WHERE so.NO_BUKTI=sod.NO_BUKTI and sod.SISA>0 AND so.GOL ='$golz' ");
+                        WHERE so.NO_BUKTI=sod.NO_BUKTI and sod.SISA>0 
+                        AND so.GOL ='$golz'
+                        AND so.CBG = '$CBG' ");
 		return response()->json($so);
 	}
 	
@@ -110,6 +114,7 @@ class OrderkController extends Controller
 	
 			$filterbukti = " WHERE NO_BUKTI='".$request->NO_PO."' AND a.KD_BRG = b.KD_BRG ";
 		}
+        
 		$orderkd = DB::SELECT("SELECT a.REC, a.KD_BRG, a.NA_BRG, a.SATUAN , a.QTY, a.HARGA, a.KIRIM, a.SISA, 
                                 b.SATUAN AS SATUAN_PO, a.QTY AS QTY_PO, '1' AS X 
                             from orderkd a, brg b
@@ -137,7 +142,10 @@ class OrderkController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 
-        $orderk = DB::SELECT("SELECT * from orderk WHERE PER='$periode' and FLAG ='$this->FLAGZ' and GOL ='$this->GOLZ' ORDER BY NO_BUKTI ");
+        $CBG = Auth::user()->CBG;
+		
+        $orderk = DB::SELECT("SELECT * from orderk WHERE PER='$periode' and FLAG ='$this->FLAGZ' 
+                            and GOL ='$this->GOLZ' AND CBG = '$CBG' ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6
@@ -234,20 +242,22 @@ class OrderkController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('orderk')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'SJ')->where('GOL', $this->GOLZ)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('orderk')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'SJ')->where('GOL', $this->GOLZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
 		
 		if ($query != '[]')
         {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'SJ'. $this->GOLZ . $tahun . $bulan . '-' . $query;
+            $no_bukti = 'SJ'. $this->GOLZ . $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'SJ'. $this->GOLZ . $tahun . $bulan . '-0001' ;
+            $no_bukti = 'SJ'. $this->GOLZ . $CBG . $tahun . $bulan . '-0001' ;
         }		
 
         $orderk = Orderk::create(
@@ -267,7 +277,8 @@ class OrderkController extends Controller
                 'TOTAL_QTY'     => (float) str_replace(',', '', $request['TOTAL_QTY']),
                 'TOTAL_QTY_SO'      	=> (float) str_replace(',', '', $request['TOTAL_QTY_SO']),
 				'USRNM'         => Auth::user()->username,
-				'TG_SMP'        => Carbon::now(),
+				'TG_SMP'        => Carbon::now(),						
+                'CBG'           => $CBG,
             ]
         );
 
@@ -340,8 +351,8 @@ class OrderkController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -358,7 +369,8 @@ class OrderkController extends Controller
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from orderk
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix'	
+                         AND CBG = '$CBG'					 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -379,7 +391,8 @@ class OrderkController extends Controller
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from orderk
 		                 where PER ='$per' 
-						 and FLAG ='$this->FLAGZ'   
+						 and FLAG ='$this->FLAGZ'
+                         AND CBG = '$CBG'   
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -402,7 +415,9 @@ class OrderkController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from orderk     
 		             where PER ='$per' 
-					 and FLAG ='$this->FLAGZ'  and NO_BUKTI < 
+					 and FLAG ='$this->FLAGZ' 
+                     AND CBG = '$CBG'
+                     and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -425,7 +440,9 @@ class OrderkController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from orderk    
 		             where PER ='$per'  
-					 and FLAG ='$this->FLAGZ' and NO_BUKTI > 
+					 and FLAG ='$this->FLAGZ' 
+                     AND CBG = '$CBG'
+                     and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -444,8 +461,9 @@ class OrderkController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from orderk
 						where PER ='$per'
-						and FLAG ='$this->FLAGZ'  
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+						and FLAG ='$this->FLAGZ'
+                        AND CBG = '$CBG'  
+		                ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -527,6 +545,7 @@ class OrderkController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
@@ -534,7 +553,7 @@ class OrderkController extends Controller
         $orderk->update(
             [
                 'TGL'           => date('Y-m-d', strtotime($request['TGL'])),	
-                'JTEMPO'           => date('Y-m-d', strtotime($request['JTEMPO'])),	
+                'JTEMPO'        => date('Y-m-d', strtotime($request['JTEMPO'])),	
                 'NO_SO'         => ($request['NO_SO']==null) ? "" : $request['NO_SO'],
                 'KODEC'         => ($request['KODEC']==null) ? "" : $request['KODEC'],	
 				'NAMAC'		    =>($request['NAMAC']==null) ? "" : $request['NAMAC'],
@@ -542,10 +561,11 @@ class OrderkController extends Controller
 				'KOTA'		    =>($request['KOTA']==null) ? "" : $request['KOTA'],
 				'NOTES'			=>($request['NOTES']==null) ? "" : $request['NOTES'],
                 'TOTAL_QTY'     => (float) str_replace(',', '', $request['TOTAL_QTY']),
-                'TOTAL_QTY_SO'      	=> (float) str_replace(',', '', $request['TOTAL_QTY_SO']),
+                'TOTAL_QTY_SO'  => (float) str_replace(',', '', $request['TOTAL_QTY_SO']),
 				'USRNM'         => Auth::user()->username,						
                 'GOL'           => $GOLZ,
                 'FLAG'          => $FLAGZ,
+                'CBG'          => $CBG,
 				'TG_SMP'        => Carbon::now(),					
                 
             ]

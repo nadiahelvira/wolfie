@@ -67,9 +67,12 @@ class JualController extends Controller
     {
         $golz = $request->GOL;
 
+		$CBG = Auth::user()->CBG;
+
         $jual = DB::SELECT("SELECT distinct jual.NO_BUKTI, jual.NO_SO, jual.KODEC, jual.NAMAC, 
 		                  jual.ALAMAT, jual.KOTA from jual, juald 
-                          WHERE jual.NO_BUKTI = jualD.NO_BUKTI AND jual.GOL ='$golz'");
+                          WHERE jual.NO_BUKTI = jualD.NO_BUKTI AND jual.GOL ='$golz'
+                          AND jual.CBG = '$CBG' ");
         return response()->json($jual);
     }
 
@@ -78,6 +81,8 @@ class JualController extends Controller
 
 		$filterkodec = '';
 	   
+		$CBG = Auth::user()->CBG;
+
 		if($request->KODEC)
 		{
 	
@@ -87,7 +92,8 @@ class JualController extends Controller
 		
 		$jual = DB::SELECT("SELECT NO_BUKTI, TGL, KODEC, 
                         NAMAC, NETT AS TOTAL, BAYAR, SISA from jual
-                        $filterkodec ORDER BY NO_BUKTI ");
+                        $filterkodec AND CBG = '$CBG' 
+                        ORDER BY NO_BUKTI ");
  
         return response()->json($jual);
     }
@@ -109,7 +115,10 @@ class JualController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
    
-       $jual = DB::SELECT("SELECT * from jual  where PER = '$periode' and FLAG ='$this->FLAGZ' AND GOL ='$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+		$CBG = Auth::user()->CBG;
+
+        $jual = DB::SELECT("SELECT * from jual  where PER = '$periode' and FLAG ='$this->FLAGZ' 
+                            AND GOL ='$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
 	   
         // ganti 6
 
@@ -223,9 +232,9 @@ class JualController extends Controller
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $tahun . $bulan . '-' . $query;
+                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $tahun . $bulan . '-0001';
+                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-0001';
             }
 
         } elseif($GOLZ=='J') {
@@ -233,9 +242,9 @@ class JualController extends Controller
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = $this->FLAGZ .  $tahun . $bulan . '-' . $query;
+                $no_bukti = $this->FLAGZ . $CBG .  $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = $this->FLAGZ .  $tahun . $bulan . '-0001';
+                $no_bukti = $this->FLAGZ . $CBG .  $tahun . $bulan . '-0001';
             }
 
         }
@@ -363,8 +372,8 @@ class JualController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -382,7 +391,8 @@ class JualController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
                          and GOL ='$this->GOLZ' 
-						 and NO_BUKTI = '$buktix'						 
+						 and NO_BUKTI = '$buktix'
+                         AND CBG = '$CBG'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -403,7 +413,8 @@ class JualController extends Controller
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ'     
+                         and GOL ='$this->GOLZ'   
+                         AND CBG = '$CBG'  
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -426,8 +437,10 @@ class JualController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual     
 		             where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ' and NO_BUKTI < 
-					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+                         and GOL ='$this->GOLZ' 
+                         AND CBG = '$CBG'
+                         and NO_BUKTI < 
+					     '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -448,9 +461,11 @@ class JualController extends Controller
       	   $buktix = $request->buktix;
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual    
-		             where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ' and NO_BUKTI > 
-					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+		                    where PER ='$per' and FLAG ='$this->FLAGZ'
+                            and GOL ='$this->GOLZ' 
+                            AND CBG = '$CBG'
+                            and NO_BUKTI > 
+					        '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -467,9 +482,10 @@ class JualController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual
-						where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ'  
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+						 where PER ='$per' and FLAG ='$this->FLAGZ'
+                         and GOL ='$this->GOLZ' 
+                         AND CBG = '$CBG' 
+		                 ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{

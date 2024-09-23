@@ -19,6 +19,8 @@ class Orderk extends Model
 //ganti 3
     protected $fillable = 
     [
-        "NO_BUKTI", "TGL", "JTEMPO", "FLAG", "NO_SO", "KD_BRG", "NA_BRG", "QTY", "KD_BHN", "NA_BHN", "QTY_BHN", "SATUAN", "NO_SERI", "NO_FO", "KODEC", "NAMAC", "ALAMAT", "KOTA", "NOTES", "TOTAL_QTYA", "TOTAL_QTY", "SISA", "USRNM", "PER", "TG_SMP", "ID_SOD", "FIN"
+        "NO_BUKTI", "TGL", "JTEMPO", "FLAG", "NO_SO", "KD_BRG", "NA_BRG", "QTY", "KD_BHN", "NA_BHN", 
+        "QTY_BHN", "SATUAN", "NO_SERI", "NO_FO", "KODEC", "NAMAC", "ALAMAT", "KOTA", "NOTES", 
+        "TOTAL_QTYA", "TOTAL_QTY", "SISA", "USRNM", "PER", "TG_SMP", "ID_SOD", "FIN", "CBG"
     ];
 }

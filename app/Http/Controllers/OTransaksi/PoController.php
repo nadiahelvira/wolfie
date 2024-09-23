@@ -59,17 +59,22 @@ class PoController extends Controller
     {
         $golz = $request->GOL;
 
+        $CBG = Auth::user()->CBG;
+		
         $po = DB::SELECT("SELECT distinct PO.NO_BUKTI , PO.KODES, PO.NAMAS, 
 		                  PO.ALAMAT, PO.KOTA, PO.PKP from po, pod 
-                          WHERE PO.NO_BUKTI = POD.NO_BUKTI AND PO.GOL ='$golz' AND POD.SISA > 0	");
+                          WHERE PO.NO_BUKTI = POD.NO_BUKTI AND PO.GOL ='$golz'
+                          AND PO.CBG = '$CBG' AND POD.SISA > 0	");
         return response()->json($po);
     }
 
     public function browseuang(Request $request)
     {
+        $CBG = Auth::user()->CBG;
+		
 		$po = DB::SELECT("SELECT NO_BUKTI,TGL,  KODES, NAMAS, TOTAL,  BAYAR, 
-                        (TOTAL-BAYAR) AS SISA, ALAMAT, KOTA from po
-		WHERE LNS <> 1 ORDER BY NO_BUKTI; ");
+                                TOTAL-BAYAR) AS SISA, ALAMAT, KOTA from po
+		                WHERE LNS <> 1 AND CBG = '$CBG' ORDER BY NO_BUKTI; ");
 
         return response()->json($po);
     }
@@ -158,7 +163,10 @@ class PoController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 
-        $po = DB::SELECT("SELECT * from po  WHERE PER='$periode' and FLAG ='$this->FLAGZ' AND GOL ='$this->GOLZ' ORDER BY NO_BUKTI ");
+        $CBG = Auth::user()->CBG;
+		
+        $po = DB::SELECT("SELECT * from po  WHERE PER='$periode' and FLAG ='$this->FLAGZ' 
+                        AND GOL ='$this->GOLZ' AND CBG = '$CBG' ORDER BY NO_BUKTI ");
 	  
 	   
         // ganti 6
@@ -257,21 +265,24 @@ class PoController extends Controller
         $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('po')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'PO')->where('GOL', $this->GOLZ )->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('po')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'PO')->where('CBG', $CBG)
+                ->where('GOL', $this->GOLZ )->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if( $GOLZ=='B'){
 
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = 'PO' . $this->GOLZ . $tahun . $bulan . '-' . $query;
+                $no_bukti = 'PO' . $this->GOLZ . $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = 'PO' . $this->GOLZ . $tahun . $bulan . '-0001';
+                $no_bukti = 'PO' . $this->GOLZ . $CBG . $tahun . $bulan . '-0001';
             }
 
         } elseif($GOLZ=='J') {
@@ -279,9 +290,9 @@ class PoController extends Controller
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = 'PO' . $tahun . $bulan . '-' . $query;
+                $no_bukti = 'PO' . $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = 'PO' . $tahun . $bulan . '-0001';
+                $no_bukti = 'PO' . $CBG . $tahun . $bulan . '-0001';
             }
 
         } elseif($GOLZ=='N') {
@@ -289,9 +300,9 @@ class PoController extends Controller
             if ($query != '[]') {
                 $query = substr($query[0]->NO_BUKTI, -4);
                 $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = 'PON' . $tahun . $bulan . '-' . $query;
+                $no_bukti = 'PON' . $CBG . $tahun . $bulan . '-' . $query;
             } else {
-                $no_bukti = 'PON' . $tahun . $bulan . '-0001';
+                $no_bukti = 'PON' . $CBG . $tahun . $bulan . '-0001';
             }
 
         }
@@ -310,6 +321,7 @@ class PoController extends Controller
                 'KOTA'             => ($request['KOTA'] == null) ? "" : $request['KOTA'],
                 'FLAG'             => 'PO',						
                 'GOL'              => $GOLZ,
+                'CBG'              => $CBG,
                 'NOTES'            => ($request['NOTES'] == null) ? "" : $request['NOTES'],
 				'PKP'              => (float) str_replace(',', '', $request['PKP']),
                 'TOTAL_QTY'        => (float) str_replace(',', '', $request['TTOTAL_QTY']),
@@ -401,8 +413,8 @@ class PoController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-
+		
+        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -420,6 +432,7 @@ class PoController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from po
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'
                          and GOL ='$this->GOLZ' 
+                         AND CBG = '$CBG'
 						 and NO_BUKTI = '$buktix'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
@@ -442,7 +455,8 @@ class PoController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from po
 		                 where PER ='$per' 
 						 and FLAG ='$this->FLAGZ' 
-                         and GOL ='$this->GOLZ'    
+                         and GOL ='$this->GOLZ' 
+                         AND CBG = '$CBG'   
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -466,7 +480,9 @@ class PoController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from po     
 		             where PER ='$per' 
 					 and FLAG ='$this->FLAGZ' 
-                     and GOL ='$this->GOLZ'  and NO_BUKTI < 
+                     and GOL ='$this->GOLZ' 
+                     AND CBG = '$CBG'
+                     and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -490,7 +506,9 @@ class PoController extends Controller
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from po    
 		             where PER ='$per'  
 					 and FLAG ='$this->FLAGZ' 
-                     and GOL ='$this->GOLZ' and NO_BUKTI > 
+                     and GOL ='$this->GOLZ'
+                     AND CBG = '$CBG' 
+                     and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -510,8 +528,9 @@ class PoController extends Controller
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from po
 						where PER ='$per'
 						and FLAG ='$this->FLAGZ'
-                        and GOL ='$this->GOLZ'    
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+                        and GOL ='$this->GOLZ'
+                        AND CBG = '$CBG'    
+		                ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -593,6 +612,8 @@ class PoController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
+        $CBG = Auth::user()->CBG;
+		
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
@@ -616,6 +637,7 @@ class PoController extends Controller
 				'updated_by'       => Auth::user()->username,
                 'FLAG'             => 'PO',						
                 'GOL'              => $GOLZ,
+                'CBG'              => $CBG,
             ]
         );
 

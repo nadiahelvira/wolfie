@@ -167,9 +167,9 @@ class MemoController extends Controller
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'M' . $tahun . $bulan . '-' . $query;
+            $no_bukti = 'M' . $CBG . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'M' . $tahun . $bulan . '-0001';
+            $no_bukti = 'M' . $CBG . $tahun . $bulan . '-0001';
         }
 
 
@@ -264,7 +264,8 @@ class MemoController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-					
+			
+        $CBG = Auth::user()->CBG;		
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -279,7 +280,7 @@ class MemoController extends Controller
 		   	
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from MEMO 
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'     
-		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
+		                 and CBG = '$CBG' ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 					
 		
@@ -302,7 +303,8 @@ class MemoController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from memo      
 		             where PER ='$per' and FLAG ='$this->FLAGZ' and NO_BUKTI < 
-					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+					 '$buktix' and CBG = '$CBG'
+                     ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -324,7 +326,8 @@ class MemoController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from memo    
 		             where PER ='$per' and FLAG ='$this->FLAGZ' and NO_BUKTI > 
-					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 '$buktix' and CBG = '$CBG'
+                     ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -341,8 +344,8 @@ class MemoController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from memo  
-			              where PER ='$per' and FLAG ='$this->FLAGZ'   
-		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
+			            where PER ='$per' and FLAG ='$this->FLAGZ'   
+		                and CBG = '$CBG' ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
