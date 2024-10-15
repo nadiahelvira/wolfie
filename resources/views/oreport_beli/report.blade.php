@@ -6,11 +6,11 @@
 	<div class="container-fluid">
 		<div class="row mb-2">
 		<div class="col-sm-6">
-			<h1 class="m-0">Laporan Pembelian </h1>
+			<h1 class="m-0">Laporan Pembelian Bahan </h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item active">Laporan Pembelian </li>
+				<li class="breadcrumb-item active">Laporan Pembelian Bahan</li>
 			</ol>
 		</div>
 		</div>
@@ -28,37 +28,17 @@
 					@csrf
 					<div class="form-group row">
 
+						
 						<div class="col-md-2">						
 							<label class="form-label">Suplier</label>
-							<input type="text" class="form-control kodes" id="kodes" name="kodes" placeholder="Pilih Suplier" value="{{ session()->get('filter_kodes1') }}" readonly>
+							<input type="text" class="form-control KODES" id="KODES" name="KODES" placeholder="Pilih Suplier" value="{{ session()->get('filter_kodes1') }}" readonly>
 						</div>  
 						<div class="col-md-3">
 							<label class="form-label">Nama</label>
 							<input type="text" class="form-control NAMAS" id="NAMAS" name="NAMAS" placeholder="Nama" value="{{ session()->get('filter_namas1') }}" readonly>
 						</div>
-
-						<div class="col-md-2">
-							<label><strong>Gol :</strong></label>
-							
-							<select name="gol" id="gol" class="form-control gol">
-								<option value="B" {{ session()->get('filter_gol')=='B' ? 'selected': ''}}>B</option>
-								<option value="J" {{ session()->get('filter_gol')=='J' ? 'selected': ''}}>J</option>
-							</select>
-						</div>
-						
 					</div>
 					
-					<!-- <div class="form-group row">
-
-                        <div class="col-md-2">
-							<label class="form-label">Barang</label>
-                            <input type="text" class="form-control brg1" id="brg1" name="brg1" placeholder="Pilih Barang# 1" value="{{ session()->get('filter_brg1') }}" readonly>
-                        </div>  
-                        <div class="col-md-3">
-							<label class="form-label">s/d</label>
-                            <input type="text" class="form-control nabrg1" id="nabrg1" name="nabrg1" placeholder="Nama" value="{{ session()->get('filter_nabrg1') }}" readonly>
-                        </div>
-					</div> -->
 					
 					<!-- Filter Tanggal -->
 					<div class="form-group row">
@@ -72,9 +52,22 @@
 							type="text" autocomplete="off" value="{{ session()->get('filter_tglSampai') }}">
 						</div>
 					</div>
-					
-                    <button class="btn btn-primary" type="submit" id="filter" class="filter" name="filter">Filter</button>
-                    <button class="btn btn-danger" type="button" id="resetfilter" class="resetfilter" onclick="window.location='{{url("rbeli")}}'">Reset</button>
+					<div class="form-group row">
+					<div class="col-md-1">
+							<label><strong>Flag :</strong></label>
+							
+							<select name="FLAG" id="FLAG" class="form-control FLAG">
+								<option value="BL" {{ session()->get('filter_flag')=='BL' ? 'selected': ''}}>Beli</option>
+								<option value="RB" {{ session()->get('filter_flag')=='RB' ? 'selected': ''}}>Retur</option>
+								<option value="" {{ session()->get('filter_flag')=='' ? 'selected': ''}}>-</option>
+							</select>
+					</div>
+						
+
+
+					</div>
+                   	<button class="btn btn-primary" type="submit" id="filter" class="filter" name="filter">Filter</button>
+					<button class="btn btn-danger" type="button" id="resetfilter" class="resetfilter" onclick="window.location='{{url("rbeli")}}'">Reset</button>
 					<button class="btn btn-warning" type="submit" id="cetak" class="cetak" formtarget="_blank">Cetak</button>
 					</form>
 					<div style="margin-bottom: 15px;"></div>
@@ -100,114 +93,118 @@
 					</table> -->
 
                     <!-- PASTE DIBAWAH INI -->
- 				<!-- DISINI BATAS AWAL KOOLREPORT-->
-				<div class="report-content" col-md-12>
-					<?php
-					use \koolreport\datagrid\DataTables;
+                    <!-- DISINI BATAS AWAL KOOLREPORT-->
+                    <div class="report-content" col-md-12>
+                        <?php
+                        use \koolreport\datagrid\DataTables;
 
-					if($hasil)
-					{
-						DataTables::create(array(
-							"dataSource" => $hasil,
-							"name" => "example",
-							"fastRender" => true,
-							"fixedHeader" => true,
-							'scrollX' => true,
-							"showFooter" => true,
-							"showFooter" => "bottom",
-							"columns" => array(
-									"NO_BUKTI" => array(
-								     "label" => "Bukti#",
-                                    ),
-                                    "TGL" => array(
-                                        "label" => "Tanggal",
-                                    ),
-                                    "NO_PO" => array(
-                                        "label" => "PO#",
-                                    ),
-                                    "KODES" => array(
-                                        "label" => "Suplier#",
-                                    ),
-                                    "NAMAS" => array(
-                                        "label" => "-",
-                                    ),
-                                    "KD_BRG" => array(
-                                        "label" => "Kode#",
-                                    ),
-                                    "NA_BRG" => array(
-                                        "label" => "Uraian",
-                                        "footerText" => "<b>Grand Total :</b>",
-                                    ),
-                                    "QTY" => array(
-                                        "label" => "Kg",
-                                        "type" => "number",
-                                        "decimals" => 2,
-                                        "decimalPoint" => ".",
-                                        "thousandSeparator" => ",",
-                                        "footer" => "sum",
-                                        "footerText" => "<b>@value</b>",
-                                    ),
-                                    "HARGA" => array(
-                                        "label" => "Harga",
-                                        "type" => "number",
-                                        "decimals" => 5,
-                                        "decimalPoint" => ".",
-                                        "thousandSeparator" => ",",
-                                        //"footer" => "avg",
-                                        //"footerText" => "<b>@value</b>",
-                                    ),
-                                    "TOTAL" => array(
-                                        "label" => "Total",
-                                        "type" => "number",
-                                        "decimals" => 2,
-                                        "decimalPoint" => ".",
-                                        "thousandSeparator" => ",",
-                                        "footer" => "sum",
-                                        "footerText" => "<b>@value</b>",
-                                    ),
-                                    
+                        if($hasil)
+                        {
+                            DataTables::create(array(
+                                "dataSource" => $hasil,
+                                "name" => "example",
+                                "fastRender" => true,
+                                "fixedHeader" => true,
+                                'scrollX' => true,
+                                "showFooter" => true,
+                                "showFooter" => "bottom",
+                                "columns" => array(
+                                "NO_BUKTI" => array(
+                                        "label" => "Bukti#",
                                 ),
-							"cssClass" => array(
-								"table" => "table table-hover table-striped table-bordered compact",
-								"th" => "label-title",
-								"td" => "detail",
-								"tf" => "footerCss"
-							),
-							"options" => array(
-								"columnDefs"=>array(
-									array(
-										"className" => "dt-right", 
-										"targets" => [7,8,9],
-									),
+                                "TGL" => array(
+									"label" => "Tanggal",
 								),
-								"order" => [],
-								"paging" => true,
-								// "pageLength" => 12,
-								"lengthMenu" => [[10, 25, 50,-1], [10,25,50, "All"]],
-								"searching" => true,
-								"colReorder" => true,
-								"select" => true,
-								"dom" => 'Blfrtip', // B e dilangi
-								// "dom" => '<"row"<col-md-6"B><"col-md-6"f>> <"row"<"col-md-12"t>><"row"<"col-md-12">>',
-								"buttons" => array(
-									array(
-										"extend" => 'collection',
-										"text" => 'Export',
-										"buttons" => [
-											'copy',
-											'excel',
-											'csv',
-											'pdf',
-											'print'
-										],
-									),
+								"KODES" => array(
+									"label" => "Suplier#",
 								),
-							),
-						));
-					}
-					?>
-				</div>
-				<!-- DISINI BATAS AKHIR KOOLREPORT-->
+								"NAMAS" => array(
+									"label" => "-",
+								),
+
+
+								"KD_BRG" => array(
+									"label" => "Barang#",
+								),
+								"NA_BRG" => array(
+									"label" => "-",
+								),
+								
+								"SATUAN" => array(
+									"label" => "Stn",
+
+								),
+
+								
+								"QTY" => array(
+									"label" => "Qty",
+									"type" => "number",
+									"decimals" => 2,
+									"decimalPoint" => ".",
+									"thousandSeparator" => ",",
+									"footer" => "sum",
+									"footerText" => "<b>@value</b>",
+								),
+					
+								"HARGA" => array(
+									"label" => "Harga",
+									"type" => "number",
+									"decimals" => 0,
+									"decimalPoint" => ".",
+									"thousandSeparator" => ",",
+									"footer" => "sum",
+									"footerText" => "<b>@value</b>",
+								),
+								"TOTAL" => array(
+									"label" => "Total",
+									"type" => "number",
+									"decimals" => 2,
+									"decimalPoint" => ".",
+									"thousandSeparator" => ",",
+									"footer" => "sum",
+									"footerText" => "<b>@value</b>",
+                                    ),
+                                ),   								
+                                "cssClass" => array(
+                                    "table" => "table table-hover table-striped table-bordered compact",
+                                    "th" => "label-title",
+                                    "td" => "detail",
+                                    "tf" => "footerCss"
+                                ),
+                                "options" => array(
+                                    "columnDefs"=>array(
+                                        array(
+                                            "className" => "dt-right", 
+                                            "targets" => [8,9,10],
+                                        ),
+                                    ),
+                                    "order" => [],
+                                    "paging" => true,
+                                    // "pageLength" => 12,
+                                    "searching" => true,
+                                    "colReorder" => true,
+                                    "select" => true,
+                                    "dom" => 'Blfrtip', // B e dilangi
+                                    // "dom" => '<"row"<col-md-6"B><"col-md-6"f>> <"row"<"col-md-12"t>><"row"<"col-md-12">>',
+                                    "buttons" => array(
+                                        array(
+                                            "extend" => 'collection',
+                                            "text" => 'Export',
+                                            "buttons" => [
+                                                'copy',
+                                                'excel',
+                                                'csv',
+                                                'pdf',
+                                                'print'
+                                            ],
+                                        ),
+                                    ),
+                                ),
+                            ));
+                        }
+                        ?>
+                    </div>
+                    <!-- DISINI BATAS AKHIR KOOLREPORT-->
 				</div>
 			</div>
 			</div>
@@ -245,21 +242,20 @@
 		</div>
 	</div>
 </div>
-
-<div class="modal fade" id="browseBrgModal" tabindex="-1" role="dialog" aria-labelledby="browseBrgModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
+<div class="modal fade" id="browseBarangModal" tabindex="-1" role="dialog" aria-labelledby="browseBarangModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" id="browseBrgModalLabel">Cari Barang</h5>
+		  <div class="modal-header">
+			<h5 class="modal-title" id="browseBarangModalLabel">Cari Item</h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
+			  <span aria-hidden="true">&times;</span>
 			</button>
-		</div>
-		<div class="modal-body">
-			<table class="table table-stripped table-bordered" id="table-brg">
+		  </div>
+		  <div class="modal-body">
+			<table class="table table-stripped table-bordered" id="table-bbarang">
 				<thead>
 					<tr>
-						<th>Barang#</th>
+						<th>Item</th>
 						<th>Nama</th>
 						<th>Satuan</th>
 					</tr>
@@ -267,13 +263,13 @@
 				<tbody>
 				</tbody>
 			</table>
-		</div>
-		<div class="modal-footer">
+		  </div>
+		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		  </div>
 		</div>
-		</div>
+	  </div>
 	</div>
-</div>
 @endsection
 
 @section('javascripts')
@@ -286,111 +282,123 @@
 			dateFormat: 'dd-mm-yy'
 		}); 
 		
-		
-	});
-	
+			
 	var dTableBSuplier;
-	loadDataBSuplier = function(){
-	
-		$.ajax(
-		{
-			type: 'GET', 		
-			url: "{{url('sup/browse')}}",
-			data: {
-					'GOL': $('#gol').val(),
-				},
-			success: function( response )
-			{
-				resp = response;
-				if(dTableBSuplier){
-					dTableBSuplier.clear();
-				}
-				for(i=0; i<resp.length; i++){
-					
-					dTableBSuplier.row.add([
-						'<a href="javascript:void(0);" onclick="chooseSuplier(\''+resp[i].KODES+'\',  \''+resp[i].NAMAS+'\', \''+resp[i].ALAMAT+'\',  \''+resp[i].KOTA+'\')">'+resp[i].KODES+'</a>',
-						resp[i].NAMAS,
-						resp[i].ALAMAT,
-						resp[i].KOTA,
-					]);
-				}
-				dTableBSuplier.draw();
-			}
-		});
-	}
-	
-	dTableBSuplier = $("#table-bsuplier").DataTable({
+		loadDataBSuplier = function(){
 		
-	});
-	
-	browseSuplier = function(){
-		loadDataBSuplier();
-		$("#browseSuplierModal").modal("show");
-	}
-	
-	chooseSuplier = function(KODES,NAMAS, ALAMAT, KOTA){
-		$("#kodes").val(KODES);
-		$("#NAMAS").val(NAMAS);	
-		$("#browseSuplierModal").modal("hide");
-	}
-	
-	$("#kodes").keypress(function(e){
-		if(e.keyCode == 46){
-			e.preventDefault();
-			browseSuplier();
+			$.ajax(
+			{
+				type: 'GET', 		
+				url: '{{url('sup/browse')}}',
+				data: {
+				
+				},
+				success: function( response )
+				{
+					resp = response;
+					if(dTableBSuplier){
+						dTableBSuplier.clear();
+					}
+					for(i=0; i<resp.length; i++){
+						
+						dTableBSuplier.row.add([
+							'<a href="javascript:void(0);" onclick="chooseSuplier(\''+resp[i].KODES+'\',  \''+resp[i].NAMAS+'\', \''+resp[i].ALAMAT+'\',  \''+resp[i].KOTA+'\')">'+resp[i].KODES+'</a>',
+							resp[i].NAMAS,
+							resp[i].ALAMAT,
+							resp[i].KOTA,
+						]);
+					}
+					dTableBSuplier.draw();
+				}
+			});
 		}
-	}); 
+		
+		dTableBSuplier = $("#table-bsuplier").DataTable({
+			
+		});
+		
+		browseSuplier = function(){
+			loadDataBSuplier();
+			$("#browseSuplierModal").modal("show");
+		}
+		
+		chooseSuplier = function(KODES,NAMAS, ALAMAT, KOTA){
+			$("#KODES").val(KODES);
+			$("#NAMAS").val(NAMAS);
+			$("#ALAMAT").val(ALAMAT);
+			$("#KOTA").val(KOTA);			
+			$("#browseSuplierModal").modal("hide");
+		}
+		
+		$("#KODES").keypress(function(e){
+
+			if(e.keyCode == 46){
+				 e.preventDefault();
+				 browseSuplier();
+			}
+		}); 
+		
+	////////////////////////////////
 	
+ 		var dTableBBarang;
+		
+		loadDataBBarang = function(){
+			$.ajax(
+			{
+				type: 'GET',    
+				url: "{{url('brg/browse')}}",
+				data: 
+				{
+					   
+				},				
+				success: function( response )
+				{
+					resp = response;
+					if(dTableBBarang){
+						dTableBBarang.clear();
+					}
+					for(i=0; i<resp.length; i++){
+					
+						    dTableBBarang.row.add([
+							   '<a href="javascript:void(0);" onclick="chooseBarang(\''+resp[i].KD_BRG+'\',  \''+resp[i].NA_BRG+'\',   \''+resp[i].SATUAN+'\')">'+resp[i].KD_BRG+'</a>',
+							   resp[i].NA_BRG,
+							   resp[i].SATUAN,
+						    ]);
+						
+					}
+					dTableBBarang.draw();
+				}
+			});
+		}
+		
+		dTableBBarang = $("#table-bbarang").DataTable({
+			
+		});
+		
+
+		
+		       browseBarang = function() {
+                    loadDataBBarang();
+                    $("#browseBarangModal").modal("show");
+                }
+
+                chooseBarang = function(KD_BRG, NA_BRG, SATUAN) {
+                    $("#KD_BRG").val(KD_BRG);
+                    $("#NA_BRG").val(NA_BRG);
+                    $("#browseBarangModal").modal("hide");
+                }
+
+
+                $("#KD_BRG").keypress(function(e) {
+                    if (e.keyCode == 46) {
+                        e.preventDefault();
+                        browseBarang(0);
+                    }
+                });
 	
-    var dTableBrg;
-    loadDataBrg = function(indeks){
-    
-        $.ajax(
-        {
-            type: 'GET', 		
-            url: "{{url('brg/browse')}}",
-            data: {
-               'GOL': $('#gol').val(),
-            },
-            success: function( response )
-            {
-                resp = response;
-                if(dTableBrg){
-                    dTableBrg.clear();
-                }
-                for(i=0; i<resp.length; i++){
-                    
-                    dTableBrg.row.add([
-                        '<a href="javascript:void(0);" onclick="chooseBrg(\''+resp[i].KD_BRG+'\',  \''+resp[i].NA_BRG+'\', \''+indeks+'\')">'+resp[i].KD_BRG+'</a>',
-                        resp[i].NA_BRG,
-                        resp[i].SATUAN,
-                    ]);
-                }
-                dTableBrg.draw();
-            }
-        });
-    }
-    
-    dTableBrg = $("#table-brg").DataTable({
-        
-    });
-    
-    browseBrg = function(indeks){
-        loadDataBrg(indeks);
-        $("#browseBrgModal").modal("show");
-    }
-    
-    chooseBrg = function(KD_BRG, NA_BRG, indeks){
-        $("#brg"+indeks).val(KD_BRG);
-        $("#nabrg"+indeks).val(NA_BRG);	
-        $("#browseBrgModal").modal("hide");
-    }
-    
-    $("#brg1").keypress(function(e){
-        if(e.keyCode == 46){
-            e.preventDefault();
-            browseBrg(1);
-        }
-    });
+	/////////
+	});
+
+
 </script>
 @endsection

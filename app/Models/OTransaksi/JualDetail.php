@@ -15,7 +15,8 @@ class JualDetail extends Model
 
     protected $fillable =
     [
-        "NO_BUKTI", "NO_SO", "REC", "PER", "FLAG", "TYP", "KD_BRG", "NA_BRG", "SATUAN", "QTY", "HARGA", 
-        "TOTAL", "NO_SERI", "KET", "ID", "ID_SOD", "KD_BHN", "NA_BHN", "GOL", "PER", "PPN", "DPP"
+        "REC", "NO_BUKTI", "ID", "KD_BRG", "NA_BRG", "SATUAN", "QTY", 
+		"HARGA",
+		"TOTAL". "FLAG","created_by", "updated_by", "PN"
     ];
 }

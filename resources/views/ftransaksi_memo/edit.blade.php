@@ -57,9 +57,9 @@
 					
 								<div class="col-md-3 input-group">
 
-									<input type="text" hidden class="form-control CARI" id="CARI" name="CARI"
+									<input type="text" class="form-control CARI" id="CARI" name="CARI"
                                     placeholder="Cari Bukti#" value="" >
-									<button type="button" hidden id='SEARCHX'  onclick="CariBukti()" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
+									<button type="button" id='SEARCHX'  onclick="CariBukti()" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
 
 								</div> 
 
@@ -119,7 +119,7 @@
                                             class="form-control REC" onkeypress="return tabE(this,event)" readonly>
                                         </td>
                                         <td>
-                                            <input name="ACNO[]"  onclick="browseAccount({{$no}})" id="ACNO{{$no}}" type="text" value="{{$detail->ACNO}}"
+                                            <input name="ACNO[]"  data-rowid={{$no}} id="ACNO{{$no}}" type="text" value="{{$detail->ACNO}}"
                                             class="form-control ACNO" readonly required>
                                         </td>
 
@@ -128,7 +128,7 @@
                                             class="form-control NACNO" readonly required>
                                         </td>
                                         <td>
-                                            <input name="ACNOB[]" onclick="browseAccount1({{$no}})" id="ACNOB{{$no}}" type="text" value="{{$detail->ACNOB}}"
+                                            <input name="ACNOB[]" id="ACNOB{{$no}}" type="text" value="{{$detail->ACNOB}}"
                                             class="form-control ACNOB" readonly required>
                                         </td>
 
@@ -304,7 +304,7 @@
 		
         if ( $tipx == 'new' )
 		{
-			 baru();	
+			 baru();
              tambah();
 			 
 		}
@@ -595,7 +595,7 @@ function cekDetail(){
 	function ganti() {
 		
 		 mati();
-		// hidup();
+	
 	}
 	
 	function batal() {
@@ -625,7 +625,7 @@ function cekDetail(){
 	    $("#SAVEX").attr("disabled", false);
 		
 	    $("#HAPUSX").attr("disabled", true);
-	    //$("#CLOSEX").attr("disabled", true);
+	    $("#CLOSEX").attr("disabled", true);
 		
 
 		$("#CARI").attr("readonly", true);	
@@ -704,7 +704,7 @@ function cekDetail(){
 				
 		 $('#NO_BUKTI').val("+");			
 		 $('#KET').val("");	
-		 $('#TJUMLAH').val("0.00");	
+		 $('#TJUMLAH').val("0.00");
 		 
 		var html = '';
 		$('#detailx').html(html);	
@@ -743,14 +743,14 @@ function cekDetail(){
 	            </td>
 						       
                 <td>
-				    <input name='ACNO[]' data-rowid=${idrow} onclick='browseAccount(${idrow})' id='ACNO${idrow}' type='text' class='form-control  ACNO' required readonly>
+				    <input name='ACNO[]' data-rowid=${idrow}  id='ACNO${idrow}' type='text' class='form-control  ACNO' required readonly>
                 </td>
                 <td>
 				    <input name='NACNO[]'   id='NACNO${idrow}' type='text' class='form-control  NACNO' required readonly>
                 </td>
 				
                 <td>
-				    <input name='ACNOB[]' data-rowid=${idrow} onclick='browseAccount1(${idrow})' id='ACNOB${idrow}' type='text' class='form-control  ACNOB' required readonly>
+				    <input name='ACNOB[]' data-rowid=${idrow}  id='ACNOB${idrow}' type='text' class='form-control  ACNOB' required readonly>
                 </td>
                 <td>
 				    <input name='NACNOB[]'   id='NACNOB${idrow}' type='text' class='form-control  NACNOB' required readonly>

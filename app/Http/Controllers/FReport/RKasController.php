@@ -91,7 +91,7 @@ class RKasController extends Controller
 		        '$xawal1' AS AWAL, 0 AS DEBET, 0 AS KREDIT, 1 AS URUTAN  
 		        UNION ALL  
 			SELECT kas.NO_BUKTI, kas.TGL, kas.BACNO, kas.BNAMA, kasd.ACNO, kasd.NACNO, kasd.URAIAN, 0 AWAL, kasd.DEBET, kasd.KREDIT, 2 AS URUTAN
-			from kas, kasd where kas.NO_BUKTI=kasd.NO_BUKTI and kas.TGL BETWEEN '$tglDrD' and '$tglSmpD' and kas.BACNO='$acno' and kas.PER='$periode'  
+			from kas, kasd where kas.NO_BUKTI=kasd.NO_BUKTI and kas.TGL BETWEEN '$tglDrD' and '$tglSmpD' and kas.BACNO='$acno' and kas.PER='$periode' order by tgl asc, type desc 
 			
 		) as kas00  ORDER BY TGL, NO_BUKTI ;"
 		);

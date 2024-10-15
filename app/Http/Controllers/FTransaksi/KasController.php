@@ -37,9 +37,9 @@ class KasController extends Controller
     function setFlag(Request $request)
     {
         if ( $request->flagz == 'BKK' ) {
-            $this->judul = "Sumber Dana Keluar";
+            $this->judul = "Journal Kas Keluar";
         } else if ( $request->flagz == 'BKM' ) {
-            $this->judul = "Sumber Dana Masuk";
+            $this->judul = "Journal Kas Masuk";
         }
 		
         $this->FLAGZ = $request->flagz;
@@ -83,12 +83,10 @@ class KasController extends Controller
         } else {
             $periode = '';
         }
-
-		$CBG = Auth::user()->CBG;
-
+		
         $this->setFlag($request);
 		
-        $kas = DB::SELECT("SELECT * from kas  where  PER ='$periode' and TYPE ='$this->FLAGZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+        $kas = DB::SELECT("SELECT * from kas  where  PER ='$periode' and TYPE ='$this->FLAGZ' ORDER BY NO_BUKTI ");
 	   
 
         // ganti 6
@@ -103,9 +101,8 @@ class KasController extends Controller
 				
 
                     $btnEdit =   ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' href="kas/edit/?idx=' . $row->NO_ID . '&tipx=edit&flagz=' . $row->TYPE . '&judul=' . $this->judul . '"';
-				
+					
                     $btnDelete = ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' onclick="return confirm(&quot; Apakah anda yakin ingin hapus? &quot;)" href="kas/delete/' . $row->NO_ID . '/?flagz=' . $row->TYPE . '" ';
-
 
 
              
@@ -169,6 +166,7 @@ class KasController extends Controller
      */
     public function store(Request $request, Kas $kas )
     {
+
 		
         $this->validate(
             $request,
@@ -190,20 +188,18 @@ class KasController extends Controller
         $judul = $this->judul;	
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
-        
-        $CBG = Auth::user()->CBG;
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query = DB::table('kas')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('kas')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         // Check apakah No Bukti terakhir NULL
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-' . $query;
+            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-0001';
+            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-0001';
         }
 
 
@@ -226,7 +222,6 @@ class KasController extends Controller
                 'JUMLAH'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'created_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
 
             ]
@@ -238,7 +233,7 @@ class KasController extends Controller
         $NACNO    = $request->input('NACNO');
         $URAIAN    = $request->input('URAIAN');
         $JUMLAH    = $request->input('JUMLAH');
-
+		
         // Check jika value detail ada/tidak
         if ($REC) {
             foreach ($REC as $key => $value) {
@@ -257,6 +252,7 @@ class KasController extends Controller
                 $detail->JUMLAH    = (float) str_replace(',', '', $JUMLAH[$key]);
                 $detail->DEBET    =  ($this->FLAGZ == 'BKM') ? (float) str_replace(',', '', $JUMLAH[$key]) : 0 ;
                 $detail->KREDIT    =  ($this->FLAGZ == 'BKK') ? (float) str_replace(',', '', $JUMLAH[$key]) : 0 ;
+
                 $detail->save();
             }
         }
@@ -267,13 +263,13 @@ class KasController extends Controller
 	    $no_buktix = $no_bukti;
 		
 		$kas = Kas::where('NO_BUKTI', $no_buktix )->first();
-	
+		
         DB::SELECT("UPDATE KAS, KASD
                             SET KASD.ID = KAS.NO_ID  WHERE KAS.NO_BUKTI = KASD.NO_BUKTI 
 							AND KAS.NO_BUKTI='$no_buktix';");
 							
-        //return redirect('/kas/edit/?idx=' . $kas->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
-		return redirect('/kas?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ ]);
+        return redirect('/kas/edit/?idx=' . $kas->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
+
 			
     }
 
@@ -299,8 +295,6 @@ class KasController extends Controller
 		
         $tipx = $request->tipx;
 
-        $CBG = Auth::user()->CBG;
-
 		$idx = $request->idx;
 			
 
@@ -320,7 +314,7 @@ class KasController extends Controller
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from kas 
 		                 where PER ='$per' and TYPE ='$this->FLAGZ' 
-						 and NO_BUKTI = '$buktix' and CBG = '$CBG'					 
+						 and NO_BUKTI = '$buktix'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -340,8 +334,7 @@ class KasController extends Controller
 			
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from kas 
-		                 where PER ='$per' and TYPE ='$this->FLAGZ' 
-                         and CBG = '$CBG'	    
+		                 where PER ='$per' and TYPE ='$this->FLAGZ'     
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -363,8 +356,7 @@ class KasController extends Controller
     	   $buktix = $request->buktix;
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS      
-		             where PER ='$per' and TYPE ='$this->FLAGZ' 
-                     and CBG = '$CBG' and NO_BUKTI < 
+		             where PER ='$per' and TYPE ='$this->FLAGZ'  and NO_BUKTI < 
 					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
@@ -386,8 +378,7 @@ class KasController extends Controller
       	   $buktix = $request->buktix;
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS    
-		             where PER ='$per' and TYPE ='$this->FLAGZ' 
-                     and CBG = '$CBG' and NO_BUKTI > 
+		             where PER ='$per' and TYPE ='$this->FLAGZ'  and NO_BUKTI > 
 					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
@@ -405,9 +396,8 @@ class KasController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from KAS  where PER ='$per'
-            			and TYPE ='$this->FLAGZ' 
-                        and CBG = '$CBG'   
-		                ORDER BY NO_BUKTI DESC  LIMIT 1" );
+            			and TYPE ='$this->FLAGZ'    
+		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -443,9 +433,9 @@ class KasController extends Controller
 				
 		 }
 
-        $no_bukti = $kas->NO_BUKTI;				
+        $no_bukti = $kas->NO_BUKTI;
+				
         $kasDetail = DB::table('kasd')->where('NO_BUKTI', $no_bukti)->get();
-
         $data = [
             'header'        => $kas,
             'detail'        => $kasDetail
@@ -493,7 +483,7 @@ class KasController extends Controller
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
-        $CBG = Auth::user()->CBG;
+      
 	  
         $kas->update(
             [
@@ -505,14 +495,13 @@ class KasController extends Controller
                 'KET'              => ($request['KET'] == null) ? "" : $request['KET'],
                 'USRNM'            => Auth::user()->username,
                 'updated_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
 
             ]
         );
 
-		
 		$no_buktix = $kas->NO_BUKTI;
+		
 		
         // Update Detail
         $length = sizeof($request->input('REC'));
@@ -522,9 +511,8 @@ class KasController extends Controller
         $NACNO    = $request->input('NACNO');
         $URAIAN    = $request->input('URAIAN');
         $JUMLAH    = $request->input('JUMLAH');
-
-
-
+        $CAIR    = $request->input('ACAIR');
+		
 
         // Delete yang NO_ID tidak ada di input
         $query = DB::table('kasd')->where('NO_BUKTI', $request->NO_BUKTI)->whereNotIn('NO_ID',  $NO_ID)->delete();
@@ -533,6 +521,8 @@ class KasController extends Controller
         // Update / Insert
         for ($i = 0; $i < $length; $i++) {
             // Insert jika NO_ID baru
+		
+			
             if ($NO_ID[$i] == 'new') {
                 $insert = KasDetail::create(
                     [
@@ -546,9 +536,7 @@ class KasController extends Controller
                         'URAIAN'     => ($URAIAN[$i] == null) ? "" : $URAIAN[$i],
                         'JUMLAH'     => (float) str_replace(',', '', $JUMLAH[$i]),
                         'DEBET'      =>  ($FLAGZ == 'BKM') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 ,
-                        'KREDIT'     =>  ($FLAGZ == 'BKK') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 
-
-					
+                        'KREDIT'     =>  ($FLAGZ == 'BKK') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 				
 						
 						
 						
@@ -570,8 +558,8 @@ class KasController extends Controller
                         'URAIAN'     => ($URAIAN[$i] == null) ? "" : $URAIAN[$i],
                         'JUMLAH'     => (float) str_replace(',', '', $JUMLAH[$i]),
                         'DEBET'      =>  ($FLAGZ == 'BKM') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 ,
-                        'KREDIT'     =>  ($FLAGZ == 'BKK') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 
-
+                        'KREDIT'     =>  ($FLAGZ == 'BKK') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 			
+										
                     ]
                 );
             }
@@ -587,8 +575,8 @@ class KasController extends Controller
                             SET KASD.ID = KAS.NO_ID  WHERE KAS.NO_BUKTI = KASD.NO_BUKTI 
 							AND KAS.NO_BUKTI='$no_buktix';");
 							
-		return redirect('/kas?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ  ]);
-
+        return redirect('/kas/edit/?idx=' . $kas->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');			
+ 
 	}
 
 
@@ -610,8 +598,6 @@ class KasController extends Controller
 		
 		$per = session()->get('periode')['bulan'] . '/' . session()->get('periode')['tahun'];
         $cekperid = DB::SELECT("SELECT POSTED from perid WHERE PERIO='$per'");
-		
-		
         if ($cekperid[0]->POSTED==1)
         {
             return redirect()->route('kas')
@@ -646,16 +632,9 @@ class KasController extends Controller
         $PHPJasperXML = new PHPJasperXML();
         $PHPJasperXML->load_xml_file(base_path() . ('/app/reportc01/phpjasperxml/' . $file . '.jrxml'));
 
-		$judul = '';
-		if($kas->TYPE =='BKK'){
-			$judul ='Bukti Kas Keluar';
-		} else {
-			$judul = 'Bukti Kas Masuk';
-		}
-		
         $query = DB::SELECT("
 			SELECT kas.NO_BUKTI,kas.TGL,kas.KET,kas.BNAMA,
-            kasd.REC,kasd.ACNO,kasd.NACNO,kasd.URAIAN,kasd.JUMLAH as JUMLAH 
+            kasd.REC,kasd.ACNO,kasd.NACNO,kasd.URAIAN,if(kasd.DEBET>=0,kasd.DEBET,kasd.KREDIT) as JUMLAH 
 			FROM kas, kasd 
 			WHERE kas.NO_BUKTI=kasd.NO_BUKTI and kas.NO_BUKTI='$no_bukti' 
 			ORDER BY kas.NO_BUKTI;
@@ -673,7 +652,6 @@ class KasController extends Controller
                 'NACNO' => $query[$key]->NACNO,
                 'URAIAN' => $query[$key]->URAIAN,
                 'JUMLAH' => $query[$key]->JUMLAH,
-                'JUDUL' => $judul,
             ));
         }
         $PHPJasperXML->setData($data);

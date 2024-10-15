@@ -15,6 +15,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('foxie_js_css/fontawesome.min.css')}}" />
   <link rel="stylesheet" href="{{asset('foxie_js_css/all.min.css')}}" />
 
+
   <!-- Bootstrap -->
 
   <!-- Date Picker -->
@@ -36,6 +37,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/ldbtn/ldbtn.min.css') }}" />
   
   @yield('styles')
+  
+  @if(Auth::check())
+	  @if(Auth::user()->font_family)
+		  <style>
+			body{
+				font-family:'{{ Auth::user()->font_family}}';
+				font-size:{{ Auth::user()->font_size}}px;
+			}
+		  </style>
+	  @endif
+  @endif
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -98,6 +110,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> -->
 <script type="text/javascript" src="{{asset('foxie_js_css/moment.min.js')}}"></script>
 
+
+
 <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
@@ -119,6 +133,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script type="text/javascript" src="{{asset('foxie_js_css/buttons.html5.js')}}"></script>
 <script type="text/javascript" src="{{asset('foxie_js_css/buttons.print.js')}}"></script>
 <script type="text/javascript" src="{{asset('foxie_js_css/datetime.js')}}"></script>
+
+
 
 @yield('javascripts')
 @yield('footer-scripts')

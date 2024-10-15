@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 use App\Models\FTransaksi\Bank;
 use App\Models\FTransaksi\BankDetail;
+use App\Models\FMaster\Account;
+
 use Illuminate\Http\Request;
 use DataTables;
 use Auth;
@@ -65,12 +67,9 @@ class BankController extends Controller
             $periode = '';
         }
 
-		$CBG = Auth::user()->CBG;
-
-
         $this->setFlag($request);
 		
-        $bank = DB::SELECT("SELECT * from bank  where  PER ='$periode' and TYPE ='$this->FLAGZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+        $bank = DB::SELECT("SELECT * from bank  where  PER ='$periode' and TYPE ='$this->FLAGZ' ORDER BY NO_BUKTI ");
 	  
         // ganti 6
 
@@ -92,13 +91,12 @@ class BankController extends Controller
                                 <i class="fas fa-edit"></i>
                                     Edit
                                 </a>
-                                <a class="dropdown-item btn btn-danger" href="bank/jasper-bank-trans/' . $row->NO_ID . '">
+                                <a class="dropdown-item btn btn-danger" href="jasper-bank-trans/' . $row->NO_ID . '">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                     Print
                                 </a> 	
                                 <hr></hr>
                                 <a class="dropdown-item btn btn-danger" ' . $btnDelete . '>
-   
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                     Delete
                                 </a> 
@@ -160,24 +158,21 @@ class BankController extends Controller
 
 		$this->setFlag($request);
         $FLAGZ = $this->FLAGZ;
-        $judul = $this->judul;		
-
-        $CBG = Auth::user()->CBG;
-	
+        $judul = $this->judul;			
         //////     nomer otomatis
 
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', $this->FLAGZ)->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-' . $query;
+            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = $this->FLAGZ . $CBG . $tahun . $bulan . '-0001';
+            $no_bukti = $this->FLAGZ . $tahun . $bulan . '-0001';
         }
 
 
@@ -201,7 +196,6 @@ class BankController extends Controller
                 'JUMLAH'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'created_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );
@@ -231,6 +225,7 @@ class BankController extends Controller
                 $detail->JUMLAH    = (float) str_replace(',', '', $JUMLAH[$key]);
                 $detail->DEBET    =  ($this->FLAGZ == 'BBM') ? (float) str_replace(',', '', $JUMLAH[$key]) : 0 ;
                 $detail->KREDIT    =  ($this->FLAGZ == 'BBK') ? (float) str_replace(',', '', $JUMLAH[$key]) : 0 ;
+
                 $detail->save();
             }
         }
@@ -242,12 +237,13 @@ class BankController extends Controller
 		
 		$bank = Bank::where('NO_BUKTI', $no_buktix )->first();
 
+
         DB::SELECT("UPDATE BANK, BANKD
                             SET BANKD.ID = BANK.NO_ID  WHERE BANK.NO_BUKTI = BANKD.NO_BUKTI 
 							AND BANK.NO_BUKTI='$no_buktix';");
-							
-        //return redirect('/bank/edit/?idx=' . $bank->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
-		return redirect('/bank?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ ]);
+					 
+        return redirect('/bank/edit/?idx=' . $kas->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
+		
     }
 
 
@@ -268,8 +264,8 @@ class BankController extends Controller
 	    $tipx = $request->tipx;
 
 		$idx = $request->idx;
+					
 
-        $CBG = Auth::user()->CBG;
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -283,8 +279,7 @@ class BankController extends Controller
 			
 		   	
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from BANK 
-		                 where PER ='$per' and TYPE ='$this->FLAGZ' 
-                         AND CGB = '$CGB'    
+		                 where PER ='$per' and TYPE ='$this->FLAGZ'     
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 					
@@ -308,9 +303,7 @@ class BankController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from BANK      
 		             where PER ='$per' and TYPE ='$this->FLAGZ' and NO_BUKTI < 
-					 '$buktix' 
-                     AND CGB = '$CGB'
-                     ORDER BY NO_BUKTI DESC LIMIT 1" );
+					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -332,9 +325,7 @@ class BankController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from BANK    
 		             where PER ='$per' and TYPE ='$this->FLAGZ' and NO_BUKTI > 
-					 '$buktix'
-                     AND CGB = '$CGB'     
-                     ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -352,8 +343,7 @@ class BankController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from Bank
             		  where PER ='$per' and TYPE ='$this->FLAGZ'   
-		              AND CGB = '$CGB'
-                      ORDER BY NO_BUKTI DESC  LIMIT 1" );
+		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -390,6 +380,8 @@ class BankController extends Controller
 		 }
 
  
+		$acno = Account::where('BNK', '=','')->get();
+
 		
         $no_bukti = $bank->NO_BUKTI;
 				
@@ -400,7 +392,7 @@ class BankController extends Controller
         ];
  
          
-         return view('ftransaksi_bank.edit', $data)
+         return view('ftransaksi_bank.edit', $data)->with(['acno' => $acno])
 		 ->with(['tipx' => $tipx, 'idx' => $idx, 'flagz' =>$this->FLAGZ, 'judul', $this->judul ]);
 	
     
@@ -436,8 +428,6 @@ class BankController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;	
 		
-        $CBG = Auth::user()->CBG;
-	  
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
 
@@ -453,7 +443,6 @@ class BankController extends Controller
                 'JUMLAH'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'updated_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );
@@ -490,6 +479,7 @@ class BankController extends Controller
                         'JUMLAH'     => (float) str_replace(',', '', $JUMLAH[$i]),
                         'DEBET'      =>  ($FLAGZ == 'BBM') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 ,
                         'KREDIT'     =>  ($FLAGZ == 'BBK') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 
+
                     ]
                 );
             } else {
@@ -508,6 +498,7 @@ class BankController extends Controller
                         'JUMLAH'     => (float) str_replace(',', '', $JUMLAH[$i]),
                         'DEBET'      =>  ($FLAGZ == 'BBM') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 ,
                         'KREDIT'     =>  ($FLAGZ == 'BBK') ? (float) str_replace(',', '', $JUMLAH[$i]) : 0 
+
                     ]
                 );
             }
@@ -525,8 +516,8 @@ class BankController extends Controller
                             SET BANKD.ID = BANK.NO_ID  WHERE BANK.NO_BUKTI = BANKD.NO_BUKTI 
 							AND BANK.NO_BUKTI='$no_buktix';");
 							
-        //return redirect('/bank/edit/?idx=' . $bank->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
-		return redirect('/bank?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ ]);
+        return redirect('/bank/edit/?idx=' . $bank->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
+
     }
 
     /**
@@ -578,18 +569,9 @@ class BankController extends Controller
         $PHPJasperXML = new PHPJasperXML();
         $PHPJasperXML->load_xml_file(base_path() . ('/app/reportc01/phpjasperxml/' . $file . '.jrxml'));
 
-		$judul = '';
-		if($bank->TYPE =='BBK'){
-			$judul ='Bukti Bank Keluar';
-		} else {
-			$judul = 'Bukti Bank Masuk';
-		}
-		
-
-
         $query = DB::SELECT("
 			SELECT bank.NO_BUKTI,bank.TGL,bank.KET,bank.BNAMA,
-            bankd.REC,bankd.ACNO,bankd.NACNO,bankd.URAIAN,bankd.JUMLAH as JUMLAH
+            bankd.REC,bankd.ACNO,bankd.NACNO,bankd.URAIAN,if(bankd.DEBET>=0,bankd.DEBET,bankd.KREDIT) as JUMLAH 
 			FROM bank, bankd 
 			WHERE bank.NO_BUKTI=bankd.NO_BUKTI and bank.NO_BUKTI='$no_bukti' 
 			ORDER BY bank.NO_BUKTI;
@@ -607,7 +589,6 @@ class BankController extends Controller
                 'NACNO' => $query[$key]->NACNO,
                 'URAIAN' => $query[$key]->URAIAN,
                 'JUMLAH' => $query[$key]->JUMLAH,
-                'JUDUL' => $judul,
             ));
         }
         $PHPJasperXML->setData($data);

@@ -30,75 +30,7 @@ class RbankController extends Controller
         return view('freport_bank.report')->with(['acno' => $acno])->with(['hasil' => []]);
     }
 	
-	public function getBankReport(Request $request)
-    {
-    /*
-        $query = DB::table('bank')
-			->join('bankd', 'bank.NO_BUKTI', '=', 'bankd.NO_BUKTI')
-			->select('bank.NO_BUKTI', 'bank.TGL', 'bank.BACNO', 'bank.BNAMA', 'bankd.ACNO', 'bankd.NACNO', 'bankd.URAIAN', 'bankd.DEBET', 'bankd.KREDIT')->get();
-		*/
-			
-		$periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
-		$bulan = substr($periode,0,2);
-		$tahun = substr($periode,3,4);
-		$acno = '';
-		$tgawal = $tahun.'-'.$bulan.'-01';
-		
-		if ($request->ajax())
-		{
-			// Ganti format tanggal input agar sama dengan database
-			$tglDrD = date("Y-m-d", strtotime($request['tglDr']));
-            $tglSmpD = date("Y-m-d", strtotime($request['tglSmp']));
-			
-			// Convert tanggal agar ambil start of day/end of day
-			$tglDr = Carbon::parse($request->tglDr)->startOfDay();
-            $tglSmp = Carbon::parse($request->tglSmp)->endOfDay();
-			
-			// Check Filter
-			/*
-			if (!empty($request->acno))
-			{
-				$query = $query->where('BACNO', $request->acno);
-			}
-			
-			if (!empty($request->tglDr) && !empty($request->tglSmp))
-			{
-				$query = $query->whereBetween('TGL', [$tglDrD, $tglSmp]);
-			}
-			*/
-			
-			$periode = date("m/Y", strtotime($request['tglDr']));
-			$bulan = date("m", strtotime($request['tglDr']));
-			$tahun = date("Y", strtotime($request['tglDr']));
-			$acno = $request->acno;
-			$tgawal = $tahun.'-'.$bulan.'-01';
-		}
-		
-		$queryakum = DB::SELECT("SET @akum:=0;");
-		$query = DB::SELECT("
-		SELECT *,@akum:=@akum+AWAL+DEBET-KREDIT SALDO from
-		(
-			SELECT '' AS NO_BUKTI, '$tglDrD'  AS TGL, BACNO AS BACNO, BNAMA AS BNAMA, '' AS ACNO, '' AS NACNO, 
-			'SALDO AWAL' URAIAN, 
-			SUM(AWAL) AS AWAL, 0 DEBET, 0 KREDIT
-			from
-			(
-				SELECT ACNO AS BACNO, NAMA AS BNAMA, AW$bulan AS AWAL 
-				from accountd WHERE ACNO='$acno' and YER='$tahun'
-				UNION ALL
-				SELECT BACNO AS BACNO, BNAMA AS BNAMA, SUM(BANKD.DEBET - BANKD.KREDIT ) AS AWAL 
-				from bank, bankd where bank.NO_BUKTI=bankd.NO_BUKTI and bank.TGL<'$tglDrD' 
-				and bank.BACNO='$acno' and bank.PER='$periode'
-			) as AWAL00
-			UNION ALL
-			SELECT bank.NO_BUKTI, bank.TGL, bank.BACNO, bank.BNAMA, bankd.ACNO, bankd.NACNO, bankd.URAIAN, 0 AWAL, bankd.DEBET, bankd.KREDIT 
-			from bank, bankd where bank.NO_BUKTI=bankd.NO_BUKTI and bank.TGL BETWEEN '$tglDrD' and '$tglSmpD' and bank.BACNO='$acno' and bank.PER='$periode'
-		) as Rbank;"
-		);
-		
-		return Datatables::of($query)->addIndexColumn()->make(true);
-		
-    }	 
+	
 	 
 	public function jasperBankReport(Request $request) 
 	{

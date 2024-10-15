@@ -88,11 +88,10 @@ class RKartupController extends Controller
     public function sisa()
     {
 		$cust = Cust::where('KODEC', '<>','ZZ')->get();
-		session()->put('filter_gol', '');
+		
 		session()->put('filter_kodec1', '');
 		session()->put('filter_namac1', '');
-		session()->put('filter_kodet1', '');
-		session()->put('filter_namat1', '');
+		
 		// session()->put('filter_tglDari', date("d-m-Y"));
 		// session()->put('filter_tglSampai', date("d-m-Y"));
 		session()->put('filter_lebih30', '');
@@ -200,40 +199,36 @@ class RKartupController extends Controller
 			$bulan = substr($periode,0,2);
 			$tahun = substr($periode,3,4);
 			
-			if (!empty($request->kodet))
-			{
-				$filterkodet = " WHERE KODET='".$request->kodet."' ";
-			}
-			
 			$filterkodec='';
 			if (!empty($request->kodec))
 			{
 				$filterkodec = " and KODEC='".$request->kodec."' ";
 			}
 			
-/* 			$filterlebih30=" ";
+			$filterlebih30=" ";
 			if ($request->lebih30==1)
 			{
 				$filterlebih30 = " and DATEDIFF(date(now()),TGL)>=30 ";
-			} */
+			}
 
 			session()->put('filter_gol', $request->gol);
 			session()->put('filter_kodec1', $request->kodec);
 			session()->put('filter_namac1', $request->NAMAC);
-
+			session()->put('filter_kodet1', $request->kodet);
+			session()->put('filter_namat1', $request->NAMAT);
 			// session()->put('filter_tglDari', $request->tglDr);
 			// session()->put('filter_tglSampai', $request->tglSmp);
 			session()->put('filter_perio', $request->perio);
-		//	session()->put('filter_lebih30', $request->lebih30);
+			session()->put('filter_lebih30', $request->lebih30);
 
 		$query = DB::SELECT("
 		SELECT * from 
 		(
 			SELECT NO_BUKTI, TGL, KODEC, NAMAC, 
-			(PER$bulan-PERB$bulan) as SISA
-			from jualx where PER$bulan-PERB$bulan<>0 $filterkodec 
+			(SELECT NO_FAKTUR from jualx WHERE NO_BUKTI=jualx.NO_BUKTI limit 1) as NO_TERIMA,(PER$bulan-PERB$bulan) as SISA
+			from jualx where PER$bulan-PERB$bulan<>0 $filterkodec $filterlebih30
 		) as sisap
-		$filterkodet
+	
 		order by KODEC,NO_BUKTI
 		");
 		
@@ -251,6 +246,7 @@ class RKartupController extends Controller
 				'KODEC' => $query[$key]->KODEC,
 				'NAMAC' => $query[$key]->NAMAC,
 				'TOTAL' => $query[$key]->SISA,
+				'NAMAT' => $query[$key]->NAMAT,
 				'NO_SO' => $query[$key]->NO_SO,
 			));
 		}

@@ -21,14 +21,14 @@
  
  <!--// ganti 1 -->
  
-		<h1 class="m-0">Master Account xxx</h1>
+		<h1 class="m-0">Master Account</h1>
           </div>
           <!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
  <!--// ganti 2 -->
 
-              <li class="breadcrumb-item active">Master Account xxx</li>
+              <li class="breadcrumb-item active">Master Account</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->

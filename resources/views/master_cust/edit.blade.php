@@ -93,12 +93,6 @@
                                     <input type="text" class="form-control KOTA" id="KOTA" name="KOTA"
                                     placeholder="Masukkan Kota" value="{{$header->KOTA}}">
                                 </div>
-								
-									
-								<!-- <div class="col-md-1">
-									<input type="checkbox" class="form-check-input" id="PKP" name="PKP" value="1" {{ ($header->PKP == 1) ? 'checked' : '' }}>
-									<label for="PKP">PKP</label>
-								</div>	 -->
                             </div>
         
 							<div class="form-group row">
@@ -146,16 +140,6 @@
                                     <input type="text" class="form-control KONTAK" id="KONTAK"name="KONTAK"
                                     placeholder="Masukkan Kontak" value="{{$header->KONTAK}}">
                                 </div>
-
-								<div class="col-md-2">
-									<label for="GOL" class="form-label">Golongan</label>
-								</div>
-								<div class="col-md-2">
-									<select id="GOL" class="form-control"  name="GOL">
-										<option value="Y" {{ ($header->GOL == 'Y') ? 'selected' : '' }}>Y</option>
-										<option value="Z" {{ ($header->GOL == 'Z') ? 'selected' : '' }}>Z</option>
-									</select>
-								</div>
                             </div>
  
 							<div class="form-group row">
@@ -200,13 +184,8 @@
 										<label for="BANK" class="form-label">Bank</label>
 									</div>
 									<div class="col-md-2">
-										<select name="BANK" id="BANK" class="form-control BANK" style="width: 300px">
-											<option value="">--Pilih Bank--</option>
-											@foreach($pilihbank as $pilihbankD)
-												<option value="{{$pilihbankD->KODE}}" {{ $header->BANK == $pilihbankD->KODE ? 'selected' : '' }}>{{ $pilihbankD->NAMA }}</option>
-											@endforeach
-										</select>
-									</div>                                  
+										<input type="text" class="form-control BANK" id="BANK" name="BANK" placeholder="Masukkan Bank" value="{{$header->BANK}}">
+									</div>                                
 								</div>
 
 								<div class="form-group row">							       
@@ -247,20 +226,19 @@
 								
 								<div class="form-group row">
 									<div class="col-md-1">
-										<label for="LIM" class="form-label">Kredit Limit</label>
+										<label for="LIM" class="form-label">Kr_Limit</label>
 									</div>
 									<div class="col-md-2">
-										<!-- <input type="text" class="form-control LIM" onclick="select()" id="LIM" name="LIM" placeholder="Masukkan Limit" value="{{$header->LIM}}"> -->
-										<input type="text" class="form-control LIM" onclick="select()"  id="LIM" name="LIM" placeholder="LIM" value="{{ number_format($header->LIM, 2, '.', ',') }}" style="text-align: right; width:140px" readonly>
+										<input type="text" class="form-control LIM" id="LIM" name="LIM" placeholder="Masukkan Limit" value="{{$header->LIM}}">
 									</div>                                
 								</div>
 								
 								<div class="form-group row">
 									<div class="col-md-1">
-										<label for="HARI" class="form-label">Jatuh Tempo (Hari)</label>
+										<label for="HARI" class="form-label">Janji Hari</label>
 									</div>
 									<div class="col-md-2">
-										<input type="text" class="form-control HARI" onclick="select()" id="HARI" name="HARI" placeholder="Masukkan Jumlah Hari" style="text-align: right; width:140px" value="{{$header->HARI}}">
+										<input type="text" class="form-control HARI" id="HARI" name="HARI" placeholder="Masukkan Jumlah Hari" value="{{$header->HARI}}">
 									</div>                                
 								</div>
 								
@@ -271,20 +249,20 @@
         
 						<div class="mt-3 col-md-12 form-group row">
 							<div class="col-md-4">
-								<button type="button" id='TOPX'  onclick="location.href='{{url('/cust/edit/?idx=' .$idx. '&tipx=top')}}'" class="btn btn-outline-primary">Top</button>
-								<button type="button" id='PREVX' onclick="location.href='{{url('/cust/edit/?idx='.$header->NO_ID.'&tipx=prev&kodex='.$header->KODEC )}}'" class="btn btn-outline-primary">Prev</button>
-								<button type="button" id='NEXTX' onclick="location.href='{{url('/cust/edit/?idx='.$header->NO_ID.'&tipx=next&kodex='.$header->KODEC )}}'" class="btn btn-outline-primary">Next</button>
-								<button type="button" id='BOTTOMX' onclick="location.href='{{url('/cust/edit/?idx=' .$idx. '&tipx=bottom')}}'" class="btn btn-outline-primary">Bottom</button>
+								<button type="button" hidden id='TOPX'  onclick="location.href='{{url('/cust/edit/?idx=' .$idx. '&tipx=top')}}'" class="btn btn-outline-primary">Top</button>
+								<button type="button" hidden id='PREVX' onclick="location.href='{{url('/cust/edit/?idx='.$header->NO_ID.'&tipx=prev&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Prev</button>
+								<button type="button" hidden id='NEXTX' onclick="location.href='{{url('/cust/edit/?idx='.$header->NO_ID.'&tipx=next&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Next</button>
+								<button type="button" hidden id='BOTTOMX' onclick="location.href='{{url('/cust/edit/?idx=' .$idx. '&tipx=bottom')}}'" class="btn btn-outline-primary">Bottom</button>
 							</div>
 							<div class="col-md-5">
-								<button type="button" id='NEWX' onclick="location.href='{{url('/cust/edit/?idx=0&tipx=new')}}'" class="btn btn-warning">New</button>
-								<button type="button" id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
-								<button type="button" id='UNDOX' onclick="location.href='{{url('/cust/edit/?idx=' .$idx. '&tipx=undo' )}}'" class="btn btn-info">Undo</button> 
-								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success" class="fa fa-save"></i>Save</button>
+								<button type="button" hidden id='NEWX' onclick="location.href='{{url('/cust/edit/?idx=0&tipx=new')}}'" class="btn btn-warning">New</button>
+								<button type="button" hidden id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
+								<button type="button" hidden id='UNDOX' onclick="location.href='{{url('/cust/edit/?idx=' .$idx. '&tipx=undo' )}}'" class="btn btn-info">Undo</button> 
+								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success"<i class="fa fa-save"></i>Save</button>
 
 							</div>
 							<div class="col-md-3">
-								<button type="button" id='HAPUSX'  onclick="hapusTrans()" class="btn btn-outline-danger">Hapus</button>
+								<button type="button" hidden id='HAPUSX'  onclick="hapusTrans()" class="btn btn-outline-danger">Hapus</button>
 								<button type="button" id='CLOSEX'  onclick="location.href='{{url('/cust' )}}'" class="btn btn-outline-secondary">Close</button>
 
 
@@ -305,40 +283,11 @@
 @endsection
 
 @section('footer-scripts')
-
-<script src="{{ asset('js/autoNumerics/autoNumeric.min.js') }}"></script>
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script> -->
-<script src="{{asset('foxie_js_css/bootstrap.bundle.min.js')}}"></script>
-
-
 <script>
     var target;
 	var idrow = 1;
 
-	function numberWithCommas(x) {
-		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	}
-
     $(document).ready(function () {
-
-		$('body').on('keydown', 'input, select', function(e) {
-			if (e.key === "Enter") {
-				var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
-				focusable = form.find('input,select,textarea').filter(':visible');
-				next = focusable.eq(focusable.index(this)+1);
-				console.log(next);
-				if (next.length) {
-					next.focus().select();
-				} else {
-					// tambah();
-					// var nomer = idrow-1;
-					// console.log("REC"+nomor);
-					// document.getElementById("REC"+nomor).focus();
-					// form.submit();
-				}
-				return false;
-			}
-		});
 
  		$tipx = $('#tipx').val();
 				
@@ -352,9 +301,6 @@
 			 //mati();	
     		 ganti();
 		} 
-
-		$("#LIM").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999.99'});
-		// $("#HARI").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999'});
 		
     });
 

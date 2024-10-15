@@ -19,8 +19,7 @@ class Brg extends Model
 //ganti 3
     protected $fillable = 
     [
-        "KD_BRG", "NA_BRG", "JENIS", "SATUAN","GOL", "USRNM", "TG_SMP", "PN", "KODES", "NAMAS",
-        "SATUAN_BELI", "KALI", "ACNOA", "NACNOA", "ACNOB","NACNOB", "ROP", "HJUAL", "SMIN", "SMAX"
+        "KD_BRG", "NA_BRG", "JENIS", "SATUAN","GOL", "USRNM", "TG_SMP", 
 		
     ];
 }

@@ -21,17 +21,13 @@ class RJualController extends Controller
 
   	public function report()
     {
-		$kodec = Cust::orderBy('KODEC')->get();
-		session()->put('filter_gol', '');
-		session()->put('filter_kodec1', '');
-		session()->put('filter_namac1', '');
+
 		session()->put('filter_tglDari', date("d-m-Y"));
 		session()->put('filter_tglSampai', date("d-m-Y"));
 		session()->put('filter_brg1', '');
 		session()->put('filter_nabrg1', '');
-		session()->put('filter_kdgd1', '');
 	
-        return view('oreport_jual.report')->with(['kodec' => $kodec])->with(['hasil' => []]);
+        return view('oreport_jual.report')->with(['hasil' => []]);
     }
 	  
 
@@ -43,43 +39,34 @@ class RJualController extends Controller
 		
 			// Check Filter
 
-			if (!empty($request->kodec))
-			{
-				$filterkodec = " and KODEC='".$request->kodec."' ";
-			}
+
 			
 			
 			if (!empty($request->tglDr) && !empty($request->tglSmp))
 			{
 				$tglDrD = date("Y-m-d", strtotime($request->tglDr));
 				$tglSmpD = date("Y-m-d", strtotime($request->tglSmp));
-				$filtertgl = " and TGL between '".$tglDrD."' and '".$tglSmpD."' ";
+				$filtertgl = " and JUAL.TGL between '".$tglDrD."' and '".$tglSmpD."' ";
 			}
 
-			if (!empty($request->brg1))
+			if (!empty($request->KD_BRG))
 			{
-				$filterbrg = " and KD_BRG='".$request->brg1."' ";
-			}
-
-			if (!empty($request->kdgd1))
-			{
-				$filtergudang = " and GUDANG='".$request->kdgd1."' ";
+				$filterbrg = " and JUALD.KD_BRG='".$request->KD_BRG."' ";
 			}
 
 
-			session()->put('filter_gol', $request->gol);
-			session()->put('filter_kodec1', $request->kodec);
-			session()->put('filter_namac1', $request->NAMAC);
 			session()->put('filter_tglDari', $request->tglDr);
 			session()->put('filter_tglSampai', $request->tglSmp);
-			session()->put('filter_brg1', $request->brg1);
-			session()->put('filter_nabrg1', $request->nabrg1);
-			session()->put('filter_kdgd1', $request->kdgd1);
-			session()->put('filter_no_so1', $request->no_so1);
+			session()->put('filter_brg1', $request->KD_BRG);
+			session()->put('filter_nabrg1', $request->NA_BRG);
+
 			
 		$query = DB::SELECT("
-			SELECT NO_BUKTI,TGL,NO_SO,TRUCK, KODEC,NAMAC,KD_BRG,NA_BRG,KG, QTY, HARGA,TOTAL, 
-			DPP, PPN, GUDANG, NOTES from jual WHERE FLAG='JL' $filtertgl  $filterkodec  $filterbrg $filtergudang;
+			SELECT JUAL.NO_BUKTI,date_format(JUAL.TGL,'%d/%m/%y') as TGL,
+			JUAL.NOTES, JUALD.KD_BRG, JUALD.NA_BRG,
+			JUALD.QTY, JUALD.HARGA, JUALD.TOTAL
+		    from JUAL, JUALD WHERE JUAL.NO_BUKTI = JUALD.NO_BUKTI			
+			$filtertgl $filterbrg ;
 		");
       
 		if($request->has('filter'))
@@ -93,22 +80,12 @@ class RJualController extends Controller
 			array_push($data, array(
 				'NO_BUKTI' => $query[$key]->NO_BUKTI,
 				'TGL' => $query[$key]->TGL,
-				'NO_SO' => $query[$key]->NO_SO,
-				'KODEC' => $query[$key]->KODEC,
-				'NAMAC' => $query[$key]->NAMAC,
-				'TRUCK' => $query[$key]->TRUCK,
-				'KG' => $query[$key]->KG,
-				'QTY' => $query[$key]->QTY,
-				'NAMAC' => $query[$key]->NAMAC,
 				'KD_BRG' => $query[$key]->KD_BRG,
-				'NA_BRG' => $query[$key]->NA_BRG,
-				'NA_BRG' => $query[$key]->NA_BRG,
-				'GDG' => $query[$key]->GUDANG,
-				'DPP' => $query[$key]->DPP,
-				'PPN' => $query[$key]->PPN,
-				'TOTAL' => $query[$key]->TOTAL,
+				'NA_BRG' => $query[$key]->NA_BRG,			
+				'QTY' => $query[$key]->KG,
 				'HARGA' => $query[$key]->HARGA,
-				'NOTES' => $query[$key]->NOTES,
+				'TOTAL' => $query[$key]->TOTAL,			
+				'NOTES' => $query[$key]->NOTES
 
 			));
 		}

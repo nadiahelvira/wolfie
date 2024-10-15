@@ -18,7 +18,7 @@ use PHPJasperXML;
 use \koolreport\laravel\Friendship;
 use \koolreport\bootstrap4\Theme;
 
-class RSupController extends Controller
+class RSup_bhController extends Controller
 {
 
    public function report()
@@ -48,11 +48,7 @@ class RSupController extends Controller
 			$periode = '';
 		}
 		
-		if ($request->gol)
-		{
-			$filtergol = " and sup.GOL='".$request->gol."' ";
-		}
-		
+
 		if($request['perio'])
 		{
 			$periode = $request['perio'];
@@ -60,14 +56,7 @@ class RSupController extends Controller
 		
 		$bulan = substr($periode,0,2);
 		$tahun = substr($periode,3,4);
-		/*            
-		$query = DB::SELECT("
-			SELECT sup.KODES,sup.NAMAS,supd.AW$bulan as AW,supd.MA$bulan as MA, 
-			supd.KE$bulan as KE,supd.LN$bulan as LN,supd.AK$bulan as AK 
-			from sup,supd 
-			WHERE sup.KODES=supd.KODES and supd.YER='$tahun';
-		");
-		*/        
+       
 		
 		$queryakum = DB::SELECT("SET @tglx:=last_day(concat('$tahun','-','$bulan','-01'));");
 		$query = DB::SELECT("
@@ -79,11 +68,11 @@ class RSupController extends Controller
 		from sup,supd 
 		left join 
 		(
-		    SELECT KODES, sum(if(DATEDIFF(@tglx,TGL)<30,belix.PER$bulan-belix.PERB$bulan,0)) as SATU,
-		    sum(if(DATEDIFF(@tglx,TGL)BETWEEN 30 and 60,belix.PER$bulan-belix.PERB$bulan,0)) as DUA,
-		    sum(if(DATEDIFF(@tglx,TGL)>60,belix.PER$bulan-belix.PERB$bulan,0)) as TIGA 
-		    from belix 
-		    where belix.YER='$tahun' and belix.PER$bulan-belix.PERB$bulan<>0
+		    SELECT KODES, sum(if(DATEDIFF(@tglx,TGL)<30, PER$bulan - PERB$bulan,0)) as SATU,
+		    sum(if(DATEDIFF(@tglx,TGL)BETWEEN 30 and 60, PER$bulan - PERB$bulan,0)) as DUA,
+		    sum(if(DATEDIFF(@tglx,TGL)>60,  PER$bulan- PERB$bulan,0)) as TIGA 
+		    from bh_belix 
+		    where YER='$tahun' and ( PER$bulan- PERB$bulan )<> 0
 		    GROUP BY KODES
 		) as xxx on supd.KODES=xxx.KODES
 		where sup.KODES = supd.KODES 

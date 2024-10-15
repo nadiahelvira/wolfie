@@ -28,36 +28,6 @@ class RRlController extends Controller
 		
     }
 	
-		public function getRlReport(Request $request)
-    {
-		
-		 if ($request->session()->has('periode')) 
-		{
-			$periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
-		} else
-		{
-			$periode = '';
-		}
-		
-		if($request['perio'])
-		{
-			$periode = $request['perio'];
-		}
-		
-		$bulan = substr($periode,0,2);
-		$tahun = substr($periode,3,4);
-		
-        $query = DB::table('rl')
-			->select('KODE','NAMA','JUM'.$bulan. ' as JUM', 'AK'.$bulan. ' as AK')->where('YER',$tahun)->get();
-			
-		//if ($request->ajax())
-		//{
-				//$query = $query->whereBetween('TGL', [$tglDrD, $tglSmp]);
-			
-			//return Datatables::of($query)->addIndexColumn()->make(true);
-		//}
-		return Datatables::of($query)->addIndexColumn()->make(true);
-    }	  
 
     public function jasperRlReport(Request $request) 
 	{

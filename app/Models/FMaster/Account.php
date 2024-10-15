@@ -19,6 +19,7 @@ class Account extends Model
 //ganti 3
     protected $fillable = 
     [
-        "ACNO", "NAMA", "BNK", "GRUP", "POS2", "USRNM", "TG_SMP"
+        "ACNO", "NAMA", "BNK", "GRUP", "POS2", "USRNM", "TG_SMP",  "KEL",  "NAMA_KEL",
+
     ];
 }

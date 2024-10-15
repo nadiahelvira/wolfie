@@ -44,14 +44,14 @@
                         <tr>
 											
                             <th scope="col" style="text-align: center">No</th>
-				     		            <th scope="col" style="text-align: center">-</th>							
+				     		<th scope="col" style="text-align: center">-</th>							
                             <th scope="col" style="text-align: center">Kode</th>
                             <th scope="col" style="text-align: center">Nama</th>
                             <th scope="col" style="text-align: center">Alamat</th>
                             <th scope="col" style="text-align: center">Kota</th>
-							              <th scope="col" style="text-align: center">HP</th>
-							              <th scope="col" style="text-align: center">Telpon</th>
-							              <th scope="col" style="text-align: center">Kontak</th>
+							<th scope="col" style="text-align: center">HP</th>
+							<th scope="col" style="text-align: center">Telpon</th>
+							<th scope="col" style="text-align: center">Kontak</th>
                         </tr>
                     </thead>
     
@@ -99,9 +99,9 @@
                 {data: 'NAMAS', name: 'NAMAS'},
                 {data: 'ALAMAT', name: 'ALAMAT'},				
                 {data: 'KOTA', name: 'KOTA'},
-                {data: 'HP', name: 'HP'},
-                {data: 'TELPON1', name: 'TELPON1'},
-                {data: 'KONTAK', name: 'KONTAK'}
+				{data: 'HP', name: 'HP'},
+				{data: 'TELPON1', name: 'TELPON1'},
+				{data: 'KONTAK', name: 'KONTAK'}
 
 				
             ],
@@ -112,10 +112,10 @@
                     "targets": 0
                 }
             ],
-            dom: "<'row'<'col-md-6'><'col-md-6'>>" +
+           dom: "<'row'<'col-md-6'><'col-md-6'>>" +
                 "<'row'<'col-md-2'l><'col-md-6 test_btn m-auto'><'col-md-4'f>>" +
                 "<'row'<'col-md-12't>><'row'<'col-md-12'ip>>",
-				    stateSave:false,
+				stateSave:true,
         });
         
         $("div.test_btn").html('<a class="btn btn-lg btn-md btn-success" href="{{url('sup/edit?idx=0&tipx=new')}}"> <i class="fas fa-plus fa-sm md-3" ></i></a');

@@ -84,18 +84,18 @@
                 <div class="centered">
 
                     <div class="text-center name">
-                        PT. WOLFIE
+                        Login
                     </div>
                     <form method="POST" action="{{ route('login') }}" class="m-0">
                         @csrf
                         <div class="form-group">
-                            <x-label for="username" :value="__('USERNAME')" />
+                            <x-label for="username" :value="__('Username')" />
 
                             <x-input id="username" type="text" name="username" :value="old('username')" required
                                 autofocus />
                         </div>
                         <div class="form-group">
-                            <x-label for="password" :value="__('PASSWORD')" />
+                            <x-label for="password" :value="__('Password')" />
 
                             <x-input id="password" type="password" name="password" required
                                 autocomplete="current-password" />

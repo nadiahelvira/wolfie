@@ -41,99 +41,6 @@ class RKarstkController extends Controller
 		
     }
 	
-	public function getStokKartu(Request $request)
-    {
-		$periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
-		$bulan = substr($periode,0,2);
-		$tahun = substr($periode,3,4);
-		$acno = '';
-		$tgawal = $tahun.'-'.$bulan.'-01';
-		
-		if ($request->ajax())
-		{
-			// Ganti format tanggal input agar sama dengan database
-			$tglDrD = date("Y-m-d", strtotime($request['tglDr']));
-            $tglSmpD = date("Y-m-d", strtotime($request['tglSmp']));
-			
-			// Convert tanggal agar ambil start of day/end of day
-			$tglDr = Carbon::parse($request->tglDr)->startOfDay();
-            $tglSmp = Carbon::parse($request->tglSmp)->endOfDay();
-			
-			// Check Filter
-			/*
-			if (!empty($request->acno))
-			{
-				$query = $query->where('BACNO', $request->acno);
-			}
-			
-			if (!empty($request->tglDr) && !empty($request->tglSmp))
-			{
-				$query = $query->whereBetween('TGL', [$tglDrD, $tglSmp]);
-			}
-			*/
-			
-			$periode = date("m/Y", strtotime($request['tglDr']));
-			$bulan = date("m", strtotime($request['tglDr']));
-			$tahun = date("Y", strtotime($request['tglDr']));
-			$brg = $request->brg;
-			$tgawal = $tahun.'-'.$bulan.'-01';
-		}
-		
-		$queryakum = DB::SELECT("SET @akum:=0;");
-		$query = DB::SELECT("
-		SELECT *,@akum:=@akum+AWAL+MASUK-KELUAR+LAIN AS SALDO from
-		(
-			SELECT '' AS NO_BUKTI, '$tglDrD'  AS TGL, KD_BRG AS KD_BRG, NA_BRG AS NA_BRG, 
-			'SALDO AWAL' URAIAN, 
-			SUM(AWAL) AS AWAL, 0 AS MASUK, 0 AS KELUAR, 0 AS LAIN 
-			from
-			(
-				SELECT KD_BRG, NA_BRG, AW$bulan AS AWAL 
-				from brgd WHERE KD_BRG='$brg' and YER='$tahun'
-				
-				UNION ALL
-				
-				SELECT KD_BRG, NA_BRG, KG1 AS AWAL 
-				from terima where terima.TGL<'$tglDrD' 
-				and terima.KD_BRG='$brg' and terima.PER='$periode' and  terima.KG1 <> 0 and GOL ='Y' union all
-				
-
-				SELECT KD_BRG, NA_BRG, ( KG1 * -1 ) AS AWAL 
-				from surats where surats.TGL<'$tglDrD' 
-				and surats.KD_BRG='$brg' and surats.PER='$periode' and  surats.KG1 <> 0  union all
-				
-				SELECT KD_BRG, NA_BRG, ( KG1 * -1 ) AS AWAL 
-				from jual where jual.TGL<'$tglDrD' 
-				and jual.KD_BRG='$brg' and jual.PER='$periode' and  jual.KG1 <> 0  union all
-				
-				SELECT KD_BRG, NA_BRG, KG AS AWAL 
-				from stock where stock.TGL<'$tglDrD' 
-				and stock.KD_BRG='$brg' and stock.PER='$periode' 
-
-				
-			) as AWAL00
-			UNION ALL
-
-			SELECT NO_BUKTI, TGL, KD_BRG, NA_BRG,CONCAT('terima-',TRIM(NAMAS)) AS URAIAN, 0 as AWAL, KG1 AS MASUK, 0 AS KELUAR, 0 AS LAIN 
-			from terima where terima.TGL BETWEEN '$tglDrD' and '$tglSmpD' and terima.KD_BRG='$brg' and terima.PER='$periode' and ( terima.KG1 <> 0 ) and terima.GOL =-'Y' union all
-
-			SELECT NO_BUKTI, TGL, KD_BRG, NA_BRG, CONCAT('SURATS-',TRIM(NAMAT)) AS URAIAN, 0 AS AWAL, 0 AS MASUK, 0 AS KELUAR, KG1 AS LAIN 
-			from surats where surats.TGL BETWEEN '$tglDrD' and '$tglSmpD' and surats.KD_BRG='$brg' and surats.PER='$periode' and ( surats.KG1 <> 0 ) union all
-
-			SELECT NO_BUKTI, TGL, KD_BRG, NA_BRG, CONCAT('JUAL-',TRIM(NAMAT)) AS URAIAN, 0 AS AWAL, 0 AS MASUK, KG1 AS KELUAR, 0 AS LAIN 
-			from jual where jual.TGL BETWEEN '$tglDrD' and '$tglSmpD' and jual.KD_BRG='$brg' and jual.PER='$periode' and ( jual.KG1 <> 0 ) union all
-
-			SELECT NO_BUKTI, TGL, KD_BRG, NA_BRG, CONCAT('KOREKSI-') AS URAIAN,           0 AS AWAL, 0 AS MASUK, 0 AS KELUAR, KG AS LAIN 
-			from stock where stock.TGL BETWEEN '$tglDrD' and '$tglSmpD' and stock.KD_BRG='$brg' and stock.PER='$periode'   order by TGL, NO_BUKTI ASC
-
-
-		) as kartustok  ;"
-		);
-		
-		return Datatables::of($query)->addIndexColumn()->make(true);
-		
-    }	 
-	 
 
 
     /**
@@ -160,28 +67,26 @@ class RKarstkController extends Controller
             $bulan = date("m", strtotime($request['tglDr']));
             $tahun = date("Y", strtotime($request['tglDr']));
 			$filterbrg = " AND KD_BRG<>'' " ;
-			$filterterima = " AND terima.KD_BRG<>'' " ;
-			$filterjual = " AND jual.KD_BRG<>'' " ;
-			$filterstock = " AND stock.KD_BRG<>'' " ;
-			if($request->brg1)
+			$filterterima = " AND jl_terimad.KD_BRG<>'' " ;
+			$filterjual = " AND jl_juald.KD_BRG<>'' " ;
+			$filterstockb = " AND jl_stockd.KD_BRG<>'' " ;
+			$filtersurat = " AND jl_suratd.KD_BRG<>'' " ;
+		
+			if($request->KD_BRG)
 			{
-				$filterbrg = " AND KD_BRG between '".$request->brg1."' and '".$request->brg2."' " ;
-				$filterterima = " AND terima.KD_BRG between'".$request->brg1."' and '".$request->brg2."' " ;
-				$filterjual = " AND jual.KD_BRG between '".$request->brg1."' and '".$request->brg2."' " ;
-				$filterstock = " AND stock.KD_BRG between '".$request->brg1."' and '".$request->brg2."' " ;
+				$filterbrg = " AND KD_BRG = '".$request->KD_BRG."'  " ;
+				$filterterima = " AND jl_terimad.KD_BRG = '".$request->KD_BRG."' " ;
+				$filterjual = " AND jl_juald.KD_BRG = '".$request->KD_BRG."' " ;
+				$filterstockb = " AND jl_stockd.KD_BRG = '".$request->KD_BRG."'  " ;
+				$filtersurat = " AND jl_suratd.KD_BRG = '".$request->KD_BRG."'  " ;
+
 			}
             $tgawal = $tahun.'-'.$bulan.'-01';
 		
-			session()->put('filter_brg1', $request->brg1);
-			session()->put('filter_nabrg1', $request->nabrg1);
-			session()->put('filter_brg2', $request->brg2);
-			session()->put('filter_nabrg2', $request->nabrg2);
-			session()->put('filter_tglDr', $request->tglDr);
-			session()->put('filter_tglSmp', $request->tglSmp);
 
 		$queryakum = DB::SELECT("SET @akum:=0;");
 		$query = DB::SELECT("
-        	SELECT *, if(@kdbrg<>KD_BRG,@akum:=AWAL+MASUK-KELUAR+LAIN,@akum:=@akum+AWAL+MASUK-KELUAR+LAIN) as SALDO,@kdbrg:=KD_BRG as ganti, URUTAN from
+        	SELECT *, if(@kdbrg<>KD_BRG,@akum:=AWAL+MASUK-KELUAR,@akum:=@akum+AWAL+MASUK-KELUAR) as SALDO,@kdbrg:=KD_BRG as ganti, URUTAN from
 		(
 			SELECT ' ' AS NO_BUKTI, '$tglDrD'  AS TGL, KD_BRG AS KD_BRG, NA_BRG AS NA_BRG, 
 			'SALDO AWAL' URAIAN, 
@@ -189,37 +94,115 @@ class RKarstkController extends Controller
 			from
 			(
 				SELECT KD_BRG AS KD_BRG, NA_BRG AS NA_BRG, AW$bulan AS AWAL 
-				from brgd WHERE YER='$tahun' $filterbrg
+				from jl_brgd WHERE YER='$tahun' $filterbrg
 				
 				UNION ALL
 				
-				SELECT KD_BRG, NA_BRG, KG AS AWAL 
-				from terima where terima.TGL<'$tglDrD' 
-				$filterterima and terima.PER='$periode' and terima.GOL ='Y' and terima.KG1 <> 0 union all
+				SELECT jl_terimad.KD_BRG, jl_terimad.NA_BRG, 
+				jl_terimad.QTY AS AWAL 
+				from jl_terima, jl_terimad where jl_terima.NO_BUKTI = jl_terimad.NO_BUKTI 
+				and jl_terima.TGL<'$tglDrD' 
+				$filterterima and jl_terima.PER='$periode' and 
+				jl_terima.FLAG ='HP' and jl_terimad.QTY <> 0 
+				
+				union all
+				
+				SELECT jl_terimad.KD_BRG, jl_terimad.NA_BRG, 
+				( jl_terimad.QTY * -1 ) AS AWAL 
+				from jl_terima, jl_terimad where jl_terima.NO_BUKTI = jl_terimad.NO_BUKTI 
+				and jl_terima.TGL<'$tglDrD' 
+				$filterterima and jl_terima.PER='$periode' and 
+				jl_terima.FLAG <> 'HP' and jl_terimad.QTY <> 0 
+
+				union all
+
+				SELECT jl_juald.KD_BRG, jl_juald.NA_BRG, 
+				jl_juald.QTY * -1  AS AWAL 
+				from jl_jual, jl_juald where jl_jual.NO_BUKTI = jl_juald.NO_BUKTI 
+				and jl_jual.TGL<'$tglDrD' 
+				$filterjual and jl_jual.PER='$periode' 
+				and jl_juald.QTY <> 0 
+
+				union all
+
+				SELECT jl_suratd.KD_BRG, jl_suratd.NA_BRG, 
+				jl_suratd.QTY * -1  AS AWAL 
+				from jl_surat, jl_suratd where jl_surat.NO_BUKTI = jl_suratd.NO_BUKTI 
+				and jl_surat.TGL<'$tglDrD' 
+				$filtersurat and jl_surat.PER='$periode' 
+				and jl_suratd.QTY <> 0 
 				
 				
-				SELECT KD_BRG, NA_BRG , ( KG * -1 ) AS AWAL 
-				from jual where jual.TGL<'$tglDrD' 
-				$filterjual and jual.PER='$periode' and ( jual.FLAG ='JL' or jual.FLAG ='AJ' ) union all
-				
-				SELECT KD_BRG, stock.NA_BRG, KG AS AWAL 
-				from stock where stock.TGL<'$tglDrD' 
-				$filterstock and stock.PER='$periode' 
+				union all
+
+				SELECT jl_stockd.KD_BRG, jl_stockd.NA_BRG, 
+				jl_stockd.QTY AS AWAL 
+				from jl_stock, jl_stockd where jl_stock.NO_BUKTI = jl_stockd.NO_BUKTI 
+				and jl_stock.TGL<'$tglDrD' 
+				$filterstock and jl_stock.PER='$periode' 
+				and jl_stockd.QTY <> 0 
 
 				
 			) as AWAL00
 			group by KD_BRG
+			
 			UNION ALL
 
-			SELECT NO_BUKTI, TGL, KD_BRG, NA_BRG, CONCAT('terima-',TRIM(NAMAS)) AS URAIAN, 0 AWAL, KG AS MASUK, 0 AS KELUAR, 0 AS LAIN,  2 as URUTAN 
-			from terima where terima.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filterterima and terima.GOL ='Y' and terima.KG1 <> 0 and terima.PER='$periode' union all
+			SELECT jl_terima.NO_BUKTI, jl_terima.TGL, jl_terimad.KD_BRG, jl_terimad.NA_BRG,
+			'HASIL PRODUKSI' AS URAIAN, 
+			0 AWAL, jl_terimad.QTY AS MASUK, 0 AS KELUAR, 
+			0 AS LAIN,  2 as URUTAN 
+			from jl_terima, jl_terimad where 
+			jl_terima.NO_BUKTI = jl_terimad.NO_BUKTI and
+			jl_terima.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filterterima 
+			and jl_terimad.QTY <> 0 and jl_terima.FLAG ='HP' and jl_terima.PER='$periode' 
+		
+			UNION ALL
 
+			SELECT jl_terima.NO_BUKTI, jl_terima.TGL, jl_terimad.KD_BRG, jl_terimad.NA_BRG,
+			'RETUR HASIL PRODUKSI' AS URAIAN, 
+			0 AWAL, 0 AS MASUK, jl_terimad.QTY AS KELUAR, 
+			0 AS LAIN,  2 as URUTAN 
+			from jl_terima, jl_terimad where 
+			jl_terima.NO_BUKTI = jl_terimad.NO_BUKTI and
+			jl_terima.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filterterima 
+			and jl_terimad.QTY <> 0 and jl_terima.FLAG <>'HP' and jl_terima.PER='$periode' 
+			
 
-			SELECT NO_BUKTI, TGL, KD_BRG, NA_BRG, CONCAT('JUAL-',TRIM(NAMAC)) AS URAIAN, 0 AWAL, 0 AS MASUK, KG AS KELUAR,  0 AS LAIN, 4 as URUTAN  
-			from jual where jual.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filterjual and jual.PER='$periode' union all
+			UNION ALL
 
-			SELECT NO_BUKTI, TGL, KD_BRG, NA_BRG, CONCAT('KOREKSI-') AS URAIAN, 0 AWAL, 0 AS MASUK, 0 AS KELUAR, KG AS LAIN, 5 as URUTAN  
-			from stock where stock.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filterstock and stock.PER='$periode' 
+			SELECT jl_surat.NO_BUKTI, jl_surat.TGL, jl_suratd.KD_BRG, jl_suratd.NA_BRG,
+			'SURAT JALAN' AS URAIAN, 
+			0 AWAL, 0 AS MASUK, jl_suratd.QTY AS KELUAR, 
+			0 AS LAIN,  2 as URUTAN
+			from jl_surat, jl_suratd where 
+			jl_surat.NO_BUKTI = jl_suratd.NO_BUKTI and
+			jl_surat.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filtersurat 
+			and jl_suratd.QTY <> 0 and jl_surat.PER='$periode' 
+			
+			UNION ALL
+
+			SELECT jl_jual.NO_BUKTI, jl_jual.TGL, jl_juald.KD_BRG, jl_juald.NA_BRG,
+			'PENJUALAN' AS URAIAN, 
+			0 AWAL, 0 AS MASUK, jl_juald.QTY AS KELUAR, 
+			0 AS LAIN,  2 as URUTAN 
+			from jl_jual, jl_juald where 
+			jl_jual.NO_BUKTI = jl_juald.NO_BUKTI and
+			jl_jual.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filterjual 
+			and jl_juald.QTY <> 0 and jl_jual.PER='$periode' 
+			
+			UNION ALL
+
+			SELECT jl_stock.NO_BUKTI, jl_stock.TGL, jl_stockd.KD_BRG, jl_stockd.NA_BRG,
+			'KOREKSI STOCK ' AS URAIAN, 
+			0 AWAL, 0 AS MASUK, jl_stockd.QTY AS KELUAR, 
+			0 AS LAIN,  2 as URUTAN 
+			from jl_stock, jl_stockd where 
+			jl_stock.NO_BUKTI = jl_stockd.NO_BUKTI and
+			jl_stock.TGL BETWEEN '$tglDrD' and '$tglSmpD' $filterstock 
+			and jl_stockd.QTY <> 0 and jl_stock.PER='$periode' 
+			
+
 			
 			order by KD_BRG, TGL, NO_BUKTI, URUTAN ASC
 			

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OReport;
 
 use App\Http\Controllers\Controller;
-use App\Models\Master\Brg;
+use App\Models\Master\Brg_st;
 use App\Models\Master\Perid;
 
 use Carbon\Carbon;
@@ -18,22 +18,22 @@ use PHPJasperXML;
 use \koolreport\laravel\Friendship;
 use \koolreport\bootstrap4\Theme;
 
-class RBrgController extends Controller
+class RBrg_stController extends Controller
 {
 	
    public function report()
     {
-		$kd_brg = Brg::query()->get();
+		
 		$per = Perid::query()->get();
 		session()->put('filter_per', '');
 
-        return view('oreport_brg.report')->with(['kd_brg' => $kd_brg])->with(['per' => $per])->with(['hasil' => []]);
+        return view('oreport_brg_st.report')->with(['per' => $per])->with(['hasil' => []]);
     }
 	
    
-	public function jasperBrgReport(Request $request) 
+	public function jasperBrg_stReport(Request $request) 
 	{
-		$file 	= 'brgpr';
+		$file 	= 'brg_stpr';
 		$PHPJasperXML = new PHPJasperXML();
 		$PHPJasperXML->load_xml_file(base_path().('/app/reportc01/phpjasperxml/'.$file.'.jrxml'));
 		
@@ -56,19 +56,21 @@ class RBrgController extends Controller
 		
 		$queryakum = DB::SELECT("SET @akum:=0;");
 		$query = DB::SELECT("
-		SELECT brg.KD_BRG,brg.NA_BRG,brgd.AW$bulan as AW, brgd.MA$bulan as MA, 
-		    brgd.KE$bulan as KE,brgd.LN$bulan as LN,brgd.AK$bulan as AK, 
-			brgd.HRT$bulan as HRT,brgd.NIW$bulan as NIW,brgd.NIM$bulan as NIM,brgd.NIK$bulan as NIK,
-		brgd.NIL$bulan as NIL,brgd.NIR$bulan as NIR
-		FROM brg,brgd
-		WHERE brg.KD_BRG=brgd.KD_BRG and brgd.YER='$tahun' order by KD_BRG;
+		SELECT st_brg.KD_BRG,st_brg.NA_BRG,st_brgd.AW$bulan as AW, st_brgd.MA$bulan as MA, 
+		    st_brgd.KE$bulan as KE,st_brgd.LN$bulan as LN,st_brgd.AK$bulan as AK, 
+			st_brgd.HRT$bulan as HRT,st_brgd.NIW$bulan as NIW,st_brgd.NIM$bulan as NIM,st_brgd.NIK$bulan as NIK,
+		st_brgd.NIL$bulan as NIL,st_brgd.NIR$bulan as NIR
+		FROM st_brg,st_brgd
+		WHERE st_brg.KD_BRG=st_brgd.KD_BRG and st_brgd.YER='$tahun' AND 
+		( st_brgd.AW$bulan <> 0 OR  st_brgd.MA$bulan <> 0 OR st_brgd.KE$bulan <> 0 OR st_brgd.LN$bulan <> 0 OR st_brgd.AK$bulan <> 0 )
+		  order by KD_BRG;
 		");
 
 		$per = Perid::query()->get();
 		session()->put('filter_per', $periode);
 		if($request->has('filter'))
 		{
-			return view('oreport_brg.report')->with(['per' => $per])->with(['hasil' => $query]);
+			return view('oreport_brg_st.report')->with(['per' => $per])->with(['hasil' => $query]);
 		}
 
 		$data=[];

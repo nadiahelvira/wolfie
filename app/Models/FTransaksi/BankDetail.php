@@ -15,6 +15,8 @@ class BankDetail extends Model
 
     protected $fillable =
     [
-        "REC", "NO_BUKTI", "ID", "ACNO", "NACNO", "URAIAN", "DEBET", "KREDIT", "JUMLAH", "FLAG", "TYPE"
+        "REC", "NO_BUKTI", "PER", "ID", "ACNO", "NACNO", "URAIAN", "DEBET", "KREDIT",
+		"JUMLAH", "FLAG", "TYPE","PER","created_by", "updated_by",
+		"deleted_by"
     ];
 }

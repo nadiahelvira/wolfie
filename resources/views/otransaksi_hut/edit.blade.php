@@ -8,7 +8,6 @@
     .form-control:focus {
         background-color: #b5e5f9 !important;
     }
-
 </style>
 
 @section('content')
@@ -65,17 +64,15 @@
 							<div class="form-group row">
 							
 								<div class="col-md-1" align="right">
-									<label style="color:red">*</label>									
-                                    <label for="KODES" class="form-label">Supplier#</label>
+                                    <label for="KODES" class="form-label">Suplier#</label>
                                 </div>
-                               	<div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control KODES" id="KODES" name="KODES" placeholder="Pilih Supplier"value="{{$header->KODES}}" style="text-align: left" readonly >
-        						  <button type="button" class="btn btn-primary" onclick="browseSuplier()"><i class="fa fa-search"></i></button>
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control KODES" id="KODES" name="KODES" placeholder="Masukkan Suplier#" value="{{$header->KODES}}" readonly>
                                 </div>
 								
-								<!-- <div class="col-md-1" align="right">
+								<div class="col-md-1" align="right">
                                     <label for="NAMAS" class="form-label"></label>
-                                </div> -->
+                                </div>
 								<div class="col-md-4">
                                     <input type="text" class="form-control NAMAS" id="NAMAS" name="NAMAS" placeholder="-" value="{{$header->NAMAS}}" readonly>
                                 </div>
@@ -91,36 +88,12 @@
                                 <div class="col-md-4">
                                     <input type="text" class="form-control NOTES" id="NOTES" name="NOTES" value="{{$header->NOTES}}" placeholder="Masukkan Notes" >
                                 </div>
-
-								<div class="col-md-1" align="center">
-									<label for="TYPE" class="form-label">Type</label>
-								</div>
-								<div class="col-md-1">
-									<select id="TYPE" class="form-control"  name="TYPE">
-										<option value="BANK" {{ ($header->TYPE == 'BANK') ? 'selected' : '' }}>BANK</option>
-										<option value="KAS" {{ ($header->TYPE == 'KAS') ? 'selected' : '' }}>KAS</option>
-									</select>
-								</div>
+        
                             </div>
 
-							<div class="form-group row">
-                                <div class="col-md-1" align="right">
-									<label style="color:red">*</label>	
-                                    <label for="BACNO" class="form-label">Bank#</label>
-                                </div>
-                                <div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control BACNO" id="BACNO" name="BACNO" placeholder="Bank#" value="{{$header->BACNO}}" style="text-align: left" readonly >
-        						
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control BNAMA" id="BNAMA" name="BNAMA" placeholder="-" value="{{ $header->BNAMA }}" readonly>
-                                </div>
 
-                               <div class="col-md-2">
-                                    <input type="text" class="form-control NO_BANK" id="NO_BANK" name="NO_BANK" placeholder="-" value="{{ $header->NO_BANK }}" readonly>
-                                </div>
-                                                                
-							</div>
+
+
 							
                             <table id="datatable" class="table table-striped table-border">
                                 <thead>
@@ -156,8 +129,10 @@
 										    <input name="BAYAR[]" onclick="select()" onblur="hitung()" value="{{$detail->BAYAR}}" id="BAYAR{{$no}}" type="text" style="text-align: right"  class="form-control BAYAR">
 										</td>
 										
+
 										<td>
-                                            <button type="button" id="DELETEX{{$no}}" class="btn btn-sm btn-circle btn-outline-danger btn-delete" onclick="">
+										
+                                            <button type="button" class="btn btn-sm btn-circle btn-outline-danger btn-delete" onclick="">
                                                 <i class="fa fa-fw fa-trash"></i>
                                             </button>
                                         </td>
@@ -171,7 +146,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td><input class="form-control TBAYAR  text-bold font-weight-bold" style="text-align: right"  id="TBAYAR" name="TBAYAR" value="{{$header->BAYAR}}" readonly></td>
+                                    <td><input class="form-control TBAYAR  text-light font-weight-bold" style="text-align: right"  id="TBAYAR" name="TBAYAR" value="{{$header->BAYAR}}" readonly></td>
                                     <td></td>
                                     <td></td>
                                 </tfoot>
@@ -186,10 +161,9 @@
 				</div>                               
             </div>
 			
-							<div class="col-md-2 row">
-                               <a type="button" id='PLUSX' onclick="tambah()" class="fas fa-plus fa-sm md-3" style="font-size: 20px" ></a>
-					
-							</div>			
+                        <div class="col-md-2 row">
+                               <a type="button" id='PLUSX' onclick="tambah()" class="fas fa-plus fa-sm md-3" ></a>					
+						</div>				
                                  
 						<div class="mt-3 col-md-12 form-group row">
 							<div class="col-md-4">
@@ -202,7 +176,7 @@
 								<button type="button" id='NEWX' onclick="location.href='{{url('/hut/edit/?idx=0&tipx=new&flagz='.$flagz.'' )}}'" class="btn btn-warning">New</button>
 								<button type="button" id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
 								<button type="button" id='UNDOX' onclick="location.href='{{url('/hut/edit/?idx=' .$idx. '&tipx=undo&flagz='.$flagz.'' )}}'" class="btn btn-info">Undo</button>  
-								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success" class="fa fa-save"></i>Save</button>
+								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success"<i class="fa fa-save"></i>Save</button>
 
 							</div>
 							<div class="col-md-3">
@@ -210,6 +184,10 @@
 								<button type="button" id='CLOSEX'  onclick="location.href='{{url('/hut?flagz='.$flagz.'' )}}'" class="btn btn-outline-secondary">Close</button>
 							</div>
 						</div>
+			
+			            
+						
+						
 			
             </div>
         </div>
@@ -255,7 +233,7 @@
 		
 
 	<div class="modal fade" id="browseSuplierModal" tabindex="-1" role="dialog" aria-labelledby="browseSuplierModalLabel" aria-hidden="true">
-	  <div class="modal-dialog mw-100 w-75" role="document">
+	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
 			<h5 class="modal-title" id="browseSuplierModalLabel">Cari Suplier</h5>
@@ -271,34 +249,6 @@
 						<th>Nama</th>
 						<th>Alamat</th>
 						<th>Kota</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-
-	<div class="modal fade" id="browseAccountModal" tabindex="-1" role="dialog" aria-labelledby="browseAccountModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title" id="browseAccountModalLabel">Cari Account</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body">
-			<table class="table table-stripped table-bordered" id="table-baccount">
-				<thead>
-					<tr>
-						<th>Acc#</th>
-						<th>Nama</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -333,25 +283,6 @@
 		idrow=<?=$no?>;
 		baris=<?=$no?>;
 
-		
-		$('body').on('keydown', 'input, select', function(e) {
-			if (e.key === "Enter") {
-				var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
-				focusable = form.find('input,select,textarea').filter(':visible');
-				next = focusable.eq(focusable.index(this)+1);
-				console.log(next);
-				if (next.length) {
-					next.focus().select();
-				} else {
-					tambah();
-					var nomer = idrow-1;
-					console.log("REC"+nomor);
-					document.getElementById("REC"+nomor).focus();
-					// form.submit();
-				}
-				return false;
-			}
-		});
 
 		
 		$tipx = $('#tipx').val();
@@ -496,7 +427,7 @@
 					for(i=0; i<resp.length; i++){
 						
 						dTableBBeli.row.add([
-							'<a href="javascript:void(0);" onclick="chooseBeli(\''+resp[i].NO_BUKTI+'\', \''+resp[i].TOTAL+'\' , \''+resp[i].SISA+'\'   )">'+resp[i].NO_BUKTI+'<input id="pilihFaktur'+i+'" hidden value="'+resp[i].NO_BUKTI+'"></a>',
+							'<a href="javascript:void(0);" onclick="chooseBeli(\''+resp[i].NO_BUKTI+'\',  \''+resp[i].KODES+'\',   \''+resp[i].NAMAS+'\',  \''+resp[i].TOTAL+'\' ,  \''+resp[i].BAYAR+'\', \''+resp[i].SISA+'\'   )">'+resp[i].NO_BUKTI+'<input id="pilihFaktur'+i+'" hidden value="'+resp[i].NO_BUKTI+'"></a>',
 							resp[i].KODES,
 							resp[i].NAMAS,
 							'<label for="pilihTotal" id="pilihTotal'+i+'" value="'+resp[i].TOTAL+'">'+Intl.NumberFormat('en-US').format(resp[i].TOTAL)+'</label>',
@@ -526,9 +457,9 @@
 			$("#browseBeliModal").modal("show");
 		}
 		
-		chooseBeli = function(NO_BUKTI, TOTAL, SISA){
+		chooseBeli = function(NO_BUKTI,KODES, NAMAS, TOTAL, BAYAR, SISA){
 			$("#NO_FAKTUR"+rowidBeli).val(NO_BUKTI);
-			$("#TOTAL"+rowidBeli).val(TOTAL);
+			$("#TOTAL"+rowidBeli).val(SISA);
 			$("#BAYAR"+rowidBeli).val(SISA);	
 			$("#TOTAL"+rowidBeli).autoNumeric('update');
 			$("#BAYAR"+rowidBeli).autoNumeric('update');
@@ -588,7 +519,7 @@
 			for (i=0 ; i<fakturArr.length ; i++) 
 			{
 				$("#NO_FAKTUR"+(rowidBeli+i)).val(fakturArr[i]);
-				$("#TOTAL"+(rowidBeli+i)).val(totalArr[i]);
+				$("#TOTAL"+(rowidBeli+i)).val(sisaArr[i]);
 				$("#BAYAR"+(rowidBeli+i)).val(sisaArr[i]);
 			};
 
@@ -605,114 +536,6 @@
 
 
  	//////////////////////////////////////////////////
-
-	//////////////////////////////////////
-
-	var dTableBAccount;
-		var tipex ;
-		
-		loadDataBAccount = function(){
-			
-		  if ( tipex == '0' )
-		  {
-			$.ajax(
-			{
-				type: 'GET',    
-				url: '{{url('account/browse')}}',
-				success: function( response )
-				{
-					resp = response;
-					if(dTableBAccount){
-						dTableBAccount.clear();
-					}
-					for(i=0; i<resp.length; i++){
-						
-						dTableBAccount.row.add([
-							'<a href="javascript:void(0);" onclick="chooseAccount(\''+resp[i].ACNO+'\',  \''+resp[i].NAMA+'\' )">'+resp[i].ACNO+'</a>',
-							resp[i].NAMA,
-						]);
-					}
-					dTableBAccount.draw();
-				}
-			});
-			
-		  }
-		  	
-		  if ( tipex == '1' )
-		  {
-			
-			  
-			$.ajax(
-			{
-				type: 'GET',    
-				url: '{{url('account/browsebank')}}',
-				success: function( response )
-				{
-					resp = response;
-					if(dTableBAccount){
-						dTableBAccount.clear();
-					}
-					for(i=0; i<resp.length; i++){
-						
-						dTableBAccount.row.add([
-							'<a href="javascript:void(0);" onclick="chooseAccount(\''+resp[i].ACNO+'\',  \''+resp[i].NAMA+'\' )">'+resp[i].ACNO+'</a>',
-							resp[i].NAMA,
-						]);
-					}
-					dTableBAccount.draw();
-				}
-			});
-			
-		  }
-		  
-			
-		}
-		
-		dTableBAccount = $("#table-baccount").DataTable({
-			
-		});
-		
-		browseAccount = function(rid){
-			tipex = rid;
-			loadDataBAccount();
-			$("#browseAccountModal").modal("show");
-		}
-		
-		chooseAccount = function(ACNO, NAMA){
-			
-			if ( tipex =='0' )
-			{
-			  $("#ACNOA").val(ACNO);
-			  $("#NACNOA").val(NAMA);
-			}
-			
-			if ( tipex =='1' )
-			{
-			  $("#BACNO").val(ACNO);
-			  $("#BNAMA").val(NAMA);
-			}
-			
-			$("#browseAccountModal").modal("hide");
-		}
-		
-		$("#ACNOA").keypress(function(e){
-			if(e.keyCode == 46){
-				e.preventDefault();
-				browseAccount(0);
-			}
-		});
-		
-		$("#BACNO").keypress(function(e){
-			if(e.keyCode == 46){
-				e.preventDefault();
-				browseAccount(1);
-			}
-		}); 
-
-
-
-		
-		///////////////////////////////////////////////////////////////////////////////////////////////	
 		
 		
     });
@@ -886,14 +709,6 @@
 			$("#TOTAL" + i.toString()).attr("readonly", true);
 			$("#BAYAR" + i.toString()).attr("readonly", false);
 			$("#DELETEX" + i.toString()).attr("hidden", false);
-
-			$tipx = $('#tipx').val();
-		
-			
-			if ( $tipx != 'new' )
-			{
-				$("#NO_FAKTUR" + i.toString()).removeAttr('onclick');	
-			}
 		}
 
 
@@ -992,7 +807,7 @@
 	            </td>
 						       
                 <td>
-				    <input name='NO_FAKTUR[]' onclick="browseBeli(${idrow})" data-rowid=${idrow}  id='NO_FAKTUR${idrow}' type='text' class='form-control  NO_FAKTUR' required readonly>
+				    <input name='NO_FAKTUR[]' data-rowid=${idrow}  id='NO_FAKTUR${idrow}' type='text' class='form-control  NO_FAKTUR' required readonly>
                 </td>
 				
 				<td>

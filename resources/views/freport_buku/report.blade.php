@@ -47,7 +47,7 @@
 						<div class="form-group row">
 							<div class="col-md-1" align="right"><strong>s/d</strong></div> 
 							<div class="col-md-2">
-								<input type="text" class="form-control acno2"  id="acno2" name="acno2" placeholder="Pilih Acc# 2" value="{{ session()->get('filter_acno2') }}" readonly>
+								<input type="text" class="form-control acno2" id="acno2" name="acno2" placeholder="Pilih Acc# 2" value="{{ session()->get('filter_acno2') }}" readonly>
 							</div>  
 							<div class="col-md-3">
 								<input type="text" class="form-control nacc2" id="nacc2" name="nacc2" placeholder="Nama" value="{{ session()->get('filter_nacc2') }}" readonly>
@@ -73,8 +73,8 @@
 						<button class="btn btn-warning" type="submit" id="cetak" class="cetak" formtarget="_blank">Cetak</button>
 						</form>
 						<div style="margin-bottom: 15px;"></div>
-						
-						<!-- <table class="table table-fixed table-striped table-border table-hover nowrap datatable">
+{{-- 						
+						<table class="table table-fixed table-striped table-border table-hover nowrap datatable">
 							<thead class="table-dark">
 								<tr>
 									<th scope="col" style="text-align: center">#</th>
@@ -99,7 +99,7 @@
 							<tfoot>
 								<tr>
 									<th></th>
-									<th></th>
+									<th>Total</th>
 									<th></th>
 									<th></th>
 									<th></th>
@@ -112,7 +112,7 @@
 									<th></th>
 								</tr>
 							</tfoot>
-						</table> -->
+						</table> --}}
 						<div class="report-content" col-md-12>
                         <?php
                         use \koolreport\datagrid\DataTables;
@@ -203,7 +203,7 @@
                                     "columnDefs"=>array(
                                         array(
                                             "className" => "dt-right", 
-                                            "targets" => [9,10,11,12],
+                                            "targets" => [7,8,9,10],
                                         ),
                                     ),
                                     "order" => [],

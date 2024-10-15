@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kasn" language="groovy" pageWidth="609" pageHeight="842" columnWidth="605" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" uuid="bfad45cf-72e9-4697-a6dc-fa407eb0bfe2">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -110,7 +110,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Tahoma" size="12"/>
 				</textElement>
-				<text><![CDATA[UD. Jago]]></text>
+				<text><![CDATA[-]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="45" y="80" width="16" height="18" uuid="07141863-22cd-45b7-ac7c-d5af7e6355b7"/>
@@ -145,14 +145,14 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Tahoma" size="10"/>
 				</textElement>
-				<text><![CDATA[Ds. Gaji, Kec. Kerek-Tuban]]></text>
+				<text><![CDATA[-]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="5" y="38" width="139" height="15" uuid="9acef8d3-8959-4133-aebd-544ee945bc89"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Tahoma" size="10"/>
 				</textElement>
-				<text><![CDATA[Telp. 085-335-271-230]]></text>
+				<text><![CDATA[-]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="61" y="98" width="224" height="18" uuid="c731448b-caeb-4765-b898-034dfb821453"/>

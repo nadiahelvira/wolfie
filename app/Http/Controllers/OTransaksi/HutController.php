@@ -64,12 +64,10 @@ class HutController extends Controller
 
 		$this->setFlag($request);	
 		
-		$CBG = Auth::user()->CBG;
-
        $hut = DB::SELECT("SELECT NO_ID, NO_BUKTI, 
 	   TGL, KODES, NAMAS, KOTA, TOTAL, BAYAR, NOTES, POSTED, FLAG,
 	   USRNM from hut 
-	   where PER = '$periode' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+	   where PER = '$periode' ORDER BY NO_BUKTI ");
 	   	
 		
 // ganti 6
@@ -157,35 +155,20 @@ class HutController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
-        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
 		
         $bulan	= session()->get('periode')['bulan'];
 		$tahun	= substr(session()->get('periode')['tahun'],-2);
 
-        $query = DB::table('hut')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ)->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('hut')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ  )->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'HT' . $CBG . $tahun . $bulan . '-' . $query;
+            $no_bukti = 'HT' . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'HT' . $CBG . $tahun . $bulan . '-0001';
-        }
-
-        /////////////////////////////////////////////////////////////////////////////////
-
-        $bulan    = session()->get('periode')['bulan'];
-        $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query2 = DB::table('bank')->select('NO_BUKTI')->where('PER', $periode)->where('TYPE', 'BBK')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
-
-        if ($query2 != '[]') {
-            $query2 = substr($query2[0]->NO_BUKTI, -4);
-            $query2 = str_pad($query2 + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti2 = 'BBK' . $CBG . $tahun . $bulan . '-' . $query2;
-        } else {
-            $no_bukti2 = 'BBK' . $CBG . $tahun . $bulan . '-0001';
+            $no_bukti = 'HT' . $tahun . $bulan . '-0001';
         }
 		
         // Insert Header
@@ -202,15 +185,9 @@ class HutController extends Controller
                 'NOREK'            => ($request['NOREK']==null) ? "" : $request['NOREK'],						
 				'FLAG'             => 'B',
 				'NOTES'            => ($request['NOTES']==null) ? "" : $request['NOTES'],
-				'BACNO'            => ($request['BACNO']==null) ? "" : $request['BACNO'],
-				'BNAMA'            => ($request['BNAMA']==null) ? "" : $request['BNAMA'],
-				'TYPE'            => ($request['TYPE']==null) ? "" : $request['TYPE'],
-                'BAYAR'            => (float) str_replace(',', '', $request['TBAYAR']),
-                'LAIN'             => (float) str_replace(',', '', $request['TLAIN']),
-                
-                'NO_BANK'          => $no_bukti2,				
+                'BAYAR'        => (float) str_replace(',', '', $request['TBAYAR']),
+                'LAIN'        => (float) str_replace(',', '', $request['TLAIN']),
 				'USRNM'            => Auth::user()->username,
-                'CBG'              => $CBG,
 				'TG_SMP'           => Carbon::now()
             ]
         );
@@ -246,7 +223,7 @@ class HutController extends Controller
 
 
 //  ganti 11
-		// $variablell = DB::select('call hutins(?)',array($no_bukti));
+		$variablell = DB::select('call hutins(?)',array($no_bukti));
 
        $no_buktix = $no_bukti;
 		
@@ -293,8 +270,8 @@ class HutController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-		
-        $CBG = Auth::user()->CBG;
+			
+
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -310,8 +287,7 @@ class HutController extends Controller
     	   $buktix = $request->buktix;
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
-		                 where PER ='$per'  and NO_BUKTI = '$buktix'	
-                         AND CBG = '$CBG'					 
+		                 where PER ='$per'  and NO_BUKTI = '$buktix'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -331,8 +307,7 @@ class HutController extends Controller
 			
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
-		                 where PER ='$per' 	
-                         AND CBG = '$CBG'  
+		                 where PER ='$per'   
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -355,8 +330,7 @@ class HutController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut     
 		             where PER ='$per' and NO_BUKTI < 
-					 '$buktix'	
-                     AND CBG = '$CBG' ORDER BY NO_BUKTI DESC LIMIT 1" );
+					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -378,8 +352,7 @@ class HutController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut    
 		             where PER ='$per'  and NO_BUKTI > 
-					 '$buktix'	
-                     AND CBG = '$CBG' ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -397,7 +370,7 @@ class HutController extends Controller
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from hut
 						where PER ='$per' 
-                        AND CBG = '$CBG'ORDER BY NO_BUKTI DESC  LIMIT 1" );
+		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -467,7 +440,7 @@ class HutController extends Controller
         );
 		
 // ganti 20
-		// $variablell = DB::select('call hutdel(?)',array($hut['NO_BUKTI']));		
+		$variablell = DB::select('call hutdel(?)',array($hut['NO_BUKTI']));		
 
         // ganti 20
         $periode = $request->session()->get('periode')['bulan']. '/' . $request->session()->get('periode')['tahun'];
@@ -476,7 +449,6 @@ class HutController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;
 		
-        $CBG = Auth::user()->CBG;
 		
 	
         $hut->update(
@@ -487,11 +459,7 @@ class HutController extends Controller
 				'NOTES'            => ($request['NOTES']==null) ? "" : $request['NOTES'],
                 'BAYAR'            => (float) str_replace(',', '', $request['TBAYAR']),
                 'LAIN'            => (float) str_replace(',', '', $request['TLAIN']),
-				'BACNO'            => ($request['BACNO']==null) ? "" : $request['BACNO'],
-				'BNAMA'            => ($request['BNAMA']==null) ? "" : $request['BNAMA'],
-				'TYPE'            => ($request['TYPE']==null) ? "" : $request['TYPE'],
 				'USRNM'            => Auth::user()->username,
-                'CBG'              => $CBG,
 				'TG_SMP'           => Carbon::now()	
             ]
         );
@@ -557,7 +525,7 @@ class HutController extends Controller
 
 
 //  ganti 21
-		// $variablell = DB::select('call hutins(?)',array($hut['NO_BUKTI']));
+		$variablell = DB::select('call hutins(?)',array($hut['NO_BUKTI']));
 		
 
  		$hut = Hut::where('NO_BUKTI', $no_buktix )->first();
@@ -592,7 +560,7 @@ class HutController extends Controller
                 ->with(['judul' => $this->judul, 'flagz' => $this->FLAGZ]);
         }
 		
-		// $variablell = DB::select('call hutdel(?)',array($hut['NO_BUKTI']));
+		$variablell = DB::select('call hutdel(?)',array($hut['NO_BUKTI']));
 		
 		
 // ganti 23

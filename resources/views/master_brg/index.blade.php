@@ -74,8 +74,8 @@
             processing: true,
             serverSide: true,
             autoWidth: true,
-            // 'scrollX': true,
-            // 'scrollY': '400px',	
+            'scrollX': true,
+            'scrollY': '400px',	
             "order": [[ 0, "asc" ]],
             ajax: 
             {
@@ -88,9 +88,9 @@
                   data: 'action',
                   name: 'action'
                 },
-				        {data: 'KD_BRG', name: 'KD_BRG'},
+				{data: 'KD_BRG', name: 'KD_BRG'},
                 {data: 'NA_BRG', name: 'NA_BRG'},
-				        {data: 'GOL', name: 'GOL'},
+				{data: 'GOL', name: 'GOL'},
                 {data: 'SATUAN', name: 'SATUAN'},
             ],
             columnDefs: [

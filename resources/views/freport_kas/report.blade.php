@@ -66,11 +66,11 @@
 					
 					<div class="report-content" col-md-12>
 					<?php
-				//	use \koolreport\datagrid\DataTables;
+					use \koolreport\datagrid\DataTables;
 
 					if($hasil)
 					{
-					 \koolreport\datagrid\DataTables::create([
+						DataTables::create(array(
 							"dataSource" => $hasil,
 							"name" => "example",
 							"fastRender" => true,
@@ -164,7 +164,7 @@
                                         ),
                                     ),
                                 ),
-                            ]);
+                            ));
                         }
                         ?>
                     <!-- DISINI BATAS AKHIR KOOLREPORT-->

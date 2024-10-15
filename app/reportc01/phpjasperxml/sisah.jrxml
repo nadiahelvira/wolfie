@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="brgpr01" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfad45cf-72e9-4697-a6dc-fa407eb0bfe2">
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="brgpr01" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfad45cf-72e9-4697-a6dc-fa407eb0bfe2">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -24,8 +33,7 @@
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<subDataset name="Table Dataset 1" uuid="1ca77ded-8c64-4fed-a35d-53c974271eab"/>
-	<parameter name="compan01" class="java.lang.String"/>
+	<parameter name="COMPAN01" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT KD_BRG, NA_BRG, TGL, AWAL, MASUK, KELUAR, LAIN, AKHIR FROM KARTU]]>
 	</queryString>
@@ -81,116 +89,202 @@
 	<variable name="var_saldo" class="java.lang.String" calculation="Sum">
 		<variableExpression><![CDATA[$F{SALDO}]]></variableExpression>
 	</variable>
+	<variable name="subtotal" class="java.lang.String" resetType="Group" resetGroup="Group1Supl" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<group name="Group1Supl" minHeightToStartNewPage="1">
+		<groupExpression><![CDATA[$F{KODES}]]></groupExpression>
+		<groupHeader>
+			<band height="43">
+				<staticText>
+					<reportElement x="20" y="23" width="110" height="20" uuid="07abada3-9de1-42a8-b0b4-78f19385025d"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Bukti#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="130" y="23" width="250" height="20" uuid="b86d2036-041d-497e-ba94-f34749ec9ae6"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Tgl]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="380" y="23" width="100" height="20" uuid="ebeb2d07-be7a-4991-9d76-98c983872012"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="20" y="3" width="360" height="20" uuid="587d13b8-0954-45ad-950b-16b522460510"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Suplier : "+$F{KODES} +"/" + $F{NAMAS}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<staticText>
+					<reportElement x="310" y="1" width="70" height="20" uuid="7fd99bdd-bb6a-405f-88c1-5be30e51369f"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Total :]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="380" y="1" width="100" height="20" uuid="3e5d7a48-29f7-4bd1-b85c-321f024c9e25"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{subtotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="1" width="290" height="20" uuid="db9ed697-d300-4f5f-af58-1a25ebfda238"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<title>
-		<band height="64" splitType="Stretch">
+	<pageHeader>
+		<band height="30" splitType="Stretch">
 			<staticText>
-				<reportElement x="253" y="34" width="216" height="20" uuid="3bc95b2a-8959-4d0b-ba9b-e4ece6bcb96e"/>
-				<textElement>
+				<reportElement x="160" y="10" width="209" height="20" uuid="f4611821-4708-424c-9bce-c0f9714b0118"/>
+				<textElement textAlignment="Center">
 					<font fontName="Tahoma" size="14" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[Sisa Hutang Suplier]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="522" y="6" width="80" height="20" uuid="663d8198-c7fb-41cd-a11a-fd282d12016d"/>
+				<reportElement x="383" y="10" width="56" height="20" uuid="0282f7b0-3008-49cc-974e-f736cd0ce8b8"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="602" y="6" width="40" height="20" uuid="b8c2b5ec-666d-47cc-ad9d-d0b1db12d931"/>
+				<reportElement x="439" y="10" width="40" height="20" uuid="b2910748-06f5-4e72-aee0-c1adc835560e"/>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement x="8" y="6" width="245" height="19" uuid="efc42e7e-35b1-45fb-a73e-c734c61fa2ae"/>
+			<staticText>
+				<reportElement x="0" y="-1" width="120" height="21" uuid="0c8bd724-a97a-4800-92db-e5b535c75483"/>
 				<textElement>
-					<font fontName="Tahoma" size="12" isItalic="false" isUnderline="true"/>
+					<font fontName="Tahoma"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{compan01}]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[-]]></text>
+			</staticText>
 		</band>
-	</title>
-	<pageHeader>
-		<band height="2" splitType="Stretch"/>
 	</pageHeader>
-	<columnHeader>
-		<band height="56" splitType="Stretch">
-			<rectangle>
-				<reportElement mode="Transparent" x="0" y="25" width="784" height="27" uuid="f81bc58e-6c25-469e-9ba4-a692cc3c78f9"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="4" y="0" width="75" height="20" uuid="11fc26c9-7137-4ba9-8fca-a55233bd4ba8"/>
-				<text><![CDATA[Kode]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="188" y="0" width="59" height="20" uuid="4ded7af7-41f5-486b-a2a7-d2f5d6465222"/>
-				<text><![CDATA[Nama]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="256" y="30" width="61" height="20" uuid="a18d19e4-4ea6-4a5a-99db-52b1a5682f4f"/>
-				<text><![CDATA[Total]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="90" y="0" width="73" height="20" uuid="3b0377ef-0e6f-4a5d-a778-5cc3c24f8b25"/>
-				<textElement textAlignment="Left"/>
-				<textFieldExpression><![CDATA[$F{KODES}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="240" y="-2" width="136" height="20" uuid="15b4ce8a-c414-4723-ae25-a6a1154daccd"/>
-				<textElement textAlignment="Left"/>
-				<textFieldExpression><![CDATA[$F{NAMAS}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="3" y="32" width="75" height="20" uuid="858f27d2-37d1-435a-9b01-0857b58cba63"/>
-				<text><![CDATA[Bukti#]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="108" y="32" width="75" height="20" uuid="977993d3-283c-4609-95bd-9da0ef21c6a2"/>
-				<text><![CDATA[Tgl]]></text>
-			</staticText>
-		</band>
-	</columnHeader>
 	<detail>
-		<band height="28" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="218" y="2" width="102" height="20" uuid="f5b1830a-1e8a-4753-bad7-4a3df0f43ec7"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="380" y="0" width="100" height="20" uuid="f5b1830a-1e8a-4753-bad7-4a3df0f43ec7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="0" y="2" width="100" height="20" uuid="fff272a5-1a82-4b2c-9880-c9f0d1cf6fff"/>
-				<textElement textAlignment="Left"/>
-				<textFieldExpression><![CDATA[$F{NO_BUKTI}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="110" y="2" width="100" height="20" uuid="b7cb414a-e5e0-4ad4-b447-66231d43d87e"/>
-				<textElement textAlignment="Left"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="130" y="0" width="250" height="20" uuid="b7cb414a-e5e0-4ad4-b447-66231d43d87e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{TGL}]]></textFieldExpression>
 			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="20" y="0" width="110" height="20" uuid="35973f63-02b1-44ce-ab4c-af83543dfd99"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NO_BUKTI}]]></textFieldExpression>
+			</textField>
 		</band>
-		<band height="1"/>
 	</detail>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
 	<pageFooter>
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="32" splitType="Stretch">
-			<line>
-				<reportElement x="4" y="4" width="780" height="1" uuid="e82e0fd6-8ab4-4c90-b24f-7b7e807a7a66"/>
-			</line>
+		<band height="22" splitType="Stretch">
 			<staticText>
-				<reportElement x="188" y="7" width="39" height="20" uuid="ac96104d-71cf-41dd-8ab0-afb337f9e99a"/>
-				<text><![CDATA[Total :]]></text>
+				<reportElement x="310" y="2" width="70" height="20" uuid="10b8022b-c0d1-4309-b4c4-d5fef4d873a3"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Grand Total :]]></text>
 			</staticText>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="218" y="7" width="102" height="20" uuid="349af15a-d383-44f4-8f92-9324d7be2410"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="380" y="2" width="100" height="20" uuid="ec7fe0ce-fff2-4f86-abdb-044eb092106f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{var_total}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="20" y="2" width="290" height="20" uuid="5e04f044-0488-445c-8af2-e58fb04c6e35"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[]]></text>
+			</staticText>
 		</band>
 	</summary>
 </jasperReport>

@@ -95,7 +95,6 @@
                     <!-- DISINI BATAS AWAL KOOLREPORT-->
                     <div class="report-content" col-md-12>
                         <?php
-                        
                         use \koolreport\datagrid\DataTables;
 
                         if($hasil)

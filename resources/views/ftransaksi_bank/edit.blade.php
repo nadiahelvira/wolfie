@@ -19,6 +19,8 @@
 
 @section('content')
 
+
+
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -48,7 +50,7 @@
         
                             <div class="form-group row">
                                 <div class="col-md-1">
-                                    <label for="NO_BUKTI" class="form-label">Bukti#</label>
+                                    <label for="NO_BUKTI" class="form-label">Bukti@</label>
                                 </div>
 
 								<input name="tipx" class="form-control tipx" id="tipx" value="{{$tipx}}" hidden>
@@ -66,9 +68,9 @@
 					
 								<div class="col-md-3 input-group">
 
-									<input type="text" hidden class="form-control CARI" id="CARI" name="CARI"
+									<input type="text" class="form-control CARI" id="CARI" name="CARI"
                                     placeholder="Cari Bukti#" value="" >
-									<button type="button" hidden id='SEARCHX'  onclick="CariBukti()" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
+									<button type="button" id='SEARCHX'  onclick="CariBukti()" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
 
 								</div> 
 								
@@ -95,7 +97,7 @@
                                     <label for="BACNO" class="form-label">Bank</label>
                                 </div>
                                 <div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control BACNO" onclick="browseAccount1()" id="BACNO" name="BACNO" placeholder="Masukkan Bank"value="{{$header->BACNO}}" style="text-align: left" readonly >
+                                  <input type="text" class="form-control BACNO" id="BACNO" name="BACNO" placeholder="Masukkan Bank"value="{{$header->BACNO}}" style="text-align: left" readonly >
                                 </div>
 								<div class="col-md-4">
                                     <input type="text" class="form-control BNAMA" id="BNAMA" name="BNAMA"
@@ -146,8 +148,13 @@
                                             class="form-control REC"  readonly>
                                         </td>
                                          <td>
-                                            <input name="ACNO[]" id="ACNO{{$no}}" onclick="browseAccount({{$no}})" type="text" value="{{$detail->ACNO}}"
-                                              class="form-control ACNO " required readonly >
+
+											<select name="ACNO[]" id="ACNO{{$no}}" class="form-control ACNO" style="width: 200px">
+												@foreach($acno as $acnod)
+													<option value="{{$acnod->ACNO}}" {{ ( $acnod->ACNO == $detail->ACNO) ? 'selected' : '' }} >{{$acnod->NAMA}}</option>
+												@endforeach
+											</select>
+
 										</td>		
 										 <td>
                                              <input name="NACNO[]" id="NACNO{{$no}}" type="text" value="{{$detail->NACNO}}"
@@ -207,7 +214,7 @@
 								<button type="button" id='NEWX' onclick="location.href='{{url('/bank/edit/?idx=0&tipx=new&flagz='.$flagz.'' )}}'" class="btn btn-warning">New</button>
 								<button type="button" id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
 								<button type="button" id='UNDOX' onclick="location.href='{{url('/bank/edit/?idx=' .$idx. '&tipx=undo&flagz='.$flagz.'' )}}'" class="btn btn-info">Undo</button>  
-								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success" class="fa fa-save"></i>Save</button>
+								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success"<i class="fa fa-save"></i>Save</button>
 
 							</div>
 							<div class="col-md-3">
@@ -337,8 +344,7 @@
         if ( $tipx == 'new' )
 		{
 			 baru();	
-             tambah();
-			 
+             tambah();			 
 		}
 
         if ( $tipx != 'new' )
@@ -596,7 +602,7 @@
 	function ganti() {
 		
 		 mati();
-		// hidup();
+	
 	}
 	
 	function batal() {
@@ -626,7 +632,7 @@
 	    $("#SAVEX").attr("disabled", false);
 		
 	    $("#HAPUSX").attr("disabled", true);
-	    //$("#CLOSEX").attr("disabled", true);
+	    $("#CLOSEX").attr("disabled", true);
 
 
 		$("#CARI").attr("readonly", true);	
@@ -705,8 +711,8 @@
 		 $('#BACNO').val("");	
 		 $('#BNAMA').val("");	
 		 $('#KET').val("");	
+
 		 $('#TJUMLAH').val("0.00");	
-		 
 		 
 		var html = '';
 		$('#detailx').html(html);	
@@ -745,7 +751,7 @@
 	            </td>
 						       
                 <td>
-				    <input name='ACNO[]' data-rowid=${idrow} onclick='browseAccount(${idrow})' id='ACNO${idrow}' type='text' class='form-control  ACNO' required readonly>
+				    <input name='ACNO[]' data-rowid=${idrow}  id='ACNO${idrow}' type='text' class='form-control  ACNO' required readonly>
                 </td>
                 <td>
 				    <input name='NACNO[]'   id='NACNO${idrow}' type='text' class='form-control  NACNO' required readonly>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="KARSTK01" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfad45cf-72e9-4697-a6dc-fa407eb0bfe2">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -57,25 +58,37 @@
 	<group name="Item">
 		<groupExpression><![CDATA[$F{KD_BRG}]]></groupExpression>
 		<groupHeader>
-			<band height="33">
+			<band height="22">
 				<textField>
-					<reportElement x="5" y="8" width="189" height="20" uuid="dddc6b73-5a89-4ccb-8d25-ab9c3386dda7"/>
+					<reportElement x="2" y="1" width="278" height="20" uuid="dddc6b73-5a89-4ccb-8d25-ab9c3386dda7"/>
+					<textElement>
+						<font fontName="CourierN"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{KD_BRG}+'-'+$F{NA_BRG}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="3" y="30" width="191" height="1" uuid="cc9b9a34-85bd-434c-af32-c2526b59d77e"/>
+					<reportElement x="3" y="21" width="277" height="1" uuid="cc9b9a34-85bd-434c-af32-c2526b59d77e"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
 				</line>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="32">
+			<band height="43">
 				<line>
-					<reportElement x="5" y="0" width="549" height="1" uuid="3bd33a8c-1fa6-405f-be89-4723023a751e"/>
+					<reportElement x="3" y="0" width="549" height="1" uuid="3bd33a8c-1fa6-405f-be89-4723023a751e"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
 				</line>
-				<staticText>
-					<reportElement x="142" y="4" width="59" height="20" uuid="7af2483c-51a5-443f-a516-6c0417c5d4af"/>
-					<text><![CDATA[Total :]]></text>
-				</staticText>
+				<textField>
+					<reportElement x="140" y="1" width="66" height="20" uuid="441ff491-6719-4925-a246-0cfacd238c4e"/>
+					<textElement>
+						<font fontName="CourierN"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total :"]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -83,91 +96,143 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="44" splitType="Stretch">
-			<staticText>
-				<reportElement x="5" y="5" width="216" height="20" uuid="3bc95b2a-8959-4d0b-ba9b-e4ece6bcb96e"/>
-				<textElement>
-					<font fontName="Tahoma" size="14" isUnderline="true"/>
+		<band height="26" splitType="Stretch">
+			<textField>
+				<reportElement x="169" y="3" width="216" height="20" uuid="d0d60c2a-d537-4f21-a6ee-d8f5dab649d8"/>
+				<textElement textAlignment="Center">
+					<font fontName="CourierN" size="14" isUnderline="true"/>
 				</textElement>
-				<text><![CDATA[Report - Item Card]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["Report - Item Card"]]></textFieldExpression>
+			</textField>
 			<textField>
 				<reportElement x="432" y="6" width="80" height="20" uuid="663d8198-c7fb-41cd-a11a-fd282d12016d"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="512" y="6" width="40" height="20" uuid="b8c2b5ec-666d-47cc-ad9d-d0b1db12d931"/>
+				<textElement>
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="194" height="18" uuid="ef85a71c-7810-43c9-a2cd-dcd8bb514562"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["UD. Jago - Kerek Tuban"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="49" splitType="Stretch">
+		<band height="29" splitType="Stretch">
 			<rectangle>
-				<reportElement mode="Transparent" x="2" y="8" width="555" height="27" uuid="9f29e13f-0b92-47ac-a091-1e5d68103c5e"/>
+				<reportElement mode="Transparent" x="2" y="8" width="549" height="21" uuid="9f29e13f-0b92-47ac-a091-1e5d68103c5e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
 			</rectangle>
-			<staticText>
-				<reportElement x="3" y="8" width="100" height="20" uuid="e696da41-1872-4eb2-bd4c-9fceb179b686"/>
-				<text><![CDATA[BUKTI#]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="107" y="8" width="59" height="20" uuid="56069e93-4b29-402e-b20f-2e3c10a50d17"/>
-				<text><![CDATA[TGL]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="410" y="9" width="51" height="20" uuid="7820b662-9cef-41c8-9097-35554a4548b4"/>
-				<text><![CDATA[KOREKSI]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="288" y="9" width="44" height="20" uuid="4a9b4c2d-5fc2-4e0f-be17-1a5219210011"/>
-				<text><![CDATA[MASUK]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="226" y="9" width="36" height="20" uuid="259de4cb-6a4f-4da5-b295-cde8a86c7ad5"/>
-				<text><![CDATA[AWAL]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="465" y="9" width="42" height="20" uuid="444e0173-d066-4612-82ac-158627b9a000"/>
-				<text><![CDATA[SALDO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="347" y="9" width="46" height="20" uuid="5286c1a8-df6c-45a0-b74d-0cd1fcf91c34"/>
-				<text><![CDATA[KELUAR]]></text>
-			</staticText>
+			<textField>
+				<reportElement x="3" y="8" width="100" height="20" uuid="23c30183-42e0-417f-a61b-c109f73efbf8"/>
+				<textElement>
+					<font fontName="CourierN"/>
+				</textElement>
+				<textFieldExpression><![CDATA["BUKTI#"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="8" width="59" height="20" uuid="7d661fd4-2487-4588-99fa-5cace54c8f3c"/>
+				<textElement>
+					<font fontName="CourierN"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TGL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="402" y="9" width="59" height="20" uuid="2918303a-4f92-463b-a724-17dc7dcb1c29"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KOREKSI"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="273" y="9" width="58" height="20" uuid="c212daaa-698e-4105-8788-071bf4a7073f"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MASUK"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="226" y="9" width="46" height="20" uuid="352af59b-3c0b-4ce9-9aee-b9eb96791759"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
+				<textFieldExpression><![CDATA["AWAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="9" width="42" height="20" uuid="19077de2-7315-4787-a30b-cb2ea04dcfba"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SALDO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="338" y="9" width="58" height="20" uuid="2370785f-c38d-4dfa-9662-1b889d5668d3"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KELUAR"]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="29" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement x="4" y="8" width="100" height="20" uuid="b40156b6-0109-4587-b0f9-81048240f567"/>
+				<reportElement x="2" y="0" width="102" height="20" uuid="b40156b6-0109-4587-b0f9-81048240f567"/>
+				<textElement>
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{NO_BUKTI}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="107" y="8" width="100" height="20" uuid="15c7b745-49b0-4d1e-8130-17b6ea3837ba"/>
+				<reportElement x="107" y="0" width="100" height="20" uuid="15c7b745-49b0-4d1e-8130-17b6ea3837ba"/>
+				<textElement>
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{TGL}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="273" y="8" width="59" height="20" uuid="78c6c50f-28cb-45d5-b014-f27909ce0693"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="273" y="0" width="59" height="20" uuid="78c6c50f-28cb-45d5-b014-f27909ce0693"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{MASUK}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="338" y="9" width="59" height="20" uuid="2b972f1b-c0d0-40f1-9fb2-f661e1384d3b"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="338" y="0" width="59" height="20" uuid="2b972f1b-c0d0-40f1-9fb2-f661e1384d3b"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{KELUAR}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="402" y="9" width="59" height="20" uuid="1ef3f2a2-5655-46e3-afc0-d2578ddb5708"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="402" y="0" width="59" height="20" uuid="1ef3f2a2-5655-46e3-afc0-d2578ddb5708"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{LAIN}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="206" y="8" width="59" height="20" uuid="f5b1830a-1e8a-4753-bad7-4a3df0f43ec7"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="206" y="0" width="66" height="20" uuid="f5b1830a-1e8a-4753-bad7-4a3df0f43ec7"/>
+				<textElement textAlignment="Right">
+					<font fontName="CourierN"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{AWAL}]]></textFieldExpression>
 			</textField>
 		</band>

@@ -25,5 +25,14 @@ class ProfileController extends Controller
         $user->save();
         return redirect('/profile')->with('status', 'Password selesai diubah..');
     }
+	
+	 public function updateSetting(Request $request, User $user)
+    {
+        $user = User::find(Auth::user()->id);
+        $user->font_family = $request->font_family;
+		$user->font_size = $request->font_size;
+        $user->save();
+        return redirect('/profile')->with('status', 'Setting selesai diubah..');
+    }
 
 }

@@ -10,7 +10,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active">Sisa Piutang</li>
+                    <li class="breadcrumb-item active">Sisa Piutang</li>
                     </ol>
                 </div>
             </div>
@@ -23,44 +23,32 @@
             <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{url('jasper-piusisa-report')}}">
+                    <form method="POST" action="{{url('jasper-piu-sisa-report')}}">
                     @csrf
-                        <div class="form-group nowrap">
-                            <label><strong>Periode :</strong></label>
-                            <input type="text" class="col-md-2 form-control perio" id="perio" name="perio" placeholder="mm/yyyy" value="{{ session()->get('filter_perio') }}">
-                        </div>
+					<div class="form-group row">					
+						<div class="col-md-2">
+							<label><strong>Periode :</strong></label>
+							<select name="perio" id="perio" class="form-control perio" style="width: 200px">
+								<option value="">--Pilih Periode--</option>
+								@foreach($per as $perD)
+									<option value="{{$perD->PERIO}}" {{ session()->get('filter_per')== $perD->PERIO ? 'selected' : '' }}>{{$perD->PERIO}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
 						
 						<div class="form-group row">
-                            <div class="col-md-1">
-                                <label><strong>Gol :</strong></label>
-                                
-                                <select name="gol" id="gol" class="form-control gol">
-                                    <option value="Y" {{ session()->get('filter_gol')=='Y' ? 'selected': ''}}>Y</option>
-                                    <option value="Z" {{ session()->get('filter_gol')=='Z' ? 'selected': ''}}>Z</option>
-                                </select>
-                            </div>
-							<!--
-							<div class="col-md-3">
-								<label><strong>Customer :</strong></label>
-								<select name="kodec" id="kodec" class="form-control kodec" style="width: 200px">
-									<option value="">--Pilih Customer--</option>
-									@foreach($kodec as $kodecD)
-										<option value="{{$kodecD->KODEC}}">{{$kodecD->KODEC}} {{$kodecD->NAMAC}}</option>
-									@endforeach
-								</select>
-							</div>
-							-->
-                            <div class="col-md-2">						
-                                <label class="form-label">Customer</label>
-                                <input type="text" class="form-control kodec" id="kodec" name="kodec" placeholder="Pilih Customer" value="{{ session()->get('filter_kodec1') }}" readonly>
-                            </div>  
-                            <div class="col-md-3">
-                                <label class="form-label">Nama</label>
-                                <input type="text" class="form-control NAMAC" id="NAMAC" name="NAMAC" placeholder="Nama" value="{{ session()->get('filter_namac1') }}" readonly>
-                            </div>
-						</div>
-                    
 
+							<div class="col-md-2">						
+								<label class="form-label">Suplier</label>
+								<input type="text" class="form-control KODES" id="KODES" name="KODES" placeholder="Pilih Suplier" value="{{ session()->get('filter_kodes1') }}" readonly>
+							</div>  
+							<div class="col-md-3">
+								<label class="form-label">Nama</label>
+								<input type="text" class="form-control NAMAS" id="NAMAS" name="NAMAS" placeholder="Nama" value="{{ session()->get('filter_namas1') }}" readonly>
+							</div>
+						</div>
+						
 						
 						<!-- Filter Tanggal -->
 						<!-- <div class="form-group row">
@@ -74,10 +62,10 @@
 								type="text" autocomplete="off" value="{{ session()->get('filter_tglSampai') }}">
 							</div>
 						</div> -->
-                    
-                    <button class="btn btn-primary" type="submit" id="filter" class="filter" name="filter">Filter</button>
-                    <button class="btn btn-danger" type="button" id="resetfilter" class="resetfilter" onclick="window.location='{{url("rsisapiu")}}'">Reset</button>
-					<button class="btn btn-warning" type="submit" id="cetak" class="cetak" formtarget="_blank">Cetak</button>
+						
+						<button class="btn btn-primary" type="submit" id="filter" class="filter" name="filter">Filter</button>
+						<button class="btn btn-danger" type="button" id="resetfilter" class="resetfilter" onclick="window.location='{{url("rsisapiu")}}'">Reset</button>
+						<button class="btn btn-warning" type="submit" id="cetak" class="cetak" formtarget="_blank">Cetak</button>
                     </form>
                     <div style="margin-bottom: 15px;"></div>
                     <!--
@@ -87,9 +75,10 @@
                                 <th scope="col" style="text-align: center">#</th>
                                 <th scope="col" style="text-align: center">Bukti</th>
                                 <th scope="col" style="text-align: center">Tgl</th>
-                                <th scope="col" style="text-align: center">Customer#</th>
+                                <th scope="col" style="text-align: center">Suplier#</th>
                                 <th scope="col" style="text-align: center">-</th>
                                 <th scope="col" style="text-align: center">Sisa</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -156,7 +145,7 @@
                                     "columnDefs"=>array(
                                         array(
                                             "className" => "dt-right", 
-                                            "targets" => [5],
+                                            "targets" => [4],
                                         ),
                                     ),
                                     "order" => [],
@@ -195,20 +184,20 @@
     </div>
 </div>
 
-	<div class="modal fade" id="browseCustModal" tabindex="-1" role="dialog" aria-labelledby="browseCustModalLabel" aria-hidden="true">
+<div class="modal fade" id="browseCustomerModal" tabindex="-1" role="dialog" aria-labelledby="browseCustomerModalLabel" aria-hidden="true">
 	  	<div class="modal-dialog" role="document">
 			<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="browseCustModalLabel">Cari Customer</h5>
+				<h5 class="modal-title" id="browseCustomerModalLabel">Cari Customer</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<table class="table table-stripped table-bordered" id="table-cust">
+				<table class="table table-stripped table-bordered" id="table-bcust">
 					<thead>
 						<tr>
-							<th>Customer</th>
+							<th>Customer#</th>
 							<th>Nama</th>
 							<th>Alamat</th>
 							<th>Kota</th>
@@ -225,35 +214,6 @@
 	  	</div>
 	</div>
 	
-    <div class="modal fade" id="browseTujuanModal" tabindex="-1" role="dialog" aria-labelledby="browseTujanModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="browseSuplierModalLabel">Cari Tujuan</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body">
-            <table class="table table-stripped table-bordered" id="table-btujuan">
-                <thead>
-                    <tr>
-                        <th>Tujuan</th>
-                        <th>-</th>
-                        <th>Alamat</th>
-                        <th>Kota</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-        </div>
-    </div>
 	@endsection
 
 	@section('javascripts')
@@ -263,217 +223,59 @@
         $('.date').datepicker({  
             dateFormat: 'dd-mm-yy'
         }); 
-        /*
-        function fill_datatable( kodec = '', tglDr = '', tglSmp = '', lebih30 = '')
-        {
-            var dataTable = $('.datatable').DataTable({
-                dom: '<"row"<"col-4"B>>fltip',
-                lengthMenu: [
-                    [ 10, 25, 50, -1 ],
-                    [ '10 rows', '25 rows', '50 rows', 'Show all' ]
-                ],
-                processing: true,
-                serverSide: true,
-                autoWidth: true,
-                //'scrollX': true,
-                'scrollY': '400px',
-                "order": [[ 0, "asc" ]],
-                ajax: 
-                {
-                    url: "{{ url('get-piu-sisa') }}",
-                    data: {
-                        kodec: kodec,
-                        tglDr: tglDr,
-                        tglSmp: tglSmp,
-			            lebih30: lebih30,
-                    }
-                },
-                columns: 
-                [
-                    {data: 'DT_RowIndex', orderable: false, searchable: false },
-                    {data: 'NO_BUKTI', name: 'NO_BUKTI'},
-                    {data: 'TGL', name: 'TGL'},
-                    {data: 'KODEC', name: 'KODEC'},
-                    {data: 'NAMAC', name: 'NAMAC'},
-                    {
-                     data: 'SISA', 
-                     name: 'SISA',
-                     render: $.fn.dataTable.render.number( ',', '.', 2, '' )
-                    },
-                 ],
-                 
-                 columnDefs: [
-                  {
-                    "className": "dt-center", 
-                    "targets": 0
-                  },
-                  {
-                    targets: 2,
-                    render: $.fn.dataTable.render.moment( 'DD-MM-YYYY' )
-                  },
-                  {
-                    "className": "dt-right", 
-                    "targets": [5]
-                  }
-               
-                 ],
-                
-                ///////////////////////////////////////////////////
-                
-                footerCallback: function (row, data, start, end, display) {
-                    var api = this.api();
-         
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function (i) {
-                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-                    };
-         
-                    // Total over this page
-                    pageDebetTotal = api
-                        .column(5, { page: 'current' })
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-         
-                    // Update footer
-                    $(api.column(5).footer()).html(pageDebetTotal.toLocaleString('en-US'));
-                    //$(api.column(6).footer()).html(pageKreditTotal.toLocaleString('en-US'));
-                },
-                
-                
-            });
-        }
-        
-        $('#filter').click(function() {
-            var kodec = $('#kodec').val();
-            var tglDr = $('#tglDr').val();
-            var tglSmp = $('#tglSmp').val();
-	        var lebih30 = (document.getElementById('lebih30').checked==true) ? 1 : 0;
-            
-            if (kodec != '' || (tglDr != '' && tglSmp != ''))
-            {
-                $('.datatable').DataTable().destroy();
-                fill_datatable(kodec, tglDr, tglSmp, lebih30);
-            }
-        });
-
-        $('#resetfilter').click(function() {
-            var kodec = '';
-            var tglDr = '';
-            var tglSmp = '';
-	        var lebih30 = 0;
-
-            $('.datatable').DataTable().destroy();
-            fill_datatable(kodec, tglDr, tglSmp, lebih30);
-        });
-            */
-
-    });
-    
-		var dTableCust;
-		loadDataCust = function(){
+       
+ 		var dTableBCustomer;
+		loadDataBCustomer = function(){
 		
 			$.ajax(
 			{
 				type: 'GET', 		
 				url: "{{url('cust/browse')}}",
 				data: {
-					'GOL': $('#gol').val(),
+				
 				},
 				success: function( response )
 				{
 					resp = response;
-					if(dTableCust){
-						dTableCust.clear();
+					if(dTableBCustomer){
+						dTableBCustomer.clear();
 					}
 					for(i=0; i<resp.length; i++){
 						
-						dTableCust.row.add([
-							'<a href="javascript:void(0);" onclick="chooseCust(\''+resp[i].KODEC+'\',  \''+resp[i].NAMAC+'\', \''+resp[i].ALAMAT+'\',  \''+resp[i].KOTA+'\')">'+resp[i].KODEC+'</a>',
+						dTableBCustomer.row.add([
+							'<a href="javascript:void(0);" onclick="chooseCustomer(\''+resp[i].KODEC+'\',  \''+resp[i].NAMAC+'\', \''+resp[i].ALAMAT+'\',  \''+resp[i].KOTA+'\')">'+resp[i].KODEC+'</a>',
 							resp[i].NAMAC,
 							resp[i].ALAMAT,
 							resp[i].KOTA,
 						]);
 					}
-					dTableCust.draw();
+					dTableBCustomer.draw();
 				}
 			});
 		}
 		
-		dTableCust = $("#table-cust").DataTable({
+		dTableBCustomer = $("#table-bcust").DataTable({
 			
 		});
 		
-		browseCust = function(){
-			loadDataCust();
-			$("#browseCustModal").modal("show");
+		browseCustomer = function(){
+			loadDataBCustomer();
+			$("#browseCustomerModal").modal("show");
 		}
 		
-		chooseCust = function(KODEC, NAMAC, ALAMAT, KOTA){
+		chooseCustomer = function(KODEC,NAMAC, ALAMAT, KOTA){
 			$("#kodec").val(KODEC);
 			$("#NAMAC").val(NAMAC);	
-			$("#browseCustModal").modal("hide");
+			$("#browseCustomerModal").modal("hide");
 		}
 		
 		$("#kodec").keypress(function(e){
 			if(e.keyCode == 46){
 				e.preventDefault();
-				browseCust();
+				browseCustomer();
 			}
-		});
+		}); 
 		
-		
-        var dTableBTujuan;
-        var rowidTujuan;
-        loadDataBTujuan = function(){
-            $.ajax(
-            {
-                type: 'GET',    
-                url: "{{url('tujuan/browse')}}",
-                data: {
-                    'GOL': 'Z',
-                },
-                success: function(resp)
-                {
-                    if(dTableBTujuan){
-                        dTableBTujuan.clear();
-                    }
-                    for(i=0; i<resp.length; i++){
-                        
-                        dTableBTujuan.row.add([
-                            '<a href="javascript:void(0);" onclick="chooseTujuan(\''+resp[i].KODET+'\',  \''+resp[i].NAMAT+'\',   \''+resp[i].ALAMAT+'\', \''+resp[i].KOTA+'\' )">'+resp[i].KODET+'</a>',
-                            resp[i].NAMAT,
-                            resp[i].ALAMAT,
-                            resp[i].KOTA,
-                            
-                        ]);
-                    }
-                    dTableBTujuan.draw();
-                }
-            });
-        }
-        
-        dTableBTujuan = $("#table-btujuan").DataTable({
-            
-        });
-        
-        browseTujuan = function(){
-            loadDataBTujuan();
-            $("#browseTujuanModal").modal("show");
-        }
-        
-        chooseTujuan = function(KODET,NAMAT,ALAMAT,KOTA){
-            $("#kodet").val(KODET);
-            $("#NAMAT").val(NAMAT);			
-            $("#browseTujuanModal").modal("hide");
-        }
-        
-        $("#kodet").keypress(function(e){
-            if(e.keyCode == 46){
-                e.preventDefault();
-                browseTujuan();
-            }
-        });
+}); 
 </script>
 @endsection

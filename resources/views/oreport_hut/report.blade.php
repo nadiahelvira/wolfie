@@ -26,12 +26,12 @@
 						<form method="POST" action="{{url('jasper-hut-report')}}">
 						@csrf
 						<div class="form-group row">
-							<!-- <div class="col-md-1">
+							<!--  <div class="col-md-1">
 								<label><strong>Gol :</strong></label>
 								
 								<select name="gol" id="gol" class="form-control gol">
 									<option value="Y" {{ session()->get('filter_gol')=='Y' ? 'selected': ''}}>Y</option>
-									<option value="Z" {{ session()->get('filter_gol')=='Z' ? 'selected': ''}}>Z</option>
+									<option value="Z" {{ session()->get('filter_gol')=='Z' ? 'selected': ''}}>Z</option> 
 								</select>
 							</div> -->
 							<div class="col-md-2">						
@@ -56,6 +56,8 @@
 								type="text" autocomplete="off" value="{{ session()->get('filter_tglSampai') }}">
 							</div>
 						</div>
+						
+							
 						
 						<button class="btn btn-primary" type="submit" id="filter" class="filter" name="filter">Filter</button>
 						<button class="btn btn-danger" type="button" id="resetfilter" class="resetfilter" onclick="window.location='{{url("rhut")}}'">Reset</button>
@@ -96,7 +98,7 @@
                                 "fixedHeader" => true,
                                 'scrollX' => true,
                                 "showFooter" => true,
-                                "showFooter" => "bottom",
+                                "showFooter" => "right",
                                 "columns" => array(
                                     "NO_BUKTI" => array(
                                         "label" => "Bukti#",
@@ -229,80 +231,7 @@
 				dateFormat: 'dd-mm-yy'
 			}); 
 			
-			/*
-			function fill_datatable( kodes = '' , gol='',tglDr = '', tglSmp = '' )
-			{
-				var dataTable = $('.datatable').DataTable({
-					dom: '<"row"<"col-4"B>>fltip',
-					lengthMenu: [
-						[ 10, 25, 50, -1 ],
-						[ '10 rows', '25 rows', '50 rows', 'Show all' ]
-					],
-					processing: true,
-					serverSide: true,
-					autoWidth: true,
-					'scrollX': true,
-					'scrollY': '400px',
-					"order": [[ 0, "asc" ]],
-					ajax: 
-					{
-						url: "{{ route('get-hut-report') }}",
-						data: {
-							kodes: kodes,
-							gol: gol,
-							tglDr: tglDr,
-							tglSmp: tglSmp
-						}
-					},
-					columns: 
-					[
-						{data: 'DT_RowIndex', orderable: false, searchable: false },
-						{data: 'NO_BUKTI', name: 'NO_BUKTI'},
-						{data: 'TGL', name: 'TGL'},
-						{data: 'KODES', name: 'KODES'},
-						{data: 'NAMAS', name: 'NAMAS'},
-						{data: 'NO_FAKTUR', name: 'NO_FAKTUR'},													
-						{
-						 data: 'TOTAL',
-					     name: 'TOTAL',
-					     render: $.fn.dataTable.render.number( ',', '.', 0, '' )
-				        },
-						{
-						 data: 'BAYAR',
-					     name: 'BAYAR',
-					     render: $.fn.dataTable.render.number( ',', '.', 0, '' )
-				        },
-				        {
-					     data: 'SISA',
-					     name: 'SISA',
-					     render: $.fn.dataTable.render.number( ',', '.', 0, '' )
-				        }
-					]
-				});
-			}
 			
-			$('#filter').click(function() {
-				var kodes = $('#kodes').val();
-				var gol = $('#gol').val();
-				var tglDr = $('#tglDr').val();
-				var tglSmp = $('#tglSmp').val();
-				if (kodes != ''|| (tglDr != '' && tglSmp != ''))
-				{
-					$('.datatable').DataTable().destroy();
-					fill_datatable(kodes, gol,tglDr, tglSmp);
-				}
-			});
-
-			$('#resetfilter').click(function() {
-				var kodes = '';
-				var gol = '';
-				var tglDr = '';
-				var tglSmp = '';
-
-				$('.datatable').DataTable().destroy();
-				fill_datatable(kodes, gol,tglDr, tglSmp);
-			});
-			*/
 		});
 		
 		var dTableBSuplier;
@@ -313,7 +242,7 @@
 				type: 'GET', 		
 				url: "{{url('sup/browse')}}",
 				data: {
-					'GOL': $('#gol').val(),
+				
 				},
 				success: function( response )
 				{

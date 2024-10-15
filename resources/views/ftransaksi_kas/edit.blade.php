@@ -14,10 +14,20 @@
         background-color: #FFFACD !important;
 		
     }
+
+	.table-scrollable {
+		margin: 0;
+		padding: 0;
+	}
+
+	table {
+		table-layout: fixed !important;
+	}
 	
 </style>
 
 @section('content')
+
 
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -28,6 +38,9 @@
         </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+	
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	
     <!-- /.content-header -->
 
     <div class="content">
@@ -36,7 +49,6 @@
             <div class="col-12">
             <div class="card">
                 <div class="card-body">
-
 																	
                     <form action="{{($tipx=='new')? url('/kas/store?flagz='.$flagz.'') : url('/kas/update/'.$header->NO_ID.'&flagz='.$flagz.'' ) }}" method="POST" name ="entri" id="entri" >
   
@@ -51,12 +63,13 @@
 								
 				
                                 <input type="text" class="form-control NO_ID" id="NO_ID" name="NO_ID"
-                                    value="{{$header->NO_ID ?? ''}}" hidden readonly>
-								<input name="tipx" class="form-control tipx" id="tipx" value="{{$tipx}}" hidden >
-								<input name="flagz" class="form-control flagz" id="flagz" value="{{$flagz}}" hidden >
-								<input name="searchx" class="form-control searchx" id="searchx" value="{{$searchx ?? ''}}" hidden >
-									
+                                    placeholder="Masukkan NO_ID" value="{{$header->NO_ID ?? ''}}" hidden readonly>
+																		
                                 <div class="col-md-2">
+
+									<input name="tipx" class="form-control tipx" id="tipx" value="{{$tipx}}" hidden >
+									<input name="flagz" class="form-control flagz" id="flagz" value="{{$flagz}}" hidden >
+									<input name="searchx" class="form-control searchx" id="searchx" value="{{$searchx ?? ''}}" hidden >
 
                                     <input type="text" class="form-control NO_BUKTI" id="NO_BUKTI" name="NO_BUKTI"
                                     placeholder="Masukkan Bukti#" value="{{$header->NO_BUKTI ?? ''}}" >
@@ -67,9 +80,9 @@
 					
 								<div class="col-md-3 input-group">
 
-									<input type="text" hidden class="form-control CARI" id="CARI" name="CARI"
+									<input type="text" class="form-control CARI" id="CARI" name="CARI"
                                     placeholder="Cari Bukti#" value="" >
-									<button type="button" hidden id='SEARCHX'  onclick="CariBukti()" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
+									<button type="button" id='SEARCHX'  onclick="CariBukti()" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
 
 								</div> 
  	
@@ -97,9 +110,14 @@
                                     <label for="BACNO" class="form-label">Kas</label>
                                 </div>
                                  <div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control BACNO" onclick="browseAccount1()" id="BACNO" name="BACNO" placeholder="Masukkan Bank" value="{{$header->BACNO ?? ''}}"  style="text-align: left" readonly >
-                                 </div>
+									<select id="selectAcnox" class="form-select" aria-label="Default select example">
+
+									</select>
 								
+                                 </div>
+
+
+					
 								 <div class="col-md-4">
                                     <input type="text" class="form-control BNAMA" id="BNAMA" name="BNAMA"
                                     placeholder="Masukkan -" value="{{$header->BNAMA ?? ''}}" readonly >
@@ -107,7 +125,9 @@
 								
 							</div>	
         
-        
+ 
+
+ 
 							<div class="form-group row">
                                 <div class="col-md-1">
                                     <label for="KET" class="form-label">Ket</label>
@@ -115,14 +135,16 @@
                                 <div class="col-md-4">
                                     <input type="text" class="form-control KET" id="KET" name="KET" value="{{$header->KET ?? ''}}"  placeholder="Masukkan Keterangan">
                                 </div>
+                                
+								
                             </div>
                      
-                            
-                            <table id="datatable" class="table table-striped table-border">
-                                <thead>
+							<div style="overflow-y:scroll; height:200px;" class="col-md-12 scrollable" align="right">
+							
+								<table id="datatable" class="table table-striped table-border table-scrollable">                                <thead>
                                     <tr>
-                                        <th width="100px">No.</th>
-                                        <th width="200px">
+                                        <th width="50px">No.</th>
+                                        <th width="100px">
 											<label style="color:red;font-size:20px">* </label>									
                                             <label for="BACNO" class="form-label">Account</label></th>
                                         <!-- <th width="200px">-</th> -->
@@ -130,9 +152,10 @@
                                             <label style="color:red;font-size:20px">* </label>
                                             <label for="NACNO" class="form-label">Nama Account</label>
                                         </th>
-                                        <th width="600px">Uraian</th>
-                                        <th width="200px">Jumlah</th>
-                                        <th></th>
+                                        <th width="400px">Uraian</th>					
+                                        <th width="150px">Jumlah</th>
+                                        <th width="50px">Cair</th>
+                                        <th width="50px">-</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -148,8 +171,8 @@
                                         </td>
 
                                         <td>
-                                            <input name="ACNO[]" id="ACNO{{$no}}" onclick="browseAccount({{$no}})" type="text" value="{{$detail->ACNO}}"
-                                              class="form-control ACNO "  readonly onclick="getNacno(this.id)">
+                                            <input name="ACNO[]" id="ACNO{{$no}}" type="text" value="{{$detail->ACNO}}"
+                                              class="form-control ACNO " onblur = "browseAccount({{$no}})" required  onclick="getNacno(this.id)">
 										</td>
 			
 										 <td>
@@ -160,11 +183,12 @@
 										<td>
                                             <input name="URAIAN[]" id="URAIAN{{$no}}" type="text" value="{{$detail->URAIAN}}"
                                             class="form-control URAIAN" required>
-                                        </td>
+                                        </td>										
 										<td>
                                             <input name="JUMLAH[]"  onblur="hitung()" style="text-align: right" id="JUMLAH{{$no}}" type="text" value="{{$detail->JUMLAH}}"
                                             class="form-control JUMLAH">
                                         </td>
+
                                         
 										<td>
                                             <button type="button" id="DELETEX{{$no}}" class="btn btn-sm btn-circle btn-outline-danger btn-delete" onclick="">
@@ -189,15 +213,16 @@
 									<td></td>
                                 </tfoot>
                             </table>     
-                            <div class="col-md-2 row">
-                               <a type="button" id='PLUSX' onclick="tambah()" class="fas fa-plus fa-sm md-3" ></a>					
-							</div>			
-                            
-                           
+							                           
                         </div>
 
 
-						        
+						   
+						   
+                            <div class="col-md-2 row">
+                               <a type="button" id='PLUSX' onclick="tambah()" class="fas fa-plus fa-sm md-3" ></a>					
+							</div>			
+                                 
 						<div class="mt-3 col-md-12 form-group row">
 							<div class="col-md-4">
 								<button type="button" id='TOPX'  onclick="location.href='{{url('/kas/edit/?idx=' .$idx. '&tipx=top&flagz='.$flagz.'' )}}'" class="btn btn-outline-primary">Top</button>
@@ -209,7 +234,7 @@
 								<button type="button" id='NEWX' onclick="location.href='{{url('/kas/edit/?idx=0&tipx=new&flagz='.$flagz.'' )}}'" class="btn btn-warning">New</button>
 								<button type="button" id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
 								<button type="button" id='UNDOX' onclick="location.href='{{url('/kas/edit/?idx=' .$idx. '&tipx=undo&flagz='.$flagz.'' )}}'" class="btn btn-info">Undo</button>  
-								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success" class="fa fa-save"></i>Save</button>
+								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success"<i class="fa fa-save"></i>Save</button>
 
 							</div>
 							<div class="col-md-3">
@@ -297,6 +322,9 @@
 @section('footer-scripts')
 <!-- TAMBAH 1 -->
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	
+	
 <script src="{{ asset('js/autoNumerics/autoNumeric.min.js') }}"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script> -->
 <script src="{{asset('foxie_js_css/bootstrap.bundle.min.js')}}"></script>
@@ -314,11 +342,29 @@
 	<?php $searchx = '' ?>
     idrow=<?=$no?>;
     baris=<?=$no?>;
+	
+		$tipx = $('#tipx').val();
+		$searchx = $('#CARI').val();
+		
+		
+        if ( $tipx == 'new' )
+		{
+			 baru();	
+             tambah();
+			 
+		}
+
+        if ( $tipx != 'new' )
+		{
+			 ganti();			
+		}    
+		
 		$("#TJUMLAH").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999.99'});
 
 		jumlahdata = 100;
 		for (i = 0; i <= jumlahdata; i++) {
 			$("#JUMLAH" + i.toString()).autoNumeric('init', {aSign: '<?php echo ''; ?>', vMin: '-999999999.99'});
+
 		}
 		
 		
@@ -332,26 +378,28 @@
 			'dateFormat': 'dd-mm-yy',
 		})
 		
-		
-		
-		$tipx = $('#tipx').val();
-		$searchx = $('#CARI').val();
-		
-		
-        if ( $tipx == 'new' )
-		{
-			 baru();
-             tambah();
-			 
-		}
 
-        if ( $tipx != 'new' )
-		{
-			 ganti();			
-		}    
-		
-	
-		
+				$("#selectAcnox").select2({
+						placeholder:'Pilih Acno',
+						ajax: {
+							url: '{{url('account/browse')}}',
+							processResults: function({data}){
+								return {
+									results: $.map(data, function(item){																
+										return {
+											id: item.ACNO,
+											text: item.NAMA
+										}
+									})
+								}
+							}
+						}
+					});
+					
+			
+	 //   $('input[type="checkbox"]').on('change', function() {
+	 //		this.value ^= 1;
+     //		});	
 		
 ///////////////////////////////////////////////////////////////////////
  
@@ -376,26 +424,47 @@
 		//CHOOSE Bacno
  		var dTableBAccount1;
 		loadDataBAccount1 = function(){
+			
+	
 			$.ajax(
 			{
 				type: 'GET',    
 				url: '{{url('account/browsecash')}}',
+				async : false,
+				data: {
+	
+					'BACNO': $("#BACNO").val(),
+				},
 				success: function( response )
 				{
 					resp = response;
-					if(dTableBAccount1){
-						dTableBAccount1.clear();
+					
+					
+					if ( resp.length > 1 )
+					{	
+							if(dTableBAccount1){
+								dTableBAccount1.clear();
+							}
+							for(i=0; i<resp.length; i++){
+								
+								dTableBAccount1.row.add([
+									'<a href="javascript:void(0);" onclick="chooseAccount1(\''+resp[i].ACNO+'\',\''+resp[i].NAMA+'\')">'+resp[i].ACNO+'</a>',
+									resp[i].NAMA,
+								]);
+							}
+							dTableBAccount1.draw();
+					
 					}
-					for(i=0; i<resp.length; i++){
-						
-						dTableBAccount1.row.add([
-							'<a href="javascript:void(0);" onclick="chooseAccount1(\''+resp[i].ACNO+'\',\''+resp[i].NAMA+'\')">'+resp[i].ACNO+'</a>',
-							resp[i].NAMA,
-						]);
+					else
+					{
+					
+						$("#BACNO").val(resp[0].ACNO);
+						$("#BNAMA").val(resp[0].NAMA);
 					}
-					dTableBAccount1.draw();
 				}
 			});
+
+			
 		}
 		
 		dTableBAccount1 = $("#table-baccount1").DataTable({
@@ -403,8 +472,13 @@
 		});
 		
 		browseAccount1 = function(){
+
+			$('#BNAMA').val("");			
 			loadDataBAccount1();
-			$("#browseAccount1Modal").modal("show");
+			if ( $("#BNAMA").val() == '' ) {				
+					$("#browseAccount1Modal").modal("show");
+			}	
+			
 		}
 		
 		chooseAccount1 = function(ACNO,NAMA){
@@ -413,12 +487,12 @@
 			$("#browseAccount1Modal").modal("hide");
 		}
 		
-		$("#BACNO").keypress(function(e){
-			if(e.keyCode == 46){
-				e.preventDefault();
-				browseAccount1();
-			}
-		}); 
+		// $("#BACNO").keypress(function(e){
+			// if(e.keyCode == 46){
+				// e.preventDefault();
+				// browseAccount1();
+			// }
+		// }); 
 		
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,27 +505,55 @@
 		
  		var dTableBAccount;
 		var rowidAccount;
-		loadDataBAccount = function(){
+		loadDataBAccount = function(rid){
+					
 			$.ajax(
 			{
 				type: 'GET',    
-				url: "{{url('account/browse')}}",
+				url: '{{url('account/browse')}}',
+				async : false,
+				data: {
+	
+					'ACNO': $("#ACNO"+rid).val(),
+				},
 				success: function( response )
 				{
 					resp = response;
-					if(dTableBAccount){
-						dTableBAccount.clear();
-					}
-					for(i=0; i<resp.length; i++){
-						
-						dTableBAccount.row.add([
-							'<a href="javascript:void(0);" onclick="chooseAccount(\''+resp[i].ACNO+'\',\''+resp[i].NAMA+'\')">'+resp[i].ACNO+'</a>',
-							resp[i].NAMA,
-						]);
-					}
-					dTableBAccount.draw();
+					$("#ACNO"+rid).val(resp[0].ACNO);
+					$("#NACNO"+rid).val(resp[0].NAMA);
+			
 				}
 			});
+
+			
+			
+			if ( $("#NACNO"+rid).val() == '' ) {
+		
+						$.ajax(
+						{
+							type: 'GET',    
+							url: "{{url('account/browse')}}",
+							data: {
+				
+								'ACNO': '',
+							},
+							success: function( response )
+							{
+								resp = response;
+								if(dTableBAccount){
+									dTableBAccount.clear();
+								}
+								for(i=0; i<resp.length; i++){
+									
+									dTableBAccount.row.add([
+										'<a href="javascript:void(0);" onclick="chooseAccount(\''+resp[i].ACNO+'\',\''+resp[i].NAMA+'\')">'+resp[i].ACNO+'</a>',
+										resp[i].NAMA,
+									]);
+								}
+								dTableBAccount.draw();
+							}
+						});
+			}			
 		}
 		
 		dTableBAccount = $("#table-baccount").DataTable({
@@ -459,9 +561,15 @@
 		});
 		
 		browseAccount = function(rid){
+
+			$("#NACNO"+rid).val("");
 			rowidAccount = rid;
-			loadDataBAccount();
-			$("#browseAccountModal").modal("show");
+			loadDataBAccount(rid);
+
+			if ( $("#NACNO"+rid).val() == '' ) {				
+					$("#browseAccountModal").modal("show");
+			}	
+			
 		}
 		
 		chooseAccount = function(ACNO,NAMA){
@@ -600,7 +708,7 @@
 	function ganti() {
 		
 		 mati();
-		//  hidup();
+	
 	}
 	
 	function batal() {
@@ -630,7 +738,7 @@
 	    $("#SAVEX").attr("disabled", false);
 		
 	    $("#HAPUSX").attr("disabled", true);
-	    //$("#CLOSEX").attr("disabled", true);
+	    $("#CLOSEX").attr("disabled", true);
 
 		$("#CARI").attr("readonly", true);	
 	    $("#SEARCHX").attr("disabled", true);
@@ -639,7 +747,7 @@
 		   
 			$("#NO_BUKTI").attr("readonly", true);		   
 			$("#TGL").attr("readonly", false);
-			$("#BACNO").attr("readonly", true);
+			$("#BACNO").attr("readonly", false);
 			$("#BNAMA").attr("readonly", true);
 			$("#KET").attr("readonly", false);
 		
@@ -648,7 +756,7 @@
 		jumlahdata = 100;
 		for (i = 0; i <= jumlahdata; i++) {
 			$("#REC" + i.toString()).attr("readonly", true);
-			$("#ACNO" + i.toString()).attr("readonly", true);
+			$("#ACNO" + i.toString()).attr("readonly", false);
 			$("#NACNO" + i.toString()).attr("readonly", true);
 			$("#URAIAN" + i.toString()).attr("readonly", false);
 			$("#JUMLAH" + i.toString()).attr("readonly", false);
@@ -711,7 +819,7 @@
 		 $('#BACNO').val("");	
 		 $('#BNAMA').val("");	
 		 $('#KET').val("");	
-		 $('#TJUMLAH').val("0.00");	
+		 $('#TJUMLAH').val("0.00");
 		 
 		 
 		var html = '';
@@ -739,7 +847,6 @@
 		
 	}
 
-
     function tambah() {
 
         var x = document.getElementById('datatable').insertRow(baris + 1);
@@ -750,10 +857,14 @@
  					<input name='NO_ID[]' id='NO_ID${idrow}' type='hidden' class='form-control NO_ID' value='new' readonly> 
 					<input name='REC[]' id='REC${idrow}' type='text' class='REC form-control' onkeypress='return tabE(this,event)' readonly>
 	            </td>
-						       
+
                 <td>
-				    <input name='ACNO[]' data-rowid=${idrow} onclick='browseAccount(${idrow})' id='ACNO${idrow}' type='text' class='form-control  ACNO' required readonly>
+					<select id="selectAcno${idrow}" class="form-select" aria-label="Default select example">
+
+					</select>
+
                 </td>
+
                 <td>
 				    <input name='NACNO[]'   id='NACNO${idrow}' type='text' class='form-control  NACNO' required readonly>
                 </td>

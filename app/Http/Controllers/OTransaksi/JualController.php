@@ -27,22 +27,16 @@ class JualController extends Controller
 	 
     var $judul = '';
     var $FLAGZ = '';
-    var $GOLZ = '';
 	
     function setFlag(Request $request)
     {
-        if ( $request->flagz == 'JL' && $request->golz == 'B' ) {
-            $this->judul = "Penjualan Bahan Baku";
-        } else if ( $request->flagz == 'AJ' && $request->golz == 'B' ) {
-            $this->judul = "Retur Penjualan Bahan Baku";
-        } else if ( $request->flagz == 'JL' && $request->golz == 'J' ) {
-            $this->judul = "Penjualan Barang";
-        } else if ( $request->flagz == 'AJ' && $request->golz == 'J' ) {
-            $this->judul = "Retur Penjualan Barang";
-        }
+        if ( $request->flagz == 'JL' ) {
+            $this->judul = "Penjualan";
+        } else if ( $request->flagz == 'AJ' ) {
+            $this->judul = "Retur Penjualan";
+        } 
 		
         $this->FLAGZ = $request->flagz;
-        $this->GOLZ = $request->golz;
 
 
     }
@@ -52,10 +46,12 @@ class JualController extends Controller
 
 	    $this->setFlag($request);
         // ganti 3
-        return view('otransaksi_jual.index')->with(['judul' => $this->judul, 'flagz' => $this->FLAGZ, 'golz' => $this->GOLZ ]);
+        return view('otransaksi_jual.index')->with(['judul' => $this->judul, 'flagz' => $this->FLAGZ ]);
 	
 	
     }
+	
+
 
 	public function index_posting(Request $request)
     {
@@ -63,37 +59,20 @@ class JualController extends Controller
         return view('otransaksi_jual.post');
     }
 
-    public function browse(Request $request)
-    {
-        $golz = $request->GOL;
-
-		$CBG = Auth::user()->CBG;
-
-        $jual = DB::SELECT("SELECT distinct jual.NO_BUKTI, jual.NO_SO, jual.KODEC, jual.NAMAC, 
-		                  jual.ALAMAT, jual.KOTA from jual, juald 
-                          WHERE jual.NO_BUKTI = jualD.NO_BUKTI AND jual.GOL ='$golz'
-                          AND jual.CBG = '$CBG' ");
-        return response()->json($jual);
-    }
-
     public function browseuang(Request $request)
     {
 
 		$filterkodec = '';
 	   
-		$CBG = Auth::user()->CBG;
-
 		if($request->KODEC)
 		{
 	
-			// $filterkodec = " WHERE SISA <> 0 AND KODEC='".$request->KODEC."' ";
-			$filterkodec = " WHERE KODEC='".$request->KODEC."' ";
+			$filterkodec = " WHERE SISA <> 0 AND KODEC='".$request->KODEC."' ";
 		}
 		
 		$jual = DB::SELECT("SELECT NO_BUKTI, TGL, KODEC, 
-                        NAMAC, NETT AS TOTAL, BAYAR, SISA from jual
-                        $filterkodec AND CBG = '$CBG' 
-                        ORDER BY NO_BUKTI ");
+		NAMAC, NETT AS TOTAL, BAYAR, SISA from jual
+		$filterkodec ORDER BY NO_BUKTI ");
  
         return response()->json($jual);
     }
@@ -110,15 +89,8 @@ class JualController extends Controller
             $periode = '';
         }
 
-        $this->setFlag($request);
-        $FLAGZ = $this->FLAGZ;
-        $GOLZ = $this->GOLZ;
-        $judul = $this->judul;
    
-		$CBG = Auth::user()->CBG;
-
-        $jual = DB::SELECT("SELECT * from jual  where PER = '$periode' and FLAG ='$this->FLAGZ' 
-                            AND GOL ='$this->GOLZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+       $jual = DB::SELECT("SELECT * from jual  where PER = '$periode'  ORDER BY NO_BUKTI ");
 	   
         // ganti 6
 
@@ -128,8 +100,8 @@ class JualController extends Controller
                 if ( Auth::user()->divisi=="programmer" ) 
 				{
                     //CEK POSTED di index dan edit
-                    $btnEdit =   ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' href="jual/edit/?idx=' . $row->NO_ID . '&tipx=edit&flagz=' . $row->FLAG . '&judul=' . $this->judul . '&golz=' . $row->GOL . '"';					
-                    $btnDelete = ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' onclick="return confirm(&quot; Apakah anda yakin ingin hapus? &quot;)" href="jual/delete/' . $row->NO_ID . '/?flagz=' . $row->FLAG . '&golz=' . $row->GOL . '" ';
+                    $btnEdit =   ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' href="jual/edit/?idx=' . $row->NO_ID . '&tipx=edit&flagz=' . $row->FLAG . '&judul=' . $this->judul . '"';					
+                    $btnDelete = ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' onclick="return confirm(&quot; Apakah anda yakin ingin hapus? &quot;)" href="jual/delete/' . $row->NO_ID . '/?flagz=' . $row->FLAG . '" ';
 
 
                     $btnPrivilege =
@@ -215,41 +187,22 @@ class JualController extends Controller
 
 		$this->setFlag($request);
         $FLAGZ = $this->FLAGZ;
-        $GOLZ = $this->GOLZ;
         $judul = $this->judul;
-		
-        $CBG = Auth::user()->CBG;
 		
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
 
-        $query = DB::table('jual')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('jual')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', $FLAGZ )->orderByDesc('NO_BUKTI')->limit(1)->get();
 
-        if( $GOLZ=='B'){
-
-            if ($query != '[]') {
-                $query = substr($query[0]->NO_BUKTI, -4);
-                $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-' . $query;
-            } else {
-                $no_bukti = $this->FLAGZ . $this->GOLZ . $CBG . $tahun . $bulan . '-0001';
-            }
-
-        } elseif($GOLZ=='J') {
-
-            if ($query != '[]') {
-                $query = substr($query[0]->NO_BUKTI, -4);
-                $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-                $no_bukti = $this->FLAGZ . $CBG .  $tahun . $bulan . '-' . $query;
-            } else {
-                $no_bukti = $this->FLAGZ . $CBG .  $tahun . $bulan . '-0001';
-            }
-
+        if ($query != '[]') {
+            $query = substr($query[0]->NO_BUKTI, -4);
+            $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
+            $no_bukti = 'JL' . $tahun . $bulan . '-' . $query;
+        } else {
+            $no_bukti = 'JL' . $tahun . $bulan . '-0001';
         }
-
-        
 		
 //////////////////////////////////////////////////////////////////////////
        
@@ -263,11 +216,8 @@ class JualController extends Controller
                 'NO_BUKTI'         => $no_bukti,
                 'TGL'              => date('Y-m-d', strtotime($request['TGL'])),
                 'PER'              => $periode,
-                'FLAG'             => $FLAGZ,						
-                'GOL'              => $GOLZ,			
+                'FLAG'             => $FLAGZ,				
                 'NO_SO'            => ($request['NO_SO'] == null) ? "" : $request['NO_SO'],
-                'NO_JUAL'            => ($request['NO_JUAL'] == null) ? "" : $request['NO_JUAL'],
-                'NO_SURAT'            => ($request['NO_SURAT'] == null) ? "" : $request['NO_SURAT'],
  
                 'KODEC'            => ($request['KODEC'] == null) ? "" : $request['KODEC'],
                 'NAMAC'            => ($request['NAMAC'] == null) ? "" : $request['NAMAC'],
@@ -285,22 +235,16 @@ class JualController extends Controller
                 'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'created_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
             ]
         );
 
 
 		$REC        = $request->input('REC');
-		$KD_BHN     = $request->input('KD_BHN');
-        $NA_BHN     = $request->input('NA_BHN');
 		$KD_BRG     = $request->input('KD_BRG');
         $NA_BRG     = $request->input('NA_BRG');
         $SATUAN     = $request->input('SATUAN');
-        $KET     = $request->input('KET');
         $QTY        = $request->input('QTY');
         $HARGA        = $request->input('HARGA');
-        $PPNX        = $request->input('PPNX');
-        $DPP        = $request->input('DPP');
 	    $TOTAL        = $request->input('TOTAL');		 
 
         // Check jika value detail ada/tidak
@@ -313,18 +257,13 @@ class JualController extends Controller
                 $detail->NO_BUKTI    = $no_bukti;
                 $detail->REC         = $REC[$key];
                 $detail->PER         = $periode;
-                $detail->FLAG        = $FLAGZ;		
-                $detail->GOL 	     = $GOLZ;               
-                $detail->KD_BHN      = ($KD_BHN[$key] == null) ? "" :  $KD_BHN[$key];
-                $detail->NA_BHN      = ($NA_BHN[$key] == null) ? "" :  $NA_BHN[$key];          
+                $detail->FLAG        = $FLAGZ;
+            
                 $detail->KD_BRG      = ($KD_BRG[$key] == null) ? "" :  $KD_BRG[$key];
                 $detail->NA_BRG      = ($NA_BRG[$key] == null) ? "" :  $NA_BRG[$key];
                 $detail->SATUAN      = ($SATUAN[$key] == null) ? "" :  $SATUAN[$key];				
-                $detail->KET      = ($KET[$key] == null) ? "" :  $KET[$key];				
                 $detail->QTY         = (float) str_replace(',', '', $QTY[$key]);
                 $detail->HARGA         = (float) str_replace(',', '', $HARGA[$key]);
-                $detail->PPN         = (float) str_replace(',', '', $PPNX[$key]);
-                $detail->DPP         = (float) str_replace(',', '', $DPP[$key]);
                 $detail->TOTAL         = (float) str_replace(',', '', $TOTAL[$key]);				
  		
                 $detail->save();
@@ -343,9 +282,11 @@ class JualController extends Controller
         DB::SELECT("UPDATE jual, juald
                             SET juald.ID = jual.NO_ID  WHERE jual.NO_BUKTI = juald.NO_BUKTI 
 							AND jual.NO_BUKTI='$no_buktix';");
+
+		
 					 
 					 
-        return redirect('/jual/edit/?idx=' . $jual->NO_ID . '&tipx=edit&flagz=' . $FLAGZ . '&golz=' . $this->GOLZ . '&judul=' . $this->judul . '');
+        return redirect('/jual/edit/?idx=' . $jual->NO_ID . '&tipx=edit&flagz=' . $FLAGZ . '&judul=' . $this->judul . '');
 
     }
 
@@ -363,7 +304,7 @@ class JualController extends Controller
         {
             return redirect('/jual')
 			       ->with('status', 'Maaf Periode sudah ditutup!')
-                   ->with(['judul' => $judul, 'flagz' => $FLAGZ, 'golz' => $GOLZ]);
+                   ->with(['judul' => $judul, 'flagz' => $FLAGZ]);
         }
 		
 
@@ -372,8 +313,8 @@ class JualController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-		
-        $CBG = Auth::user()->CBG;
+			
+
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -389,10 +330,8 @@ class JualController extends Controller
     	   $buktix = $request->buktix;
 		   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual
-		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ' 
-						 and NO_BUKTI = '$buktix'
-                         AND CBG = '$CBG'						 
+		                 where PER ='$per'  
+						 and NO_BUKTI = '$buktix'						 
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 			
@@ -412,9 +351,7 @@ class JualController extends Controller
 			
 
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual
-		                 where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ'   
-                         AND CBG = '$CBG'  
+		                 where PER ='$per'     
 		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 		
@@ -436,11 +373,8 @@ class JualController extends Controller
     	   $buktix = $request->buktix;
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual     
-		             where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ' 
-                         AND CBG = '$CBG'
-                         and NO_BUKTI < 
-					     '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
+		             where PER ='$per'  and NO_BUKTI < 
+					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -461,11 +395,9 @@ class JualController extends Controller
       	   $buktix = $request->buktix;
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual    
-		                    where PER ='$per' and FLAG ='$this->FLAGZ'
-                            and GOL ='$this->GOLZ' 
-                            AND CBG = '$CBG'
-                            and NO_BUKTI > 
-					        '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
+		             where PER ='$per' 
+					 and FLAG ='$this->FLAGZ' and NO_BUKTI > 
+					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -482,10 +414,8 @@ class JualController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from jual
-						 where PER ='$per' and FLAG ='$this->FLAGZ'
-                         and GOL ='$this->GOLZ' 
-                         AND CBG = '$CBG' 
-		                 ORDER BY NO_BUKTI DESC  LIMIT 1" );
+						where PER ='$per'   
+		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -522,7 +452,7 @@ class JualController extends Controller
 		 }
 
         $no_bukti = $jual->NO_BUKTI;
-	    $jualDetail = DB::table('juald')->where('NO_BUKTI', $no_bukti)->orderBy('REC')->get();	
+	    $jualDetail = DB::table('juald')->where('NO_BUKTI', $no_bukti)->get();	
 		
 		$data = [
             'header'        => $jual,
@@ -533,7 +463,7 @@ class JualController extends Controller
          
       
          return view('otransaksi_jual.edit', $data)
-		 ->with(['tipx' => $tipx, 'idx' => $idx, 'flagz' => $this->FLAGZ, 'golz' => $this->GOLZ, 'judul'=> $this->judul ]);
+		 ->with(['tipx' => $tipx, 'idx' => $idx, 'flagz' =>$this->FLAGZ, 'judul', $this->judul ]);
       	 
  
  
@@ -558,10 +488,7 @@ class JualController extends Controller
 
 		$this->setFlag($request);
         $FLAGZ = $this->FLAGZ;
-        $GOLZ = $this->GOLZ;
         $judul = $this->judul;
-		
-        $CBG = Auth::user()->CBG;
 		
         // ganti 20
       $variablell = DB::select('call jualdel(?)', array($jual['NO_BUKTI']));
@@ -574,8 +501,6 @@ class JualController extends Controller
             [
                 'TGL'              => date('Y-m-d', strtotime($request['TGL'])),
                 'NO_SO'            => ($request['NO_SO'] == null) ? "" : $request['NO_SO'],
-                'NO_SURAT'            => ($request['NO_SURAT'] == null) ? "" : $request['NO_SURAT'],
-                'NO_JUAL'            => ($request['NO_JUAL'] == null) ? "" : $request['NO_JUAL'],
  
                 'KODEC'            => ($request['KODEC'] == null) ? "" : $request['KODEC'],
                 'NAMAC'            => ($request['NAMAC'] == null) ? "" : $request['NAMAC'],
@@ -594,9 +519,6 @@ class JualController extends Controller
 				'USRNM'            => Auth::user()->username,
                 'TG_SMP'           => Carbon::now(),
 				'updated_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
-                'FLAG'             => $FLAGZ,						
-                'GOL'              => $GOLZ,
             ]
         );
 
@@ -608,16 +530,11 @@ class JualController extends Controller
         $NO_ID  = $request->input('NO_ID');
 
         $REC    = $request->input('REC');
-        $KD_BHN = $request->input('KD_BHN');
-        $NA_BHN = $request->input('NA_BHN');
         $KD_BRG = $request->input('KD_BRG');
         $NA_BRG = $request->input('NA_BRG');
         $SATUAN = $request->input('SATUAN');		
-        $KET = $request->input('KET');		
         $QTY    = $request->input('QTY');
         $HARGA    = $request->input('HARGA');
-        $PPNX    = $request->input('PPNX');
-        $DPP    = $request->input('DPP');
         $TOTAL    = $request->input('TOTAL');	
 
         $query = DB::table('juald')->where('NO_BUKTI', $request->NO_BUKTI)->whereNotIn('NO_ID',  $NO_ID)->delete();
@@ -631,18 +548,12 @@ class JualController extends Controller
                         'NO_BUKTI'   => $request->NO_BUKTI,
                         'REC'        => $REC[$i],
                         'PER'        => $periode,
-                        'FLAG'       => $this->FLAGZ,
-                        'GOL'        => $this->GOLZ,
-                        'KD_BHN'     => ($KD_BHN[$i] == null) ? "" :  $KD_BHN[$i],
-                        'NA_BHN'     => ($NA_BHN[$i] == null) ? "" :  $NA_BHN[$i],
+                        'FLAG'       => $FLAGZ,					
                         'KD_BRG'     => ($KD_BRG[$i] == null) ? "" :  $KD_BRG[$i],
                         'NA_BRG'     => ($NA_BRG[$i] == null) ? "" :  $NA_BRG[$i],
                         'SATUAN'     => ($SATUAN[$i] == null) ? "" :  $SATUAN[$i],						
-                        'KET'     => ($KET[$i] == null) ? "" :  $KET[$i],						
                         'QTY'        => (float) str_replace(',', '', $QTY[$i]),
                         'HARGA'        => (float) str_replace(',', '', $HARGA[$i]),
-                        'PPN'        => (float) str_replace(',', '', $PPNX[$i]),
-                        'DPP'        => (float) str_replace(',', '', $DPP[$i]),
                         'TOTAL'        => (float) str_replace(',', '', $TOTAL[$i]),
 						
                     ]
@@ -658,20 +569,12 @@ class JualController extends Controller
                     [
                         'REC'        => $REC[$i],
                       
-                        'KD_BHN'     => ($KD_BHN[$i] == null) ? "" :  $KD_BHN[$i],
-                        'NA_BHN'     => ($NA_BHN[$i] == null) ? "" :  $NA_BHN[$i],
                         'KD_BRG'     => ($KD_BRG[$i] == null) ? "" :  $KD_BRG[$i],
                         'NA_BRG'     => ($NA_BRG[$i] == null) ? "" :  $NA_BRG[$i],
                         'SATUAN'     => ($SATUAN[$i] == null) ? "" :  $SATUAN[$i],						
-                        'KET'        => ($KET[$i] == null) ? "" :  $KET[$i],						
                         'QTY'        => (float) str_replace(',', '', $QTY[$i]),
-                        'HARGA'      => (float) str_replace(',', '', $HARGA[$i]),
-                        'TOTAL'      => (float) str_replace(',', '', $TOTAL[$i]),
-                        'PPN'        => (float) str_replace(',', '', $PPNX[$i]),
-                        'DPP'        => (float) str_replace(',', '', $DPP[$i]),
-                        'FLAG'       => $this->FLAGZ,
-                        'GOL'        => $this->GOLZ,
-                        'PER'        => $periode,
+                        'HARGA'        => (float) str_replace(',', '', $HARGA[$i]),
+                        'TOTAL'        => (float) str_replace(',', '', $TOTAL[$i]),
                     ]
                 );
             }
@@ -682,14 +585,8 @@ class JualController extends Controller
         $variablell = DB::select('call jualins(?)', array($jual['NO_BUKTI']));
 
  		$jual = Jual::where('NO_BUKTI', $no_buktix )->first();
-
-        $no_bukti = $jual->NO_BUKTI;
-
-         DB::SELECT("UPDATE jual,  juald
-                     SET  juald.ID =  jual.NO_ID  WHERE  jual.NO_BUKTI =  juald.NO_BUKTI 
-                     AND  jual.NO_BUKTI='$no_bukti';");
 					 
-        return redirect('/jual/edit/?idx=' . $jual->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '&golz=' . $this->GOLZ . '');	
+        return redirect('/jual/edit/?idx=' . $jual->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');	
 	
 	
     }
@@ -708,7 +605,6 @@ class JualController extends Controller
 
 		$this->setFlag($request);
         $FLAGZ = $this->FLAGZ;
-        $GOLZ = $this->GOLZ;
         $judul = $this->judul;
 		
 		$per = session()->get('periode')['bulan'] . '/' . session()->get('periode')['tahun'];
@@ -717,7 +613,7 @@ class JualController extends Controller
         {
             return redirect()->route('jual')
                 ->with('status', 'Maaf Periode sudah ditutup!')
-                ->with(['judul' => $this->judul, 'flagz' => $this->FLAGZ, 'golz' => $this->GOLZ]);
+                ->with(['judul' => $this->judul, 'flagz' => $this->FLAGZ]);
         }
 		
        $variablell = DB::select('call jualdel(?)', array($jual['NO_BUKTI']));//
@@ -732,7 +628,7 @@ class JualController extends Controller
         $deleteJual->delete();
 
         // ganti 
-       return redirect('/jual?flagz='.$FLAGZ.'&golz='.$GOLZ)->with(['judul' => $judul, 'flagz' => $FLAGZ, 'golz' => $GOLZ ])->with('statusHapus', 'Data '.$jual->NO_BUKTI.' berhasil dihapus');
+       return redirect('/jual?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ ])->with('statusHapus', 'Data '.$jual->NO_BUKTI.' berhasil dihapus');
 
 
     }

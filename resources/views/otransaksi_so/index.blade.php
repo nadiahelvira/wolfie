@@ -43,7 +43,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Transaksi {{$judul}} </h1>
+            <h1 class="m-0">Transaksi Sales Order </h1>
           </div>
 
         </div>
@@ -64,16 +64,12 @@
             <div class="card">
               <div class="card-body">
 			  
-              <input name="flagz"  class="form-control flagz" id="flagz" value="{{$flagz}}" hidden >
-              <input name="golz"  class="form-control golz" id="golz" value="{{$golz}}" hidden >
-
                 <table class="table table-fixed table-striped table-border table-hover nowrap datatable" id="datatable">
                     <thead class="table-dark">
                         <tr>
                             <th scope="col" style="text-align: center">#</th>
-				     		            <th scope="col" style="text-align: center">-</th>							
+				     		<th scope="col" style="text-align: center">-</th>							
                             <th scope="col" style="text-align: center">Bukti#</th>
-                            <th scope="col" style="text-align: center">Customer</th>
                             <th scope="col" style="text-align: center">Tgl</th>
                             <th scope="col" style="text-align: center">Total_Qty</th>
                             <th scope="col" style="text-align: center">Total</th>
@@ -107,20 +103,13 @@
             "order": [[ 0, "asc" ]],
             ajax: 
             {
-                url: "{{ route('get-so') }}",
-				        data: 
-                {
-                    flagz : $('#flagz').val(),
-                    golz : $('#golz').val(),
-				   
-                }				
+                url: "{{ route('get-so') }}",				
             },
             columns: 
             [
                 {data: 'DT_RowIndex', orderable: false, searchable: false },
 				        {data: 'action', name: 'action'},
                 {data: 'NO_BUKTI', name: 'NO_BUKTI'},
-                {data: 'NAMAC', name: 'NAMAC'},
                 {data: 'TGL', name: 'TGL'},
                 {data: 'TOTAL_QTY', name: 'TOTAL_QTY', render: $.fn.dataTable.render.number( ',', '.', 0, '' )},
                 {data: 'TOTAL', name: 'TOTAL', render: $.fn.dataTable.render.number( ',', '.', 0, '' )},
@@ -134,10 +123,10 @@
                 },		
                 {
                     "className": "dt-right", 
-                    "targets": [5, 6],
+                    "targets": [4],
                 },			
                 {
-                  targets: 4,
+                  targets: 3,
                   render: $.fn.dataTable.render.moment( 'DD-MM-YYYY' )
                 }
             ],
@@ -152,7 +141,7 @@
 
         });
 		
-        $("div.test_btn").html('<a class="btn btn-lg btn-md btn-success" href="{{url('so/edit?flagz='.$flagz.'&golz='.$golz.'&idx=0&tipx=new')}}"> <i class="fas fa-plus fa-sm md-3" ></i></a');
+        $("div.test_btn").html('<a class="btn btn-lg btn-md btn-success" href="{{url('so/edit?idx=0&tipx=new')}}"> <i class="fas fa-plus fa-sm md-3" ></i></a');
     });
 	
 </script>

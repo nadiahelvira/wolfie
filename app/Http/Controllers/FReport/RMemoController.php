@@ -26,30 +26,7 @@ class RMemoController extends Controller
 		return view('freport_memo.report')->with(['acno' => $acno])->with(['hasil' => []]);
 	}
 
-	public function getMemoReport(Request $request)
-	{
-		$query = DB::table('memo')
-			->join('memod', 'memo.NO_BUKTI', '=', 'memod.NO_BUKTI')
-			->select('memo.NO_BUKTI', 'memo.TGL', 'memod.ACNO', 'memod.NACNO', 'memod.ACNOB', 'memod.NACNOB', 'memod.URAIAN', 'memod.DEBET', 'memod.KREDIT')->get();
 
-		if ($request->ajax()) {
-			// Ganti format tanggal input agar sama dengan database
-			$tglDrD = date("Y-m-d", strtotime($request['tglDr']));
-			$tglSmpD = date("Y-m-d", strtotime($request['tglSmp']));
-
-			// Convert tanggal agar ambil start of day/end of day
-			//$tglDr = Carbon::parse($request->tglDr)->startOfDay();
-			$tglSmp = Carbon::parse($request->tglSmp)->endOfDay();
-
-			// Check Filter
-
-			if (!empty($request->tglDr) && !empty($request->tglSmp)) {
-				$query = $query->whereBetween('TGL', [$tglDrD, $tglSmp]);
-			}
-		}
-
-		return Datatables::of($query)->addIndexColumn()->make(true);
-	}
 
 	public function cetak(Request $request)
 	{

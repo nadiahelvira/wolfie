@@ -85,7 +85,6 @@
                             <th scope="col" style="text-align: left">Nomor Bukti</th>
                             <th scope="col" style="text-align: left">Tgl</th>
                             <th scope="col" style="text-align: right">Jumlah</th>
-							<th scope="col" style="text-align: center">Notes</th>
 							<th scope="col" style="text-align: center">Posted</th>
 							<th scope="col" style="text-align: center">User</th>
                    </thead>
@@ -115,8 +114,8 @@
             processing: true,
             serverSide: true,
             autoWidth: false,
-            //'scrollX': true,
-            'scrollY': '400px',					
+            'scrollX': true,
+            'scrollY': '400px',			
             "order": [[ 0, "asc" ]],
             ajax: 
             {
@@ -142,7 +141,6 @@
 					name: 'JUMLAH',
 					render: $.fn.dataTable.render.number( ',', '.', 0, '' )
 				},
-                {data: 'KET', name: 'KET'},
                 { data: 'POSTED', name: 'POSTED',
                   render : function(data, type, row, meta) {
                     if(row['POSTED']=="0"){
@@ -180,7 +178,6 @@
         dom: "<'row'<'col-md-6'><'col-md-6'>>" +
             "<'row'<'col-md-2'l><'col-md-6 test_btn m-auto'><'col-md-4'f>>" +
             "<'row'<'col-md-12't>><'row'<'col-md-12'ip>>",
-			stateSave:true,
 
 
         });

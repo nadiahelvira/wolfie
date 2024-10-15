@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 // ganti 1
 
 use App\Models\Master\Cust;
-use App\Models\Master\Acnox;
 use Illuminate\Http\Request;
 use DataTables;
 use Auth;
@@ -31,16 +30,11 @@ class CustController extends Controller
     // ganti 4
     public function browse(Request $request)
     {
-        // $gol = 'Y';
-        // if($request->GOL){
-        //     $gol = $request->GOL;
-        // }
-        // $cust = DB::table('cust')->select('KODEC', 'NAMAC', 'ALAMAT', 'KOTA')->where('GOL', $gol)->orderBy('KODEC', 'ASC')->get();
-        // $cust = DB::table('cust')->select('KODEC', 'NAMAC', 'ALAMAT', 'KOTA')->orderBy('KODEC', 'ASC')->get();
-        $cust = DB::SELECT("SELECT NO_ID, KODEC, NAMAC, ALAMAT, KOTA,  AKTIF, CASE WHEN PKP = '1' THEN '(PKP)' ELSE '(NON PKP)' END AS PKP2, PKP
-                            FROM cust
-                            ORDER BY KODEC");
-
+        $gol = 'Y';
+        if($request->GOL){
+            $gol = $request->GOL;
+        }
+        $cust = DB::table('cust')->select('KODEC', 'NAMAC', 'ALAMAT', 'KOTA')->where('GOL', $gol)->orderBy('KODEC', 'ASC')->get();
         return response()->json($cust);
     }
 
@@ -58,7 +52,7 @@ class CustController extends Controller
         return Datatables::of($cust)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                if (Auth::user()->divisi=="programmer" || Auth::user()->divisi=="owner" || Auth::user()->divisi=="sales") 
+                if (Auth::user()->divisi=="programmer" || Auth::user()->divisi=="owner" || Auth::user()->divisi=="assistant" || Auth::user()->divisi=="accounting" || Auth::user()->divisi=="pembelian" || Auth::user()->divisi=="penjualan") 
                 {
                     $btnPrivilege =
                         '
@@ -142,9 +136,7 @@ class CustController extends Controller
                 'GOL'           => 'Y',
                 'TELPON1'       => ($request['TELPON1'] == null) ? "" : $request['TELPON1'],
                 'FAX'            => ($request['FAX'] == null) ? "" : $request['FAX'],
-                'AKT'            => ($request['AKT'] == null) ? "" : $request['AKT'],
-                // 'PKP'           => (float) str_replace(',', '', $request['PKP']),				
-                'GOL'            => ($request['GOL'] == null) ? "" : $request['GOL'],				
+                'AKT'            => ($request['AKT'] == null) ? "" : $request['AKT'],				
                 'HP'            => ($request['HP'] == null) ? "" : $request['HP'],
                 'KONTAK'        => ($request['KONTAK'] == null) ? "" : $request['KONTAK'],
                 'EMAIL'           => ($request['EMAIL'] == null) ? "" : $request['EMAIL'],
@@ -194,9 +186,7 @@ class CustController extends Controller
     // ganti 15
 
 	public function edit(Request $request ,  Cust $cust)
-    { 
-        
-        $pilihbank = DB::table('bang')->select('KODE', 'NAMA')->orderBy('KODE', 'ASC')->get();
+    {
 
         // ganti 16
 
@@ -335,7 +325,7 @@ class CustController extends Controller
 		 $data = [
 						'header' => $cust,
 			        ];				
-			return view('master_cust.edit', $data)->with(['tipx' => $tipx, 'idx' => $idx ])->with(['pilihbank' => $pilihbank]);
+			return view('master_cust.edit', $data)->with(['tipx' => $tipx, 'idx' => $idx ]);
 		 
 	 
     }
@@ -378,8 +368,6 @@ class CustController extends Controller
                 'FAX'            => ($request['FAX'] == null) ? "" : $request['FAX'],
                 'HP'            => ($request['HP'] == null) ? "" : $request['HP'],
                 'AKT'            => ($request['AKT'] == null) ? "" : $request['AKT'],
-                // 'PKP'           => (float) str_replace(',', '', $request['PKP']),
-                'GOL'            => ($request['GOL'] == null) ? "" : $request['GOL'],
                 'KONTAK'        => ($request['KONTAK'] == null) ? "" : $request['KONTAK'],
                 'EMAIL'           => ($request['EMAIL'] == null) ? "" : $request['EMAIL'],
                 'NPWP'            => ($request['NPWP'] == null) ? "" : $request['NPWP'],

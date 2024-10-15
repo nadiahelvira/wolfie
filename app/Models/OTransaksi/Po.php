@@ -4,23 +4,22 @@ namespace App\Models\OTransaksi;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+//use Illuminate\Database\Eloquent\SoftDeletes;
 
-
-//ganti 1
 class Po extends Model
 {
-    use HasFactory;
+     use HasFactory;
 
-// ganti 2
     protected $table = 'po';
     protected $primaryKey = 'NO_ID';
-    public $timestamps = false;
+    public $timestamps = true;
 
-//ganti 3
     protected $fillable = 
     [
-        "NO_BUKTI", "TGL", "JTEMPO", "PER","KODES", "NAMAS", "ALAMAT", "KOTA", "FLAG", "GOL", 
-        "TOTAL", "TOTAL_QTY", "NOTES", "FLAG", "GOL", "USRNM", "TG_SMP", "TERM", "VIA", 
-        "PKP", "PPN", "NETT", "CBG"
+        "NO_BUKTI","TGL", "PER","KODES", "NAMAS", "ALAMAT", "KOTA", 
+		"FLAG", "TOTAL", "TOTAL_QTY", "NOTES", 
+		"USRNM", "TG_SMP" ,  "created_at", "updated_at", "created_by", "updated_by",
+		"deleted_by"
+		
     ];
 }

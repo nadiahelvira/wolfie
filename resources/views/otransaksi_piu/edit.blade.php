@@ -65,12 +65,10 @@
 							<div class="form-group row">
 							
 								<div class="col-md-1" align="right">
-									<label style="color:red">*</label>									
                                     <label for="KODEC" class="form-label">Customer#</label>
                                 </div>
-                               	<div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control KODEC" id="KODEC" name="KODEC" placeholder="Pilih Customer"value="{{$header->KODEC}}" style="text-align: left" readonly >
-        						  <button type="button" class="btn btn-primary" onclick="browseCust()"><i class="fa fa-search"></i></button>
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control KODEC" id="KODEC" name="KODEC" placeholder="Masukkan Suplier#" value="{{$header->KODEC}}" readonly>
                                 </div>
 								
 								<div class="col-md-1" align="right">
@@ -127,11 +125,15 @@
 										</td>    
 										<td>
 										    <input name="BAYAR[]" onclick="select()" onblur="hitung()" value="{{$detail->BAYAR}}" id="BAYAR{{$no}}" type="text" style="text-align: right"  class="form-control BAYAR">
-										</td>       
-											
-										<td>
-											<button type='button' id='DELETEX{{$no}}'  class='btn btn-sm btn-circle btn-outline-danger btn-delete' onclick=''> <i class='fa fa-fw fa-trash'></i> </button>
 										</td>
+										
+
+										<td>
+										
+                                            <button type="button" class="btn btn-sm btn-circle btn-outline-danger btn-delete" onclick="">
+                                                <i class="fa fa-fw fa-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
 								
 								<?php $no++; ?>
@@ -142,7 +144,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td><input class="form-control TBAYAR  text-block font-weight-bold" style="text-align: right"  id="TBAYAR" name="TBAYAR" value="{{$header->BAYAR}}" readonly></td>
+                                    <td><input class="form-control TBAYAR  text-light font-weight-bold" style="text-align: right"  id="TBAYAR" name="TBAYAR" value="{{$header->BAYAR}}" readonly></td>
                                     <td></td>
                                     <td></td>
                                 </tfoot>
@@ -150,16 +152,15 @@
 							
   
 							
-														
-								
-						</form>
-					</div>                               
-				</div>
-
-						<div class="col-md-2 row">
-							<a type="button" id='PLUSX' onclick="tambah()" class="fas fa-plus fa-sm md-3" style="font-size: 20px" ></a>
-
-						</div>			
+												
+						
+                    </form>
+				</div>                               
+            </div>
+			
+                        <div class="col-md-2 row">
+                               <a type="button" id='PLUSX' onclick="tambah()" class="fas fa-plus fa-sm md-3" ></a>					
+						</div>				
                                  
 						<div class="mt-3 col-md-12 form-group row">
 							<div class="col-md-4">
@@ -172,7 +173,7 @@
 								<button type="button" id='NEWX' onclick="location.href='{{url('/piu/edit/?idx=0&tipx=new&flagz='.$flagz.'' )}}'" class="btn btn-warning">New</button>
 								<button type="button" id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
 								<button type="button" id='UNDOX' onclick="location.href='{{url('/piu/edit/?idx=' .$idx. '&tipx=undo&flagz='.$flagz.'' )}}'" class="btn btn-info">Undo</button>  
-								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success" class="fa fa-save"></i>Save</button>
+								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success"<i class="fa fa-save"></i>Save</button>
 
 							</div>
 							<div class="col-md-3">
@@ -228,7 +229,7 @@
 		
 	
  	<div class="modal fade" id="browseCustModal" tabindex="-1" role="dialog" aria-labelledby="browseCustModalLabel" aria-hidden="true">
-	  <div class="modal-dialog mw-100 w-75" role="document">
+	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
 			<h5 class="modal-title" id="browseCustModalLabel">Cari Customer</h5>
@@ -280,26 +281,6 @@
     $(document).ready(function () {
 		idrow=<?=$no?>;
 		baris=<?=$no?>;
-
-		
-		$('body').on('keydown', 'input, select', function(e) {
-			if (e.key === "Enter") {
-				var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
-				focusable = form.find('input,select,textarea').filter(':visible');
-				next = focusable.eq(focusable.index(this)+1);
-				console.log(next);
-				if (next.length) {
-					next.focus().select();
-				} else {
-					tambah();
-					var nomer = idrow-1;
-					console.log("REC"+nomor);
-					document.getElementById("REC"+nomor).focus();
-					// form.submit();
-				}
-				return false;
-			}
-		});
 
 		$tipx = $('#tipx').val();
 		$searchx = $('#CARI').val();
@@ -385,7 +366,7 @@
 			
 		});
 		
-		browseCust = function(){
+		browseCustomer = function(){
 			loadDataBCust();
 			$("#browseCustModal").modal("show");
 		}
@@ -402,7 +383,7 @@
 
 			if(e.keyCode == 46){
 				 e.preventDefault();
-				 browseCust();
+				 browseCustomer();
 			}
 		}); 
 
@@ -534,7 +515,7 @@
 			for (i=0 ; i<fakturArr.length ; i++) 
 			{
 				$("#NO_FAKTUR"+(rowidJual+i)).val(fakturArr[i]);
-				$("#TOTAL"+(rowidJual+i)).val(totalArr[i]);
+				$("#TOTAL"+(rowidJual+i)).val(sisaArr[i]);
 				$("#BAYAR"+(rowidJual+i)).val(sisaArr[i]);
 			};
 
@@ -732,14 +713,6 @@
 			$("#TOTAL" + i.toString()).attr("readonly", true);
 			$("#BAYAR" + i.toString()).attr("readonly", false);
 			$("#DELETEX" + i.toString()).attr("hidden", false);
-
-			$tipx = $('#tipx').val();
-		
-			
-			if ( $tipx != 'new' )
-			{
-				$("#NO_FAKTUR" + i.toString()).removeAttr('onclick');	
-			}
 		}
 
 
@@ -841,15 +814,15 @@
 	            </td>
 						       
                 <td>
-				    <input name='NO_FAKTUR[]' onclick="browseJual(${idrow})" data-rowid=${idrow}  id='NO_FAKTUR${idrow}' type='text' class='form-control  NO_FAKTUR' required readonly>
+				    <input name='NO_FAKTUR[]' data-rowid=${idrow}  id='NO_FAKTUR${idrow}' type='text' class='form-control  NO_FAKTUR' required readonly>
                 </td>
 				
 				<td>
-		            <input name='TOTAL[]' onclick='select()' onblur='hitung()' value='0' id='TOTAL${idrow}' type='text' style='text-align: right' class='form-control TOTAL text-primary' required readonly >
+		            <input name='TOTAL[]'  onblur='hitung()' value='0' id='TOTAL${idrow}' type='text' style='text-align: right' class='form-control TOTAL text-primary' required readonly >
                 </td>
 
 				<td>
-		            <input name='BAYAR[]' onclick='select()' onblur='hitung()' value='0' id='BAYAR${idrow}' type='text' style='text-align: right' class='form-control BAYAR text-primary' required >
+		            <input name='BAYAR[]'  onblur='hitung()' value='0' id='BAYAR${idrow}' type='text' style='text-align: right' class='form-control BAYAR text-primary' required >
                 </td>
 				
                 <td>

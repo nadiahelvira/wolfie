@@ -66,10 +66,8 @@ class MemoController extends Controller
         //   $po = DB::table('po')->select('*')->where('PER', $periode)->where('GOL', 'Y')->orderBy('NO_PO', 'ASC')->get();
 
         $this->setFlag($request);
-
-		$CBG = Auth::user()->CBG;
-
-        $memo = DB::SELECT("SELECT * from memo  where  PER ='$periode' and FLAG ='$this->FLAGZ' AND CBG='$CBG' ORDER BY NO_BUKTI ");
+		
+        $memo = DB::SELECT("SELECT * from memo  where  PER ='$periode' and FLAG ='$this->FLAGZ' ORDER BY NO_BUKTI ");
 	  
         // ganti 6
 
@@ -80,7 +78,8 @@ class MemoController extends Controller
                 {
 
                     $btnEdit =   ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' href="memo/edit/?idx=' . $row->NO_ID . '&tipx=edit&flagz=' . $row->FLAG . '&judul=' . $this->judul . '"';					
-                    $btnDelete = ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' onclick="return confirm(&quot; Apakah anda yakin ingin hapus? &quot;)" href="memo/delete/' . $row->NO_ID . '/?flagz=' . $row->FLAG . '" ';
+                    $btnDelete = ($row->POSTED == 1) ? ' onclick= "alert(\'Transaksi ' . $row->NO_BUKTI . ' sudah diposting!\')" href="#" ' : ' onclick="return confirm(&quot; Apakah anda yakin ingin hapus? &quot;)"  href="memo/delete/' . $row->NO_ID . '/?flagz=' . $row->FLAG . '" ';
+
 
                     $btnPrivilege =
                         '
@@ -93,7 +92,7 @@ class MemoController extends Controller
                                     Print
                                 </a> 									
                                 <hr></hr>
-                                <a class="dropdown-item btn btn-danger"  ' . $btnDelete . '>
+                                <a class="dropdown-item btn btn-danger" ' . $btnDelete . '>
    
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                     Delete
@@ -156,20 +155,18 @@ class MemoController extends Controller
         $FLAGZ = $this->FLAGZ;
         $judul = $this->judul;	
 		
-        $CBG = Auth::user()->CBG;
-
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
         $bulan    = session()->get('periode')['bulan'];
         $tahun    = substr(session()->get('periode')['tahun'], -2);
-        $query = DB::table('memo')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'M')->where('CBG', $CBG)->orderByDesc('NO_BUKTI')->limit(1)->get();
+        $query = DB::table('memo')->select('NO_BUKTI')->where('PER', $periode)->where('FLAG', 'M')->orderByDesc('NO_BUKTI')->limit(1)->get();
 
         if ($query != '[]') {
             $query = substr($query[0]->NO_BUKTI, -4);
             $query = str_pad($query + 1, 4, 0, STR_PAD_LEFT);
-            $no_bukti = 'M' . $CBG . $tahun . $bulan . '-' . $query;
+            $no_bukti = 'M' . $tahun . $bulan . '-' . $query;
         } else {
-            $no_bukti = 'M' . $CBG . $tahun . $bulan . '-0001';
+            $no_bukti = 'M' . $tahun . $bulan . '-0001';
         }
 
 
@@ -189,7 +186,6 @@ class MemoController extends Controller
                 'KREDIT'           => (float) str_replace(',', '', $request['TJUMLAH']),
                 'USRNM'            => Auth::user()->username,
                 'created_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );
@@ -239,8 +235,8 @@ class MemoController extends Controller
                             SET MEMOD.ID = MEMO.NO_ID  WHERE MEMO.NO_BUKTI = MEMOD.NO_BUKTI 
 							AND MEMO.NO_BUKTI='$no_buktix';");
 							
-        //return redirect('/memo/edit/?idx=' . $memo->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
-		return redirect('/memo?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ ]);
+        return redirect('/memo/edit/?idx=' . $kas->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
+		
     }
 
 
@@ -264,8 +260,7 @@ class MemoController extends Controller
         $tipx = $request->tipx;
 
 		$idx = $request->idx;
-			
-        $CBG = Auth::user()->CBG;		
+					
 		
 		if ( $idx =='0' && $tipx=='undo'  )
 	    {
@@ -280,7 +275,7 @@ class MemoController extends Controller
 		   	
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from MEMO 
 		                 where PER ='$per' and FLAG ='$this->FLAGZ'     
-		                 and CBG = '$CBG' ORDER BY NO_BUKTI ASC  LIMIT 1" );
+		                 ORDER BY NO_BUKTI ASC  LIMIT 1" );
 						 
 					
 		
@@ -303,8 +298,7 @@ class MemoController extends Controller
 			
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from memo      
 		             where PER ='$per' and FLAG ='$this->FLAGZ' and NO_BUKTI < 
-					 '$buktix' and CBG = '$CBG'
-                     ORDER BY NO_BUKTI DESC LIMIT 1" );
+					 '$buktix' ORDER BY NO_BUKTI DESC LIMIT 1" );
 			
 
 			if(!empty($bingco)) 
@@ -326,8 +320,7 @@ class MemoController extends Controller
 	   
 		   $bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from memo    
 		             where PER ='$per' and FLAG ='$this->FLAGZ' and NO_BUKTI > 
-					 '$buktix' and CBG = '$CBG'
-                     ORDER BY NO_BUKTI ASC LIMIT 1" );
+					 '$buktix' ORDER BY NO_BUKTI ASC LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -344,8 +337,8 @@ class MemoController extends Controller
 		if ($tipx=='bottom') {
 		  
     		$bingco = DB::SELECT("SELECT NO_ID, NO_BUKTI from memo  
-			            where PER ='$per' and FLAG ='$this->FLAGZ'   
-		                and CBG = '$CBG' ORDER BY NO_BUKTI DESC  LIMIT 1" );
+			              where PER ='$per' and FLAG ='$this->FLAGZ'   
+		              ORDER BY NO_BUKTI DESC  LIMIT 1" );
 					 
 			if(!empty($bingco)) 
 			{
@@ -431,7 +424,6 @@ class MemoController extends Controller
 
         $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
 
-        $CBG = Auth::user()->CBG;
 
         $memo->update(
             [
@@ -443,7 +435,6 @@ class MemoController extends Controller
                 'KET'              => ($request['KET'] == null) ? "" : $request['KET'],
                 'USRNM'            => Auth::user()->username,
                 'updated_by'       => Auth::user()->username,
-                'CBG'              => $CBG,
                 'TG_SMP'           => Carbon::now()
             ]
         );
@@ -522,8 +513,8 @@ class MemoController extends Controller
                             SET MEMOD.ID = MEMO.NO_ID  WHERE MEMO.NO_BUKTI = MEMOD.NO_BUKTI 
 							AND MEMO.NO_BUKTI='$no_buktix';");
 							
-        //return redirect('/memo/edit/?idx=' . $memo->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
-		return redirect('/memo?flagz='.$FLAGZ)->with(['judul' => $judul, 'flagz' => $FLAGZ ]);
+        return redirect('/memo/edit/?idx=' . $kas->NO_ID . '&tipx=edit&flagz=' . $this->FLAGZ . '&judul=' . $this->judul . '');
+		
     }
 
     /**

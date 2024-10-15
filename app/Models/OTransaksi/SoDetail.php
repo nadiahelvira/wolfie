@@ -15,7 +15,8 @@ class SoDetail extends Model
 
     protected $fillable =
     [
-        "REC", "NO_BUKTI", "ID",  "KD_BRG", "FLAG", "NA_BRG", "SATUAN", "QTY", "SISA", "HARGA", 
-        "TOTAL", "KET", "TOTAL_QTY", "KD_BHN", "NA_BHN", "PER", "GOL"
+        "REC", "NO_BUKTI", "ID", "KD_BRG", "NA_BRG", "SATUAN", "QTY", 
+		"HARGA",
+		"TOTAL". "FLAG","created_by", "updated_by", "PN"
     ];
 }

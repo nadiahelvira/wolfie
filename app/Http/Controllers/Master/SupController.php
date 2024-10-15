@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master\Sup;
-use App\Models\Master\Acnox;
 use Illuminate\Http\Request;
 use DataTables;
 use Auth;
@@ -28,11 +27,7 @@ class SupController extends Controller
     {
 
 		
-        // $sup = DB::table('sup')->select('KODES', 'NAMAS', 'ALAMAT', 'KOTA', 'PKP')->orderBy('KODES', 'ASC')->get();
-        $sup = DB::SELECT("SELECT NO_ID, KODES, NAMAS, ALAMAT, KOTA, NOTBAY, KONTAK, AKTIF, CASE WHEN PKP = '1' THEN '(PKP)' ELSE '(NON PKP)' END AS PKP2, PKP
-                            FROM sup
-                            ORDER BY KODES");
-        
+        $sup = DB::table('sup')->select('KODES', 'NAMAS', 'ALAMAT', 'KOTA')->where('GOL', $request['GOL'] )->orderBy('KODES', 'ASC')->get();
         return response()->json($sup);
     }
 
@@ -139,8 +134,7 @@ class SupController extends Controller
                 'TELPON1'       => ($request['TELPON1'] == null) ? "" : $request['TELPON1'],
                 'FAX'            => ($request['FAX'] == null) ? "" : $request['FAX'],
                 'HP'            => ($request['HP'] == null) ? "" : $request['HP'],
-                'AKT'           => (float) str_replace(',', '', $request['AKT']),
-                'PKP'           => (float) str_replace(',', '', $request['PKP']),
+                // 'AKT'            => ($request['AKT'] == null) ? "" : $request['AKT'],
                 'KONTAK'        => ($request['KONTAK'] == null) ? "" : $request['KONTAK'],
                 'EMAIL'           => ($request['EMAIL'] == null) ? "" : $request['EMAIL'],
                 'NPWP'            => ($request['NPWP'] == null) ? "" : $request['NPWP'],
@@ -151,39 +145,6 @@ class SupController extends Controller
                 'BANK_NAMA'     => ($request['BANK_NAMA'] == null) ? "" : $request['BANK_NAMA'],
                 'BANK_REK'      => ($request['BANK_REK'] == null) ? "" : $request['BANK_REK'],
                 'HARI'            => (float) str_replace(',', '', $request['HARI']),
-
-                'NOREK'         => ($request['NOREK'] == null) ? "" : $request['NOREK'],
-                'NOTBAY'        => ($request['NOTBAY'] == null) ? "" : $request['NOTBAY'],
-                'LDT_NEW'       => ($request['LDT_NEW'] == null) ? "" : $request['LDT_NEW'],
-                'LDT_REP'       => ($request['LDT_REP'] == null) ? "" : $request['LDT_REP'],
-                'PLH'           => ($request['PLH'] == null) ? "" : $request['PLH'],
-                'PLM'           => ($request['PLM'] == null) ? "" : $request['PLM'],
-                'PLL'           => ($request['PLL'] == null) ? "" : $request['PLL'],
-                'SKH'           => ($request['SKH'] == null) ? "" : $request['SKH'],
-                'SKH_KET'       => ($request['SKH_KET'] == null) ? "" : $request['SKH_KET'],
-                'SKM'           => ($request['SKM'] == null) ? "" : $request['SKM'],
-                'SKM_KET'       => ($request['SKM_KET'] == null) ? "" : $request['SKM_KET'],
-                'SKL'           => ($request['SKL'] == null) ? "" : $request['SKL'],
-                'SKL_KET'       => ($request['SKL_KET'] == null) ? "" : $request['SKL_KET'],
-                'KET'           => ($request['KET'] == null) ? "" : $request['KET'],
-                'NKUALITAS'     => ($request['NKUALITAS'] == null) ? "" : $request['NKUALITAS'],
-                'KUALITAS'      => (float) str_replace(',', '', $request['KUALITAS']),
-                'NHARGA'        => ($request['NHARGA'] == null) ? "" : $request['NHARGA'],
-                'NOTE_HARGA'    => (float) str_replace(',', '', $request['NOTE_HARGA']),
-                'NPENGIRIMAN'   => ($request['NPENGIRIMAN'] == null) ? "" : $request['NPENGIRIMAN'],
-                'PENGIRIMAN'    => (float) str_replace(',', '', $request['PENGIRIMAN']),
-                'NKEAMANAN'     => ($request['NKEAMANAN'] == null) ? "" : $request['NKEAMANAN'],
-                'KEAMANAN'      => (float) str_replace(',', '', $request['KEAMANAN']),
-                'NKREDIT'       => ($request['NKREDIT'] == null) ? "" : $request['NKREDIT'],
-                'KREDIT'        => (float) str_replace(',', '', $request['KREDIT']),
-                'NPRODUKSI'     => ($request['NPRODUKSI'] == null) ? "" : $request['NPRODUKSI'],
-                'PRODUKSI'      => (float) str_replace(',', '', $request['PRODUKSI']),
-                'NPELAYANAN'    => ($request['NPELAYANAN'] == null) ? "" : $request['NPELAYANAN'],
-                'PELAYANAN'     => (float) str_replace(',', '', $request['PELAYANAN']),
-                'NISO'          => ($request['NISO'] == null) ? "" : $request['NISO'],
-                'ISO'           => (float) str_replace(',', '', $request['ISO']),
-                'NILAI'         => (float) str_replace(',', '', $request['NILAI']),
-
                 'USRNM'          => Auth::user()->username,
                 'TG_SMP'        => Carbon::now()
             ]
@@ -205,7 +166,6 @@ class SupController extends Controller
     public function edit(Request $request ,  Sup $sup)
     {
 
-        $pilihbank = DB::table('bang')->select('KODE', 'NAMA')->orderBy('KODE', 'ASC')->get();
         // ganti 16
 
 
@@ -343,7 +303,7 @@ class SupController extends Controller
 		 $data = [
 						'header' => $sup,
 			        ];				
-			return view('master_sup.edit', $data)->with(['tipx' => $tipx, 'idx' => $idx ])->with(['pilihbank' => $pilihbank]);
+			return view('master_sup.edit', $data)->with(['tipx' => $tipx, 'idx' => $idx ]);
 		 
 	 
     }
@@ -380,8 +340,7 @@ class SupController extends Controller
                 'TELPON1'       => ($request['TELPON1'] == null) ? "" : $request['TELPON1'],
                 'FAX'            => ($request['FAX'] == null) ? "" : $request['FAX'],
                 'HP'            => ($request['HP'] == null) ? "" : $request['HP'],
-                'AKT'           => (float) str_replace(',', '', $request['AKT']),
-                'PKP'           => (float) str_replace(',', '', $request['PKP']),
+                // 'AKT'            => ($request['AKT'] == null) ? "" : $request['AKT'],
                 'KONTAK'        => ($request['KONTAK'] == null) ? "" : $request['KONTAK'],
                 'EMAIL'           => ($request['EMAIL'] == null) ? "" : $request['EMAIL'],
                 'NPWP'            => ($request['NPWP'] == null) ? "" : $request['NPWP'],
@@ -391,41 +350,8 @@ class SupController extends Controller
                 'BANK_KOTA'     => ($request['BANK_KOTA'] == null) ? "" : $request['BANK_KOTA'],
                 'BANK_NAMA'     => ($request['BANK_NAMA'] == null) ? "" : $request['BANK_NAMA'],
                 'BANK_REK'      => ($request['BANK_REK'] == null) ? "" : $request['BANK_REK'],
-                'GOL'           => ($request['GOL'] == null) ? "" : $request['GOL'],
+                'GOL'      => ($request['GOL'] == null) ? "" : $request['GOL'],
                 'HARI'            => (float) str_replace(',', '', $request['HARI']),
-                
-                'NOREK'         => ($request['NOREK'] == null) ? "" : $request['NOREK'],
-                'NOTBAY'        => ($request['NOTBAY'] == null) ? "" : $request['NOTBAY'],
-                'LDT_NEW'       => ($request['LDT_NEW'] == null) ? "" : $request['LDT_NEW'],
-                'LDT_REP'       => ($request['LDT_REP'] == null) ? "" : $request['LDT_REP'],
-                'PLH'           => ($request['PLH'] == null) ? "" : $request['PLH'],
-                'PLM'           => ($request['PLM'] == null) ? "" : $request['PLM'],
-                'PLL'           => ($request['PLL'] == null) ? "" : $request['PLL'],
-                'SKH'           => ($request['SKH'] == null) ? "" : $request['SKH'],
-                'SKH_KET'       => ($request['SKH_KET'] == null) ? "" : $request['SKH_KET'],
-                'SKM'           => ($request['SKM'] == null) ? "" : $request['SKM'],
-                'SKM_KET'       => ($request['SKM_KET'] == null) ? "" : $request['SKM_KET'],
-                'SKL'           => ($request['SKL'] == null) ? "" : $request['SKL'],
-                'SKL_KET'       => ($request['SKL_KET'] == null) ? "" : $request['SKL_KET'],
-                'KET'           => ($request['KET'] == null) ? "" : $request['KET'],
-                'NKUALITAS'     => ($request['NKUALITAS'] == null) ? "" : $request['NKUALITAS'],
-                'KUALITAS'      => (float) str_replace(',', '', $request['KUALITAS']),
-                'NHARGA'        => ($request['NHARGA'] == null) ? "" : $request['NHARGA'],
-                'NOTE_HARGA'    => (float) str_replace(',', '', $request['NOTE_HARGA']),
-                'NPENGIRIMAN'   => ($request['NPENGIRIMAN'] == null) ? "" : $request['NPENGIRIMAN'],
-                'PENGIRIMAN'    => (float) str_replace(',', '', $request['PENGIRIMAN']),
-                'NKEAMANAN'     => ($request['NKEAMANAN'] == null) ? "" : $request['NKEAMANAN'],
-                'KEAMANAN'      => (float) str_replace(',', '', $request['KEAMANAN']),
-                'NKREDIT'       => ($request['NKREDIT'] == null) ? "" : $request['NKREDIT'],
-                'KREDIT'        => (float) str_replace(',', '', $request['KREDIT']),
-                'NPRODUKSI'     => ($request['NPRODUKSI'] == null) ? "" : $request['NPRODUKSI'],
-                'PRODUKSI'      => (float) str_replace(',', '', $request['PRODUKSI']),
-                'NPELAYANAN'    => ($request['NPELAYANAN'] == null) ? "" : $request['NPELAYANAN'],
-                'PELAYANAN'     => (float) str_replace(',', '', $request['PELAYANAN']),
-                'NISO'          => ($request['NISO'] == null) ? "" : $request['NISO'],
-                'ISO'           => (float) str_replace(',', '', $request['ISO']),
-                'NILAI'         => (float) str_replace(',', '', $request['NILAI']),
-
                 'USRNM'          => Auth::user()->username,
                 'TG_SMP'         => Carbon::now()
             ]

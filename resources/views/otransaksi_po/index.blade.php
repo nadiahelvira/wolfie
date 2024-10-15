@@ -43,7 +43,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Transaksi {{$judul}} </h1>
+            <h1 class="m-0">Transaksi Purchase Order  </h1>
           </div>
         </div>
       </div>
@@ -63,20 +63,19 @@
             <div class="card">
               <div class="card-body">
 
-              <input name="flagz"  class="form-control flagz" id="flagz" value="{{$flagz}}" hidden >
-              <input name="golz"  class="form-control golz" id="golz" value="{{$golz}}" hidden >
+				<input name="flagz"  class="form-control flagz" id="flagz" value="{{$flagz}}" hidden >
 
                 <table class="table table-fixed table-striped table-border table-hover nowrap datatable" id="datatable">
                     <thead class="table-dark">
                         <tr>
                             <th scope="col" style="text-align: center">#</th>
-				     	              <th scope="col" style="text-align: center">-</th>							
+				     	    <th scope="col" style="text-align: center">-</th>							
                             <th scope="col" style="text-align: center">Bukti#</th>
                             <th scope="col" style="text-align: center">Tgl</th>
                             <th scope="col" style="text-align: center">Suplier#</th>
                             <th scope="col" style="text-align: center">Nama</th>
                             <th scope="col" style="text-align: center">Total-Qty</th>
-						                <th scope="col" style="text-align: center">Total</th>
+						    <th scope="col" style="text-align: center">Total</th>
                             <th scope="col" style="text-align: center">Notes</th>
                             <th scope="col" style="text-align: center">User</th>
                         </tr>
@@ -111,10 +110,9 @@
             ajax: 
             {
                 url: "{{ route('get-po') }}",
-				        data: 
+				data: 
                 {
                     flagz : $('#flagz').val(),
-                    golz : $('#golz').val(),
 				   
                 }
             },
@@ -122,7 +120,7 @@
             columns: 
             [
                 { data: 'DT_RowIndex', orderable: false, searchable: false },
-			          { data: 'action', name: 'action'},
+			    { data: 'action', name: 'action'},
                 { data: 'NO_BUKTI', name: 'NO_BUKTI'},
                 { data: 'TGL', name: 'TGL'},
                 { data: 'KODES', name: 'KODES'},
@@ -130,7 +128,7 @@
                 { data: 'TOTAL_QTY', name: 'TOTAL_QTY', render: $.fn.dataTable.render.number( ',', '.', 0, '' )},			
                 { data: 'TOTAL', name: 'TOTAL', render: $.fn.dataTable.render.number( ',', '.', 0, '' )},				
                 { data: 'NOTES', name: 'NOTES'},
-				        { data: 'USRNM', name: 'USRNM'},
+				{ data: 'USRNM', name: 'USRNM'},
             ],
             columnDefs: 
             [
@@ -154,7 +152,7 @@
 
         });
 		
-        $("div.test_btn").html('<a class="btn btn-lg btn-md btn-success" href="{{url('po/edit?flagz='.$flagz.'&golz='.$golz.'&idx=0&tipx=new')}}"> <i class="fas fa-plus fa-sm md-3" ></i></a');
+        $("div.test_btn").html('<a class="btn btn-lg btn-md btn-success" href="{{url('po/edit?flagz='.$flagz.'&idx=0&tipx=new')}}"> <i class="fas fa-plus fa-sm md-3" ></i></a');
     });
 	
 </script>

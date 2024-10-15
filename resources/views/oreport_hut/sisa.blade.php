@@ -23,43 +23,32 @@
             <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="{{url('jasper-hutsisa-report')}}">
+                    <form method="POST" action="{{url('jasper-hut-bh-sisa-report')}}">
                     @csrf
-                        <div class="form-group row">
-							<div class="col-md-2">
-                                <label><strong>Periode :</strong></label>
-                                <input type="text" class="form-control perio" id="perio" name="perio" placeholder="mm/yyyy" value="{{ session()->get('filter_perio') }}">
-							</div>
-							<div class="col-md-2">
-								<label><strong>Jenis :</strong></label>
-								
-								<select name="flag" id="flag" class="form-control flag">
-								    <option value="">Semua</option>
-									<option value="BELI" {{ session()->get('filter_flag')=='BELI' ? 'selected': ''}}>Beli</option>
-									<option value="UM" {{ session()->get('filter_flag')=='UM' ? 'selected': ''}}>UM</option>
-									<option value="THUT" {{ session()->get('filter_flag')=='THUT' ? 'selected': ''}}>T.Hut</option>
-								</select>
-							</div>
-                        </div>
+					<div class="form-group row">					
+						<div class="col-md-2">
+							<label><strong>Periode :</strong></label>
+							<select name="perio" id="perio" class="form-control perio" style="width: 200px">
+								<option value="">--Pilih Periode--</option>
+								@foreach($per as $perD)
+									<option value="{{$perD->PERIO}}" {{ session()->get('filter_per')== $perD->PERIO ? 'selected' : '' }}>{{$perD->PERIO}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
 						
 						<div class="form-group row">
-							<div class="col-md-1">
-								<label><strong>Gol :</strong></label>
-								
-								<select name="gol" id="gol" class="form-control gol">
-									<option value="Y" {{ session()->get('filter_gol')=='Y' ? 'selected': ''}}>Y</option>
-									<option value="Z" {{ session()->get('filter_gol')=='Z' ? 'selected': ''}}>Z</option>
-								</select>
-							</div>
+
 							<div class="col-md-2">						
 								<label class="form-label">Suplier</label>
-								<input type="text" class="form-control kodes" id="kodes" name="kodes" placeholder="Pilih Suplier" value="{{ session()->get('filter_kodes1') }}" readonly>
+								<input type="text" class="form-control KODES" id="KODES" name="KODES" placeholder="Pilih Suplier" value="{{ session()->get('filter_kodes1') }}" readonly>
 							</div>  
 							<div class="col-md-3">
 								<label class="form-label">Nama</label>
 								<input type="text" class="form-control NAMAS" id="NAMAS" name="NAMAS" placeholder="Nama" value="{{ session()->get('filter_namas1') }}" readonly>
 							</div>
 						</div>
+						
 						
 						<!-- Filter Tanggal -->
 						<!-- <div class="form-group row">
@@ -233,109 +222,7 @@
         $('.date').datepicker({  
             dateFormat: 'dd-mm-yy'
         }); 
-        /*
-        function fill_datatable( kodes = '', tglDr = '', tglSmp = '')
-        {
-            var dataTable = $('.datatable').DataTable({
-                dom: '<"row"<"col-4"B>>fltip',
-                lengthMenu: [
-                    [ 10, 25, 50, -1 ],
-                    [ '10 rows', '25 rows', '50 rows', 'Show all' ]
-                ],
-                processing: true,
-                serverSide: true,
-                autoWidth: true,
-                //'scrollX': true,
-                'scrollY': '400px',
-                "order": [[ 0, "asc" ]],
-                ajax: 
-                {
-                    url: "{{ url('get-hut-sisa') }}",
-                    data: {
-                        kodes: kodes,
-                        tglDr: tglDr,
-                        tglSmp: tglSmp
-                    }
-                },
-                columns: 
-                [
-                    {data: 'DT_RowIndex', orderable: false, searchable: false },
-                    {data: 'NO_BUKTI', name: 'NO_BUKTI'},
-                    {data: 'TGL', name: 'TGL'},
-                    {data: 'KODES', name: 'KODES'},
-                    {data: 'NAMAS', name: 'NAMAS'},
-                    {
-                     data: 'SISA', 
-                     name: 'SISA',
-                     render: $.fn.dataTable.render.number( ',', '.', 2, '' )
-                    },	
-                 ],
-                 
-                 columnDefs: [
-                  {
-                    "className": "dt-center", 
-                    "targets": 0
-                  },
-                  {
-                    targets: 2,
-                    render: $.fn.dataTable.render.moment( 'DD-MM-YYYY' )
-                  },
-                  {
-                    "className": "dt-right", 
-                    "targets": [5]
-                  }
-               
-                 ],
-                
-                ///////////////////////////////////////////////////
-                
-                footerCallback: function (row, data, start, end, display) {
-                    var api = this.api();
-         
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function (i) {
-                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-                    };
-         
-                    // Total over this page
-                    pageDebetTotal = api
-                        .column(5, { page: 'current' })
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-         
-                    // Update footer
-                    $(api.column(5).footer()).html(pageDebetTotal.toLocaleString('en-US'));
-                    //$(api.column(6).footer()).html(pageKreditTotal.toLocaleString('en-US'));
-                },
-                
-                
-            });
-        }
-        
-        $('#filter').click(function() {
-            var kodes = $('#kodes').val();
-            var tglDr = $('#tglDr').val();
-            var tglSmp = $('#tglSmp').val();
-            
-            if (kodes != '' || (tglDr != '' && tglSmp != ''))
-            {
-                $('.datatable').DataTable().destroy();
-                fill_datatable(kodes, tglDr, tglSmp);
-            }
-        });
-
-        $('#resetfilter').click(function() {
-            var kodes = '';
-            var tglDr = '';
-            var tglSmp = '';
-
-            $('.datatable').DataTable().destroy();
-            fill_datatable(kodes, tglDr, tglSmp);
-        }); */
-
-    });
+       
     
 		var dTableBSuplier;
 		loadDataBSuplier = function(){
@@ -343,9 +230,9 @@
 			$.ajax(
 			{
 				type: 'GET', 		
-				url: "{{url('sup/browse')}}",
+				url: "{{url('sup_bh/browse')}}",
 				data: {
-					'GOL': $('#gol').val(),
+
 				},
 				success: function( response )
 				{
@@ -377,16 +264,17 @@
 		}
 		
 		chooseSuplier = function(KODES,NAMAS, ALAMAT, KOTA){
-			$("#kodes").val(KODES);
+			$("#KODES").val(KODES);
 			$("#NAMAS").val(NAMAS);	
 			$("#browseSuplierModal").modal("hide");
 		}
 		
-		$("#kodes").keypress(function(e){
+		$("#KODES").keypress(function(e){
 			if(e.keyCode == 46){
 				e.preventDefault();
 				browseSuplier();
 			}
 		}); 
+}); 
 </script>
 @endsection

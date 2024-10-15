@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\OReport;
 
 use App\Http\Controllers\Controller;
-
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Master\Sup;
@@ -20,81 +19,71 @@ use \koolreport\bootstrap4\Theme;
 class RHutController extends Controller
 {
 
-    public function report()
+  	public function report()
     {
-		$kodes = Sup::orderBy('KODES')->get();
-		session()->put('filter_gol', '');
-		session()->put('filter_kodes1', '');
-		session()->put('filter_namas1', '');
+		
 		session()->put('filter_tglDari', date("d-m-Y"));
 		session()->put('filter_tglSampai', date("d-m-Y"));
-		
-        return view('oreport_hut.report')->with(['kodes' => $kodes])->with(['hasil' => []]);
+		session()->put('filter_kodes1', '');
+
+
+        return view('oreport_hut.report')->with(['hasil' => []]);
     }
 	
-	 
-	 
+	
+
 	public function jasperHutReport(Request $request) 
 	{
 		$file 	= 'hutn';
 		$PHPJasperXML = new PHPJasperXML();
 		$PHPJasperXML->load_xml_file(base_path().('/app/reportc01/phpjasperxml/'.$file.'.jrxml'));
-	
-			// Check Filter
-			if (!empty($request->gol))
-			{
-				$filtergol = " and hut.GOL='".$request->gol."' ";
-			}
 			
-			if (!empty($request->kodes))
-			{
-				$filterkodes = " and hut.KODES='".$request->kodes."' ";
-			}
-			
+
 			if (!empty($request->tglDr) && !empty($request->tglSmp))
 			{
 				$tglDrD = date("Y-m-d", strtotime($request->tglDr));
 				$tglSmpD = date("Y-m-d", strtotime($request->tglSmp));
-				$filtertgl = " and hut.TGL between '".$tglDrD."' and '".$tglSmpD."' ";
+				$filtertgl = " and HUT.TGL between '".$tglDrD."' and '".$tglSmpD."' ";
 			}
 			
-			session()->put('filter_gol', $request->gol);
-			session()->put('filter_kodes1', $request->kodes);
-			session()->put('filter_namas1', $request->NAMAS);
+
+				if (!empty($request->kodes1))
+			{
+				$filterkodes1 = " and HUT.KODES='".$request->KODES."' ";
+			}
+			
 			session()->put('filter_tglDari', $request->tglDr);
 			session()->put('filter_tglSampai', $request->tglSmp);
-			
-		$query = DB::SELECT("SELECT hut.NO_BUKTI,
-									-- hut.NO_PO,
-									hut.TGL,hut.KODES,hut.NAMAS,hutd.NO_FAKTUR,
-									hutd.TOTAL,hutd.BAYAR, hutd.SISA,hut.GOL 
-							from hut,hutd 
-							WHERE hut.NO_BUKTI=hutd.NO_BUKTI 
-							$filtertgl $filtergol $filterkodes;
-			/*order by hut.KODES,hut.NO_BUKTI*/;
-		");
+			session()->put('filter_kodes1', $request->KODES);
 		
+      		$query = DB::SELECT("
+		     	SELECT HUT.NO_BUKTI,date_format(HUT.TGL,'%d/%m/%y') as TGL,
+			    HUT.KODES, HUT.NAMAS, HUTD.NO_FAKTUR, HUTD.TOTAL,
+			    HUTD.BAYAR
+		        from HUT, HUTD WHERE HUT.NO_BUKTI = HUTD.NO_BUKTI 
+		     	$filtertgl $filterkodes1 		
+			     ;
+		     ");
+		
+
+		
+
 		if($request->has('filter'))
 		{
 			return view('oreport_hut.report')->with(['hasil' => $query]);
 		}
-
+        
 		$data=[];
 		foreach ($query as $key => $value)
 		{
 			array_push($data, array(
 				'NO_BUKTI' => $query[$key]->NO_BUKTI,
-				'BACNO' => $query[$key]->BACNO,
-				'BNAMA' => $query[$key]->BNAMA,
-				'NO_PO' => $query[$key]->NO_PO,
 				'TGL' => $query[$key]->TGL,
 				'KODES' => $query[$key]->KODES,
-				'NAMAS' => $query[$key]->NAMAS,
+				'NAMAS' => $query[$key]->NAMAS,			
 				'NO_FAKTUR' => $query[$key]->NO_FAKTUR,
 				'TOTAL' => $query[$key]->TOTAL,
-				'BAYAR' => $query[$key]->BAYAR,
-				'SISA' => $query[$key]->SISA,
-				'GOL' => $query[$key]->GOL,
+				'BAYAR' => $query[$key]->BAYAR
 			));
 		}
 		$PHPJasperXML->setData($data);

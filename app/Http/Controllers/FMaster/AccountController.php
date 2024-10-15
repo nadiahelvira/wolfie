@@ -45,30 +45,54 @@ class AccountController extends Controller
         }
 		return response()->json($kel);
     }
-    public function browsecash()
+    public function browsecash( Request $request )
     {
 
-        $account = Account::where('BNK', '=', '1')->get();
+		$filter_bacno='';
+		
+         if (!empty($request->BACNO)) {
+			
+			$filter_bacno = " and ACNO='".$request->BACNO."' ";
+        } 
+		
+			$account = DB::SELECT("SELECT ACNO, NAMA from account where bnk = '1' $filter_bacno ORDER BY ACNO ");
+
+		if	( empty($account) ) {
+			
+			$account = DB::SELECT("SELECT ACNO, NAMA from account where bnk = '1' ORDER BY ACNO ");
+			
+		}
+	
         return response()->json($account);
     }
 
-    public function browsebank()
+    public function browsebank(Request $request)
     {
         $account = Account::where('BNK', '=', '2')->get();
         return response()->json($account);
     }
     
     
-    public function browsecashbank()
+    public function browsecashbank(Request $request)
     {
 
         $account = Account::where('BNK', '<>', '')->get();
         return response()->json($account);
     }
 
-    public function browse()
+    public function browse(Request $request)
     {
-        $account = Account::where('BNK', '=', '')->get();
+
+		$filter_acno='';
+		
+        if (!empty($request->ACNO)) {
+			
+			$filter_acno = " and ACNO='".$request->ACNO."' ";
+        }
+		
+        $account = DB::SELECT("SELECT ACNO, NAMA from account where bnk = '' $filter_acno ORDER BY ACNO ");
+
+
         return response()->json($account);
     }
 
@@ -174,8 +198,8 @@ class AccountController extends Controller
 		
 		$account = Account::where('ACNO', $acnox )->first();
 					       
-        //return redirect('/account/edit/?idx=' . $account->NO_ID . '&tipx=edit')->with('statusInsert', 'Data baru berhasil ditambahkan');
-		return redirect('/account')->with('status', 'Data berhasil ditambahkan');
+        return redirect('/account/edit/?idx=' . $account->NO_ID . '&tipx=edit')->with('statusInsert', 'Data baru berhasil ditambahkan');
+			
 				
 				
     }
@@ -334,7 +358,15 @@ class AccountController extends Controller
 	 
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Master\Rute  $rute
+     * @return \Illuminate\Http\Response
+     */
 
+    // ganti 18
 
     public function update(Request $request, Account $account)
     {
@@ -375,8 +407,8 @@ class AccountController extends Controller
 		 
         //  ganti 21
 
-        //return redirect('/account/edit/?idx=' . $account->NO_ID . '&tipx=edit');
-		return redirect('/account')->with('status', 'Data berhasil di update');
+        return redirect('/account/edit/?idx=' . $account->NO_ID . '&tipx=edit')->with('statusInsert', 'Data baru berhasil ditambahkan');
+			
 			
     }
 

@@ -16,7 +16,7 @@
         <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-            <h1 class="m-0">Data Barang</h1>
+            <h1 class="m-0">Data Mesin</h1>
             </div>
         </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -30,7 +30,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form action="{{($tipx=='new')? url('/brg/store/') : url('/brg/update/'.$header->NO_ID ) }}" method="POST" name ="entri" id="entri" >
+                    <form action="{{($tipx=='new')? url('/mesin/store/') : url('/mesin/update/'.$header->NO_ID ) }}" method="POST" name ="entri" id="entri" >
   
                         @csrf
                         {{-- <ul class="nav nav-tabs">
@@ -46,7 +46,7 @@
         
                             <div class="form-group row">
                                 <div class="col-md-1">
-                                    <label for="KD_BRG" class="form-label">Kode</label>
+                                    <label for="KD_GOL" class="form-label">Kode</label>
                                 </div>
 								
                                     <input type="text" class="form-control NO_ID" id="NO_ID" name="NO_ID"
@@ -56,161 +56,39 @@
 		 								
 								
                                 <div class="col-md-2">
-                                    <input type="text" class="form-control KD_BRG" id="KD_BRG" name="KD_BRG"
-                                    placeholder="Masukkan Barang" value="{{$header->KD_BRG}}" readonly>
+                                    <input type="text" class="form-control KD_GOL" id="KD_GOL" name="KD_GOL"
+                                    placeholder="Masukkan Barang" value="{{$header->KD_GOL}}" readonly>
                                 </div>
-
-								<div class="col-md-1" align="center">
-									<label for="PN" class="form-label">PPN</label>
-								</div>
-								<div class="col-md-1">
-									<select id="PN" class="form-control"  name="PN">
-										<option value="0" {{ ($header->PN == '0') ? 'selected' : '' }}>0</option>
-										<option value="11" {{ ($header->PN == '11') ? 'selected' : '' }}>11</option>
-										<option value="12" {{ ($header->PN == '12') ? 'selected' : '' }}>12</option>
-									</select>
-								</div>	
-								
-							
-								<div class="col-md-1">
-                                    <input type="checkbox" class="form-check-input" id="AKTIF"name="AKTIF"
-                                    placeholder="Masukkan Aktif/Tidak" value="1" {{ ($header->AKTIF == 1) ? 'checked' : '' }}>
-									<label for="AKTIF">Aktif</label>
-                                </div>
-
                             </div>
         
                             <div class="form-group row">
                                 <div class="col-md-1">
-                                    <label for="NA_BRG" class="form-label">Nama</label>
+                                    <label for="NA_GOL" class="form-label">Nama</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control NA_BRG" id="NA_BRG" name="NA_BRG"
-                                    placeholder="Masukkan Nama Barang" value="{{$header->NA_BRG}}" >
+                                    <input type="text" class="form-control NA_GOL" id="NA_GOL" name="NA_GOL"
+                                    placeholder="Masukkan Nama Barang" value="{{$header->NA_GOL}}" >
                                 </div>
                             </div>
 							
                             <div class="form-group row">
                                 <div class="col-md-1">
-                                    <label for="SATUAN_BELI" class="form-label">Satuan Beli</label>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="text" class="form-control SATUAN_BELI" id="SATUAN_BELI" name="SATUAN_BELI"
-                                    placeholder="Masukkan Satuan Beli" value="{{$header->SATUAN_BELI}}">
-                                </div>
-
-								<div class="col-md-1">
-                                    <label for="KALI" class="form-label" style="text-align: center; width:140px">Konversi</label>
-                                </div>
-                                <div class="col-md-2">
-									<input type="text" class="form-control KALI" onclick="select()"  id="KALI" name="KALI" placeholder="KALI" 
-									value="{{ number_format($header->KALI, 2, '.', ',') }}" style="text-align: right; width:140px">
-                                </div>
-
-                                <div class="col-md-1">
-                                    <label for="SATUAN" class="form-label">Satuan Pakai</label>
+                                    <label for="SATUAN" class="form-label">Satuan</label>
                                 </div>
                                 <div class="col-md-2">
                                     <input type="text" class="form-control SATUAN" id="SATUAN" name="SATUAN"
-                                    placeholder="Masukkan Satuan Pakai" value="{{$header->SATUAN}}">
+                                    placeholder="Masukkan Satuan" value="{{$header->SATUAN}}">
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label for="GOL" class="form-label">Gol</label>
+                                </div>
+                                <div class="col-md-1">
+                                    <input type="text" class="form-control GOL" id="GOL" name="GOL"
+                                    placeholder="Gol" value="{{$header->GOL}}">
                                 </div>
 
 								
-                            </div>
-
-							<div class="form-group row">
-
-                                <div class="col-md-1">
-									<label for="GOL" class="form-label">Golongan</label>
-								</div>
-								<div class="col-md-2">
-									<select id="GOL" class="form-control"  name="GOL">
-										<option value="J" {{ ($header->GOL == 'J') ? 'selected' : '' }}>J</option>
-										<option value="N" {{ ($header->GOL == 'N') ? 'selected' : '' }}>N</option>
-									</select>
-								</div>
-								
-                            </div>
-
-							<div class="form-group row">
-								<div class="col-md-1">
-                                    <label for="ROP" class="form-label">ROP</label>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="text" onclick="select()" class="form-control ROP" id="ROP" name="ROP" placeholder="Masukkan ROP" 
-									value="{{ number_format( $header->ROP, 0, '.', ',') }}" style="text-align: right" >
-                                </div>
-
-								<div class="col-md-1">
-									<label for="HJUAL" class="form-label">Harga Jual</label>
-								</div>
-								<div class="col-md-2">
-									<input type="text" onclick="select()" class="form-control HJUAL" id="HJUAL" name="HJUAL" placeholder="Masukkan HJUAL" 
-									value="{{ number_format( $header->HJUAL, 0, '.', ',') }}" style="text-align: right" >
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<div class="col-md-1">
-                                    <label for="SMIN" class="form-label">SMIN</label>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="text" onclick="select()" class="form-control SMIN" id="SMIN" name="SMIN" placeholder="Masukkan SMIN" 
-									value="{{ number_format( $header->SMIN, 0, '.', ',') }}" style="text-align: right" >
-                                </div>
-
-								<div class="col-md-1">
-									<label for="SMAX" class="form-label">SMAX</label>
-								</div>
-								<div class="col-md-2">
-									<input type="text" onclick="select()" class="form-control SMAX" id="SMAX" name="SMAX" placeholder="Masukkan SMAX" 
-									value="{{ number_format( $header->SMAX, 0, '.', ',') }}" style="text-align: right" >
-								</div>
-							</div>
-
-							<!-- <div class="form-group row">
-                                <div class="col-md-1">
-									<label style="color:red">*</label>									
-                                    <label for="KODES" class="form-label">Vendor</label>
-                                </div>
-                               	<div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control KODES" id="KODES" name="KODES" placeholder="Pilih Suplier"value="{{$header->KODES}}" style="text-align: left" readonly >
-        						  <button type="button" class="btn btn-primary" onclick="browseSuplier()"><i class="fa fa-search"></i></button>
-                                </div>
-        
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control NAMAS" id="NAMAS" name="NAMAS" placeholder="" value="{{$header->NAMAS}}" readonly>
-                                </div>
-                            </div> -->
-
-							<div class="form-group row">
-                                <div class="col-md-1">
-									<label style="color:red">*</label>									
-                                    <label for="ACNOA" class="form-label">Acno Debet</label>
-                                </div>
-                               	<div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control ACNOA" id="ACNOA" name="ACNOA" placeholder="Pilih Acno Debet"value="{{$header->ACNOA}}" style="text-align: left" readonly >
-        						  <button type="button" class="btn btn-primary" onclick="browseAcno()"><i class="fa fa-search"></i></button>
-                                </div>
-        
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control NACNOA" id="NACNOA" name="NACNOA" placeholder="" value="{{$header->NACNOA}}" readonly>
-                                </div>
-                            </div>
-
-							<div class="form-group row">
-                                <div class="col-md-1">
-									<label style="color:red">*</label>									
-                                    <label for="ACNOB" class="form-label">Acno Kredit</label>
-                                </div>
-                               	<div class="col-md-2 input-group" >
-                                  <input type="text" class="form-control ACNOB" id="ACNOB" name="ACNOB" placeholder="Pilih Acno Kredit"value="{{$header->ACNOB}}" style="text-align: left" readonly >
-        						  <button type="button" class="btn btn-primary" onclick="browseAcnob()"><i class="fa fa-search"></i></button>
-                                </div>
-        
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control NACNOB" id="NACNOB" name="NACNOB" placeholder="" value="{{$header->NACNOB}}" readonly>
-                                </div>
                             </div>
                                 
                         </div>
@@ -218,21 +96,21 @@
         
 						<div class="mt-3 col-md-12 form-group row">
 							<div class="col-md-4">
-								<button type="button" id='TOPX'  onclick="location.href='{{url('/brg/edit/?idx=' .$idx. '&tipx=top')}}'" class="btn btn-outline-primary">Top</button>
-								<button type="button" id='PREVX' onclick="location.href='{{url('/brg/edit/?idx='.$header->NO_ID.'&tipx=prev&kodex='.$header->KD_BRG )}}'" class="btn btn-outline-primary">Prev</button>
-								<button type="button" id='NEXTX' onclick="location.href='{{url('/brg/edit/?idx='.$header->NO_ID.'&tipx=next&kodex='.$header->KD_BRG )}}'" class="btn btn-outline-primary">Next</button>
-								<button type="button" id='BOTTOMX' onclick="location.href='{{url('/brg/edit/?idx=' .$idx. '&tipx=bottom')}}'" class="btn btn-outline-primary">Bottom</button>
+								<button type="button" hidden id='TOPX'  onclick="location.href='{{url('/mesin/edit/?idx=' .$idx. '&tipx=top')}}'" class="btn btn-outline-primary">Top</button>
+								<button type="button" hidden id='PREVX' onclick="location.href='{{url('/mesin/edit/?idx='.$header->NO_ID.'&tipx=prev&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Prev</button>
+								<button type="button" hidden id='NEXTX' onclick="location.href='{{url('/mesin/edit/?idx='.$header->NO_ID.'&tipx=next&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Next</button>
+								<button type="button" hidden id='BOTTOMX' onclick="location.href='{{url('/mesin/edit/?idx=' .$idx. '&tipx=bottom')}}'" class="btn btn-outline-primary">Bottom</button>
 							</div>
 							<div class="col-md-5">
-								<button type="button" id='NEWX' onclick="location.href='{{url('/brg/edit/?idx=0&tipx=new')}}'" class="btn btn-warning">New</button>
-								<button type="button" id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
-								<button type="button" id='UNDOX' onclick="location.href='{{url('/brg/edit/?idx=' .$idx. '&tipx=undo' )}}'" class="btn btn-info">Undo</button> 
-								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success" class="fa fa-save"></i>Save</button>
+								<button type="button" hidden id='NEWX' onclick="location.href='{{url('/mesin/edit/?idx=0&tipx=new')}}'" class="btn btn-warning">New</button>
+								<button type="button" hidden id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
+								<button type="button" hidden id='UNDOX' onclick="location.href='{{url('/mesin/edit/?idx=' .$idx. '&tipx=undo' )}}'" class="btn btn-info">Undo</button> 
+								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success"<i class="fa fa-save"></i>Save</button>
 
 							</div>
 							<div class="col-md-3">
-								<button type="button" id='HAPUSX'  onclick="hapusTrans()" class="btn btn-outline-danger">Hapus</button>
-								<button type="button" id='CLOSEX'  onclick="location.href='{{url('/brg' )}}'" class="btn btn-outline-secondary">Close</button>
+								<button type="button" hidden id='HAPUSX'  onclick="hapusTrans()" class="btn btn-outline-danger">Hapus</button>
+								<button type="button" id='CLOSEX'  onclick="location.href='{{url('/mesin' )}}'" class="btn btn-outline-secondary">Close</button>
 
 
 							</div>
@@ -248,94 +126,6 @@
         </div><!-- /.container-fluid -->
     </div>
     <!-- /.content -->
-
-
-	<div class="modal fade" id="browseSuplierModal" tabindex="-1" role="dialog" aria-labelledby="browseSuplierModalLabel" aria-hidden="true">
-	 <div class="modal-dialog mw-100 w-75" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title" id="browseSuplierModalLabel">Cari Suplier</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body">
-			<table class="table table-stripped table-bordered" id="table-bsuplier">
-				<thead>
-					<tr>
-						<th>Suplier</th>
-						<th>Nama</th>
-						<th>Alamat</th>
-						<th>Kota</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-
-	<div class="modal fade" id="browseAcnoModal" tabindex="-1" role="dialog" aria-labelledby="browseAcnoModalLabel" aria-hidden="true">
-	 <div class="modal-dialog mw-100 w-75" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title" id="browseAcnoModalLabel">Cari Acno</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body">
-			<table class="table table-stripped table-bordered" id="table-bacno">
-				<thead>
-					<tr>
-						<th>Acno</th>
-						<th>Nama</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-
-	<div class="modal fade" id="browseAcnobModal" tabindex="-1" role="dialog" aria-labelledby="browseAcnobModalLabel" aria-hidden="true">
-	 <div class="modal-dialog mw-100 w-75" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title" id="browseAcnobModalLabel">Cari Acnob</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body">
-			<table class="table table-stripped table-bordered" id="table-bacnob">
-				<thead>
-					<tr>
-						<th>Acno</th>
-						<th>Nama</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-
 @endsection
 @section('footer-scripts')
 <script src="{{ asset('js/autoNumerics/autoNumeric.min.js') }}"></script>
@@ -353,26 +143,6 @@
 
 
     $(document).ready(function () {
-
-		
-		$('body').on('keydown', 'input, select', function(e) {
-			if (e.key === "Enter") {
-				var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
-				focusable = form.find('input,select,textarea').filter(':visible');
-				next = focusable.eq(focusable.index(this)+1);
-				console.log(next);
-				if (next.length) {
-					next.focus().select();
-				} else {
-					// tambah();
-					// var nomer = idrow-1;
-					// console.log("REC"+nomor);
-					// document.getElementById("REC"+nomor).focus();
-					// form.submit();
-				}
-				return false;
-			}
-		});
 		
  		$tipx = $('#tipx').val();
 				
@@ -386,188 +156,6 @@
 			 //mati();	
     		 ganti();
 		} 
-
-
-		$("#KALI").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999.99'});
-		$("#ROP").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999.99'});
-		$("#HJUAL").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999.99'});
-		$("#SMIN").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999.99'});
-		$("#SMAX").autoNumeric('init', {aSign: '<?php echo ''; ?>',vMin: '-999999999.99'});
-
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
-		
-		
-		//CHOOSE Supplier
-		var dTableBSuplier;
-		loadDataBSuplier = function(){
-			$.ajax(
-			{
-				type: 'GET',    
-				url: '{{url('sup/browse')}}',
-
-				success: function( response )
-				{
-			
-					resp = response;
-					if(dTableBSuplier){
-						dTableBSuplier.clear();
-					}
-					for(i=0; i<resp.length; i++){
-						
-						dTableBSuplier.row.add([
-							'<a href="javascript:void(0);" onclick="chooseSuplier(\''+resp[i].KODES+'\',  \''+resp[i].NAMAS+'\', \''+resp[i].ALAMAT+'\',  \''+resp[i].KOTA+'\')">'+resp[i].KODES+'</a>',
-							resp[i].NAMAS,
-							resp[i].ALAMAT,
-							resp[i].KOTA,
-						]);
-					}
-					dTableBSuplier.draw();
-				}
-			});
-		}
-		
-		dTableBSuplier = $("#table-bsuplier").DataTable({
-			
-		});
-		
-		browseSuplier = function(){
-			loadDataBSuplier();
-			$("#browseSuplierModal").modal("show");
-		}
-		
-		chooseSuplier = function(KODES,NAMAS, ALAMAT, KOTA){
-			$("#KODES").val(KODES);
-			$("#NAMAS").val(NAMAS);
-			$("#ALAMAT").val(ALAMAT);
-			$("#KOTA").val(KOTA);
-			$("#browseSuplierModal").modal("hide");
-		}
-		
-		$("#KODES").keypress(function(e){
-
-			if(e.keyCode == 46){
-				e.preventDefault();
-				browseSuplier();
-			}
-		}); 
-		
-		
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-		//CHOOSE Acno
-		var dTableBAcno;
-		loadDataBAcno = function(){
-			$.ajax(
-			{
-				type: 'GET',    
-				url: '{{url('account/browse')}}',
-
-				success: function( response )
-				{
-			
-					resp = response;
-					if(dTableBAcno){
-						dTableBAcno.clear();
-					}
-					for(i=0; i<resp.length; i++){
-						
-						dTableBAcno.row.add([
-							'<a href="javascript:void(0);" onclick="chooseAcno(\''+resp[i].ACNO+'\',  \''+resp[i].NAMA+'\' )">'+resp[i].ACNO+'</a>',
-							resp[i].NAMA,
-						]);
-					}
-					dTableBAcno.draw();
-				}
-			});
-		}
-		
-		dTableBAcno = $("#table-bacno").DataTable({
-			
-		});
-		
-		browseAcno = function(){
-			loadDataBAcno();
-			$("#browseAcnoModal").modal("show");
-		}
-		
-		chooseAcno = function(ACNO,NAMA){
-			$("#ACNOA").val(ACNO);
-			$("#NACNOA").val(NAMA);
-			$("#browseAcnoModal").modal("hide");
-		}
-		
-		$("#ACNOA").keypress(function(e){
-
-			if(e.keyCode == 46){
-				e.preventDefault();
-				browseAcno();
-			}
-		}); 
-		
-		
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-		//CHOOSE Acno
-		var dTableBAcnob;
-		loadDataBAcnob = function(){
-			$.ajax(
-			{
-				type: 'GET',    
-				url: '{{url('account/browse')}}',
-
-				success: function( response )
-				{
-			
-					resp = response;
-					if(dTableBAcnob){
-						dTableBAcnob.clear();
-					}
-					for(i=0; i<resp.length; i++){
-						
-						dTableBAcnob.row.add([
-							'<a href="javascript:void(0);" onclick="chooseAcnob(\''+resp[i].ACNO+'\',  \''+resp[i].NAMA+'\' )">'+resp[i].ACNO+'</a>',
-							resp[i].NAMA,
-						]);
-					}
-					dTableBAcnob.draw();
-				}
-			});
-		}
-		
-		dTableBAcnob = $("#table-bacnob").DataTable({
-			
-		});
-		
-		browseAcnob = function(){
-			loadDataBAcnob();
-			$("#browseAcnobModal").modal("show");
-		}
-		
-		chooseAcnob = function(ACNO,NAMA){
-			$("#ACNOB").val(ACNO);
-			$("#NACNOB").val(NAMA);
-			$("#browseAcnobModal").modal("hide");
-		}
-		
-		$("#ACNOB").keypress(function(e){
-
-			if(e.keyCode == 46){
-				e.preventDefault();
-				browseAcnob();
-			}
-		}); 
-		
-		
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
 		
     });
 
@@ -613,17 +201,17 @@
         if ( $tipx == 'new' )		
 		{	
 		  	
-			$("#KD_BRG").attr("readonly", false);	
+			$("#KD_GOL").attr("readonly", false);	
 
 		   }
 		else
 		{
-	     	$("#KD_BRG").attr("readonly", true);	
+	     	$("#KD_GOL").attr("readonly", true);	
 
 		   }
 		   
 		
-		$("#NA_BRG").attr("readonly", false);		
+		$("#NA_GOL").attr("readonly", false);		
 		$("#GRUP").attr("readonly", false);		
 		$("#DR").attr("readonly", false);	
 		$("#SUB").attr("readonly", false);			
@@ -645,8 +233,8 @@
 	    $("#HAPUSX").attr("disabled", false);
 	    $("#CLOSEX").attr("disabled", false);
 		
-		$("#KD_BRG").attr("readonly", true);			
-		$("#NA_BRG").attr("readonly", true);	
+		$("#KD_GOL").attr("readonly", true);			
+		$("#NA_GOL").attr("readonly", true);	
 		$("#GRUP").attr("readonly", true);	
 		$("#DR").attr("readonly", true);
 		$("#SUB").attr("readonly", true);
@@ -656,18 +244,18 @@
 
 	function kosong() {
 				
-		 $('#KD_BRG').val("");	
-		 $('#NA_BRG').val("");	
+		 $('#KD_GOL').val("");	
+		 $('#NA_GOL').val("");	
 		 $('#GRUP').val("");	
 		 $('#DR').val("");
 		 $('#SUB').val("");		 
 	}
 	
 	function hapusTrans() {
-		let text = "Hapus Master "+$('#KD_BRG').val()+"?";
+		let text = "Hapus Master "+$('#KD_GOL').val()+"?";
 		if (confirm(text) == true) 
 		{
-			window.location ="{{url('/brg/delete/'.$header->NO_ID )}}'";
+			window.location ="{{url('/mesin/delete/'.$header->NO_ID )}}'";
 			//return true;
 		} 
 		return false;
@@ -676,18 +264,18 @@
 	function CariBukti() {
 		
 		var cari = $("#CARI").val();
-		var loc = "{{ url('/brg/edit/') }}" + '?idx={{ $header->NO_ID}}&tipx=search&kodex=' +encodeURIComponent(cari);
+		var loc = "{{ url('/mesin/edit/') }}" + '?idx={{ $header->NO_ID}}&tipx=search&kodex=' +encodeURIComponent(cari);
 		window.location = loc;
 		
 	}
 
     var hasilCek;
-	function cekBarang(kdbrg) {
+	function cekBarang(kdmesin) {
 		$.ajax({
 			type: "GET",
-			url: "{{url('brg/cekbarang')}}",
+			url: "{{url('mesin/cekbarang')}}",
             async: false,
-			data: ({ KDBRG: kdbrg, }),
+			data: ({ KDBRG: kdmesin, }),
 			success: function(data) {
                 // hasilCek=data;
                 if (data.length > 0) {
@@ -704,8 +292,8 @@
 	}
     
 	function simpan() {
-        //cekBarang($('#KD_BRG').val());
-        //(hasilCek==0) ? document.getElementById("entri").submit() : alert('Kode Barang '+$('#KD_BRG').val()+' sudah ada!');
+        //cekBarang($('#KD_GOL').val());
+        //(hasilCek==0) ? document.getElementById("entri").submit() : alert('Kode Barang '+$('#KD_GOL').val()+' sudah ada!');
         
         document.getElementById("entri").submit()
 	}

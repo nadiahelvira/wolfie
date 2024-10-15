@@ -19,15 +19,39 @@ use \koolreport\bootstrap4\Theme;
 class RBeliController extends Controller
 {
 
-   public function report()
+   public function report(Request $request)
     {
-		session()->put('filter_gol', '');
+		
+		
+		$tglx1 = '01-'.$request->session()->get('periode')['bulan'].'-'.$request->session()->get('periode')['tahun'] ;
+        $d1 = '31';
+		
+		$bulan = $request->session()->get('periode')['bulan'];
+		$tahun = $request->session()->get('periode')['tahun'];
+
+		
+		if ( $bulan=='04'  OR  $bulan=='06'  OR  $bulan=='09'  OR  $bulan=='11'  )
+		{
+			$d1 = '30';
+		}
+		
+		if ( $bulan=='02' )
+		{	
+		     if ( fmod($tahun,4) == 0 )
+				 $d1 = '29';
+			 else
+				 $d1 = '28';
+		    
+        }
+
+		$tglx2 = $d1.'-'.$request->session()->get('periode')['bulan'].'-'.$request->session()->get('periode')['tahun'] ;
+
+        
+
 		session()->put('filter_kodes1', '');
 		session()->put('filter_namas1', '');
-		session()->put('filter_tglDari', date("d-m-Y"));
-		session()->put('filter_tglSampai', date("d-m-Y"));
-		session()->put('filter_brg1', '');
-		session()->put('filter_nabrg1', '');
+		session()->put('filter_tglDari', $tglx1);
+		session()->put('filter_tglSampai', $tglx2);
 
 
         return view('oreport_beli.report')->with(['hasil' => []]);
@@ -36,64 +60,59 @@ class RBeliController extends Controller
 	 
 	public function jasperBeliReport(Request $request) 
 	{
+		
 		$file 	= 'belin';
 		$PHPJasperXML = new PHPJasperXML();
 		$PHPJasperXML->load_xml_file(base_path().('/app/reportc01/phpjasperxml/'.$file.'.jrxml'));
 		
 			// Check Filter
-			if (!empty($request->gol))
+
+			if (!empty($request->kd_brg))
 			{
-				$filtergol = " and beli.GOL='".$request->gol."' ";
+				$filterkd_brg = " and BELID.KD_BRG='".$request->kd_brg."' ";
 			}
 			
-			if (!empty($request->kodes))
+			if (!empty($request->KODES))
 			{
-				$filterkodes = " and beli.KODES='".$request->kodes."' ";
+				$filterkodes = " and BELI.KODES='".$request->KODES."' ";
 			}
 			
 			if (!empty($request->tglDr) && !empty($request->tglSmp))
 			{
 				$tglDrD = date("Y-m-d", strtotime($request->tglDr));
 				$tglSmpD = date("Y-m-d", strtotime($request->tglSmp));
-				$filtertgl = " and beli.TGL between '".$tglDrD."' and '".$tglSmpD."' ";
+				$filtertgl = " AND BELI.TGL between '".$tglDrD."' and '".$tglSmpD."' ";
 			}	
 
-			if (!empty($request->brg1))
+			if (!empty($request->FLAG))
 			{
-				$filterbrg = " and beid.KD_BRG='".$request->brg1."' ";
+				$filterflag = " and BELI.FLAG ='".$request->FLAG."' ";
 			}
 			
 
-			session()->put('filter_gol', $request->gol);
-			session()->put('filter_kodes1', $request->kodes);
+			
+		    $periode = $request->session()->get('periode')['bulan'] . '/' . $request->session()->get('periode')['tahun'];
+		    $filter_periode = ' and BELI.PER ='.$periode;
+			
+
+	
+			session()->put('filter_kodes1', $request->KODES);
 			session()->put('filter_namas1', $request->NAMAS);
 			session()->put('filter_tglDari', $request->tglDr);
 			session()->put('filter_tglSampai', $request->tglSmp);
-			session()->put('filter_brg1', $request->brg1);
-			session()->put('filter_nabrg1', $request->nabrg1);
-			session()->put('filter_flag', $request->flag);
+			session()->put('filter_flag', $request->FLAG);	
+			
+			
+			
 		
-
-		if( $filtergol == 'B'){
-			$query = DB::SELECT("SELECT trim(beli.NO_BUKTI) as NO_BUKTI, beli.TGL, beli.NO_PO, beli.KODES, 
-									beli.NAMAS, belid.KD_BHN AS KD_BRG, belid.NA_BHN AS NA_BRG,
-									belid.QTY, belid.HARGA, belid.TOTAL, beli.GOL, belid.PPN, (belid.TOTAL + belid.PPN) AS NETT 
-								from beli,belid 
-								WHERE beli.NO_BUKTI=belid.NO_BUKTI 
-								$filtertgl $filtergol $filterkodes 
-								/*order by beli.KODES,beli.NO_BUKTI*/;
-							");
-		
-		} else {
-			$query = DB::SELECT("SELECT trim(beli.NO_BUKTI) as NO_BUKTI, beli.TGL, beli.NO_PO, beli.KODES, 
-									beli.NAMAS, belid.KD_BRG, belid.NA_BRG,
-									belid.QTY, belid.HARGA, belid.TOTAL, beli.GOL, belid.PPN, (belid.TOTAL + belid.PPN) AS NETT 
-								from beli,belid 
-								WHERE beli.NO_BUKTI=belid.NO_BUKTI 
-								$filtertgl $filtergol $filterkodes 
-								/*order by beli.KODES,beli.NO_BUKTI*/;
-							");
-		}
+		$query = DB::SELECT("
+			SELECT BELI.NO_BUKTI, BELI.TGL, 
+			BELI.KODES, BELI.NAMAS, BELId.KD_BRG, 
+			BELId.NA_BRG, BELID.SATUAN, BELId.QTY, 
+			BELId.HARGA, BELId.TOTAL  from BELI, BELId WHERE 
+			BELI.NO_BUKTI=BELId.NO_BUKTI $filtertgl	
+			$filterkodes $filterflag  ");	
+			
 			
 
 		if($request->has('filter'))
@@ -107,20 +126,14 @@ class RBeliController extends Controller
 			array_push($data, array(
 				'NO_BUKTI' => $query[$key]->NO_BUKTI,
 				'TGL' => $query[$key]->TGL,
-				'NO_PO' => $query[$key]->NO_PO,
 				'KODES' => $query[$key]->KODES,
 				'NAMAS' => $query[$key]->NAMAS,
 				'KD_BRG' => $query[$key]->KD_BRG,
 				'NA_BRG' => $query[$key]->NA_BRG,
-				'KD_BHN' => $query[$key]->KD_BHN,
-				'NA_BHN' => $query[$key]->NA_BHN,
-				'KG' => $query[$key]->KG,
+				'SATUAN' => $query[$key]->SATUAN,
 				'QTY' => $query[$key]->QTY,
 				'HARGA' => $query[$key]->HARGA,
 				'TOTAL' => $query[$key]->TOTAL,
-				'PPN' => $query[$key]->PPN,
-				'NETT' => $query[$key]->NETT,
-				'NOTES' => $query[$key]->NOTES,
 
 			));
 		}

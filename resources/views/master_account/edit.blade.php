@@ -3,6 +3,9 @@
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	
+	
     <div class="content-header">
         <div class="container-fluid">
         <div class="row mb-2">
@@ -10,12 +13,6 @@
             <h1 class="m-0">Data Account </h1>
             </div>
             <!-- /.col -->
-            <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{url('/account')}}">Master Account</a></li>
-                <li class="breadcrumb-item active">-</li>
-            </ol>
-            </div><!-- /.col -->
         </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
@@ -27,122 +24,121 @@
             <div class="col-12">
             <div class="card">
                 <div class="card-body">
-
-	  
+				
                     <form action="{{($tipx=='new')? url('/account/store/') : url('/account/update/'.$header->NO_ID ) }}" method="POST" name ="entri" id="entri" >
-  
+     
                         @csrf
-    
-   
+                        {{-- <ul class="nav nav-tabs">
+                            <li class="nav-item active">
+                                <a class="nav-link active" href="#data" data-toggle="tab">Data</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#dokumen" data-toggle="tab">Dokumen</a>
+                            </li>
+                        </ul> --}}
+        
                         <div class="tab-content mt-3">
         
                             <div class="form-group row">
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <label for="ACNO" class="form-label">Account</label>
                                 </div>
-                                <div class="col-md-2">
 								
-                                    <input type="text" class="form-control NO_ID" id="NO_ID" name="NO_ID"
-                                    placeholder="Masukkan NO_ID" value="{{$header->NO_ID ?? ''}}" hidden readonly>
+									<input type="text" class="form-control NO_ID" id="NO_ID" name="NO_ID"
+									placeholder="Masukkan NO_ID" value="{{$header->NO_ID ?? ''}}" hidden readonly>
 
-									<input name="tipx" class="form-control flagz" id="tipx" value="{{$tipx}}" hidden>
-		
-		
-                                    <input type="text" class="form-control ACNO" id="ACNO" name="ACNO"
-                                    placeholder="Masukkan Account" value="{{$header->ACNO ?? ''}}" required readonly>
+									<input name="tipx" class="form-control flagz" id="tipx" value="{{$tipx}}" hidden>								
 								
-								</div>      
+								
+								
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control ACNO" id="ACNO" name="ACNO"
+                                    placeholder="Masukkan Account" value="{{$header->ACNO}}" readonly>
+                                </div>      
         
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <label for="BNK" class="form-label">Type</label>
                                 </div>
-                                <div class="col-md-2">
-                                    <!-- <input type="text" class="form-control BNK" id="BNK" name="BNK"
-                                    placeholder="Masukkan Type" value="{{$header->BNK}}">-->
-								  <select id="BNK"  class="form-control" name="BNK">
-									<option value="1" {{ ($header->BNK ?? '' == '1') ? 'selected' : '' }}>1-Kas</option>
-									<option value="2" {{ ($header->BNK ?? '' == '2') ? 'selected' : '' }}>2-Bank</option>
-									<option value="" {{ ($header->BNK ?? '' == '') ? 'selected' : '' }}>3-Lain</option>
+                                <div class="col-md-4">
+								  <select id="BNK" class="form-control" name="BNK">
+									<option value="1" {{ ($header->BNK == '1') ? 'selected' : '' }}>1-Kas</option>
+									<option value="2" {{ ($header->BNK == '2') ? 'selected' : '' }}>2-Bank</option>
+									<option value="" {{ ($header->BNK == '') ? 'selected' : '' }}>3-Lain</option>
 								  </select>
                                 </div>      
-								
-								
-								<div class="col-md-2"></div>
-					
-								<div class="col-md-3 input-group">
-
-									<input type="text" hidden class="form-control CARI" id="CARI" name="CARI"
-											placeholder="Cari Kode#" value="" >
-									
-									<button type="button" hidden id='SEARCHX'  onclick="CariBukti()" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
-
-								</div> 
-									
                             </div>
 							
 							<div class="form-group row">
-									<div class="col-md-1">
+									<div class="col-md-2">
 										<label for="NAMA" class="form-label">Nama</label>
 									</div>
 									<div class="col-md-4">
-										<input type="text" class="form-control NAMA" id="NAMA" name="NAMA" 
-										placeholder="Masukkan Nama" value="{{$header->NAMA ?? ''}}" required >
+										<input type="text" class="form-control NAMA" id="NAMA" name="NAMA" placeholder="Masukkan Nama" value="{{$header->NAMA}}">
 									</div>                             
-							</div>
+								</div>
 								
 							<div class="form-group row">
-									<div class="col-md-1">
+									<div class="col-md-2">
 										<label for="POS2" class="form-label">Type</label>
 									</div>
 									<div class="col-md-4">
-									  <select id="POS2"   class="form-control" name="POS2">
+									  <select id="POS2" class="form-control" name="POS2">
 										<option value="B" {{ ($header->POS2 == 'B') ? 'selected' : '' }}>B-Neraca</option>
 										<option value="I" {{ ($header->POS2 == 'I') ? 'selected' : '' }}>I-Rugi Laba Berjalan</option>
 										<option value="R" {{ ($header->POS2 == 'R') ? 'selected' : '' }}>R-Rugi Laba</option>
 									  </select>
 									</div>                             
-								</div>	
+							</div>	
 								
 							<div class="form-group row">
-									<div class="col-md-1">
+									<div class="col-md-2">
+										<label style="color:red;font-size:20px">* </label>	
 										<label for="KEL" class="form-label">Kelompok</label>
 									</div>
-									<div class="col-md-2">
-										<input type="text" class="form-control KEL" id="KEL" name="KEL" 
-										placeholder="Pilih Kel" value="{{$header->KEL ?? ''}}" required readonly>
+									<div class="col-md-1">
+										<input type="text" class="form-control KEL" id="KEL" name="KEL" placeholder="Pilih Kel" value="{{$header->KEL}}" readonly>
 									</div>    
 									<div class="col-md-3">
-										<input type="text" class="form-control NAMA_KEL" id="NAMA_KEL" name="NAMA_KEL" placeholder="Nama Kel" value="{{$header->NAMA_KEL ?? ''}}" required readonly>
+										<input type="text" class="form-control NAMA_KEL" id="NAMA_KEL" name="NAMA_KEL" placeholder="Nama Kel" value="{{$header->NAMA_KEL}}" readonly>
 									</div>                              
 							</div>
-
+        							
+                                   
+        
+                            <hr style="margin-top: 30px; margin-buttom: 30px">
+                            
+                           
+                        </div>
         
 						<div class="mt-3 col-md-12 form-group row">
 							<div class="col-md-4">
-								<button type="button" hidden id='TOPX'  onclick="location.href='{{url('/account/edit/?idx=' .$idx. '&tipx=top')}}'" class="btn btn-outline-primary">Top</button>
-								<button type="button" hidden id='PREVX' onclick="location.href='{{url('/account/edit/?idx='.$header->NO_ID.'&tipx=prev&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Prev</button>
-								<button type="button" hidden id='NEXTX' onclick="location.href='{{url('/account/edit/?idx='.$header->NO_ID.'&tipx=next&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Next</button>
-								<button type="button" hidden id='BOTTOMX' onclick="location.href='{{url('/account/edit/?idx=' .$idx. '&tipx=bottom')}}'" class="btn btn-outline-primary">Bottom</button>
+								<button type="button" id='TOPX'  onclick="location.href='{{url('/account/edit/?idx=' .$idx. '&tipx=top')}}'" class="btn btn-outline-primary">Top</button>
+								<button type="button" id='PREVX' onclick="location.href='{{url('/account/edit/?idx='.$header->NO_ID.'&tipx=prev&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Prev</button>
+								<button type="button" id='NEXTX' onclick="location.href='{{url('/account/edit/?idx='.$header->NO_ID.'&tipx=next&kodex='.$header->ACNO )}}'" class="btn btn-outline-primary">Next</button>
+								<button type="button" id='BOTTOMX' onclick="location.href='{{url('/account/edit/?idx=' .$idx. '&tipx=bottom')}}'" class="btn btn-outline-primary">Bottom</button>
+
 							</div>
 							<div class="col-md-5">
-								<button type="button" hidden id='NEWX' onclick="location.href='{{url('/account/edit/?idx=0&tipx=new')}}'" class="btn btn-warning">New</button>
-								<button type="button" hidden id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
-								<button type="button" hidden id='UNDOX' onclick="location.href='{{url('/account/edit/?idx=' .$idx. '&tipx=undo' )}}'" class="btn btn-info">Undo</button> 
+								<button type="button" id='NEWX' onclick="location.href='{{url('/account/edit/?idx=0&tipx=new')}}'" class="btn btn-warning">New</button>
+								<button type="button" id='EDITX' onclick='hidup()' class="btn btn-secondary">Edit</button>                    
+								<button type="button" id='UNDOX' onclick="location.href='{{url('/account/edit/?idx=' .$idx. '&tipx=undo' )}}'" class="btn btn-info">Undo</button> 
 								<button type="button" id='SAVEX' onclick='simpan()'   class="btn btn-success"<i class="fa fa-save"></i>Save</button>
 
 							</div>
 							<div class="col-md-3">
-								<button type="button" hidden id='HAPUSX'  onclick="hapusTrans()" class="btn btn-outline-danger">Hapus</button>
+								<button type="button" id='HAPUSX'  onclick="hapusTrans()" class="btn btn-outline-danger">Hapus</button>
 								<button type="button" id='CLOSEX'  onclick="location.href='{{url('/account' )}}'" class="btn btn-outline-secondary">Close</button>
 
 
 							</div>
 						</div>
-                            
-                           
-                        </div>
-        
-
+						
+						
+						
+						
+						
+						
+						
                     </form>
                 </div>
             </div>
@@ -184,30 +180,28 @@
 @endsection
 
 @section('footer-scripts')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	
+<script src="{{asset('foxie_js_css/bootstrap.bundle.min.js')}}"></script>
+
 <script>
     var target;
 	var idrow = 1;
 
     $(document).ready(function () {
+        $('body').on('click', '.btn-delete', function() {
+			var val = $(this).parents("tr").remove();
+			idrow--;
+			nomor();
+		});
+	
 
- 		$tipx = $('#tipx').val();
-				
-        if ( $tipx == 'new' )
-		{
-			 baru();			
-		}
-
-        if ( $tipx != 'new' )
-		{
-			 //mati();	
-    		 ganti();
-		}    
-
-		
-
-		
-        var dTableKel;
+			$("#POS2").select2({
+               
+            });
+			
+        	var dTableKel;
 		loadDataKel = function(){
 			$.ajax(
 			{
@@ -249,146 +243,20 @@
 		}
 		
 		$("#KEL").keypress(function(e){
-
-			
 			if(e.keyCode == 46){
-				
 				e.preventDefault();
 				browseKel();
 			}
 		}); 
-		
     });
 
- 
-	function baru() {
-		
-		 kosong();
-		 hidup();
-		 
-	}
-	
-	function ganti() {
-		
-		 //mati();
-		hidup();
-	}
-	
-	
-	function batal() {
-			
-		 mati();
-	
-	}
-	
-
-	function hidup() {
-
-	    $("#TOPX").attr("disabled", true);
-	    $("#PREVX").attr("disabled", true);
-	    $("#NEXTX").attr("disabled", true);
-	    $("#BOTTOMX").attr("disabled", true);
-
-	    $("#NEWX").attr("disabled", true);
-	    $("#EDITX").attr("disabled", true);
-	    $("#UNDOX").attr("disabled", false);
-	    $("#SAVEX").attr("disabled", false);
-		
-	    $("#HAPUSX").attr("disabled", true);
-	    //$("#CLOSEX").attr("disabled", true);
-		
-		
- 		$tipx = $('#tipx').val();
-		
-        if ( $tipx == 'new' )		
-		{	
-		  	
-			$("#ACNO").attr("readonly", false);	
-
-		   }
-		else
-		{
-	     	$("#ACNO").attr("readonly", true);	
-
-		   }
-		   
-		
-		$("#NAMA").attr("readonly", false);		
-		document.getElementById("BNK").disabled = false;
-		document.getElementById("POS2").disabled = false;
-		$("#KEL").attr("readonly", true);
-		$("#NAMA_KEL").attr("readonly", true);
-
-		
-		//document.getElementById("KET").disabled = false;
-		
-	
-	
+    function nomor() {
 	}
 
-
-	function mati() {
-
-	    $("#TOPX").attr("disabled", false);
-	    $("#PREVX").attr("disabled", false);
-	    $("#NEXTX").attr("disabled", false);
-	    $("#BOTTOMX").attr("disabled", false);
-
-	    $("#NEWX").attr("disabled", false);
-	    $("#EDITX").attr("disabled", false);
-	    $("#UNDOX").attr("disabled", true);
-	    $("#SAVEX").attr("disabled", true);
-	    $("#HAPUSX").attr("disabled", false);
-	    $("#CLOSEX").attr("disabled", false);
-		
-		$("#ACNO").attr("readonly", true);			
-		$("#NAMA").attr("readonly", true);	
-		
-		document.getElementById("BNK").disabled = true;
-		document.getElementById("POS2").disabled = true;
-		
-		$("#KEL").attr("readonly", true);
-		$("#NAMA_KEL").attr("readonly", true);
-		//document.getElementById("KET").disabled = false;
-		
-	
-
-		
-	}
-
-
-	function kosong() {
-				
-		 $('#ACNO').val("");	
-		 $('#NAMA').val("");	
-		 $('#KEL').val("");	
-		 $('#NAMA_KEL').val("");	
-		// $('#KET').val("");	
-		 $('#POS2').val("");	
-
-
-		 
-	}
-	
-	function hapusTrans() {
-		let text = "Hapus Master "+$('#ACNO').val()+"?";
-		if (confirm(text) == true) 
-		{
-			window.location ="{{url('/account/delete/'.$header->NO_ID )}}'";
-			//return true;
-		} 
-		return false;
-	}
-
-	function CariBukti() {
-		
-		var cari = $("#CARI").val();
-		var loc = "{{ url('/account/edit/') }}" + '?idx={{ $header->NO_ID}}&tipx=search&kodex=' +encodeURIComponent(cari);
-		window.location = loc;
-		
-	}
-	
-    var hasilCek;
+    function tambah() {
+     }
+     
+     var hasilCek;
 	function cekAcc(acno) {
 		$.ajax({
 			type: "GET",
@@ -405,41 +273,14 @@
 			error: function() {
 				alert('Error cekAcc occured');
 			}
-		});		
+		});
 		return hasilCek;
 	}
     
 	function simpan() {
-        
-		hasilCek = '0';
-		
-		$tipx = $('#tipx').val();
-		
-        if ( $tipx =='new')		
-		{	
-			cekAcc($('#ACNO').val());
-			
-			if ( hasilCek =='1' )		
-				{	
-					alert('Account# yang dimasukkan sudah ada.');
-		
-				}
-		}
-
-			
-		if ( $('#POS2').val()=='' ) 
-        {			
-			    hasilCek = '1';
-				alert("POS2 Harus diisi.");
-			}
-			
-	
-			
-		(hasilCek==0) ? document.getElementById("entri").submit() : alert('Masih ada kesalahan');
-
-
-    				      
-               
+        //cekAcc($('#ACNO').val());
+        //(hasilCek==0) ? document.getElementById("entri").submit() : alert('Account '+$('#ACNO').val()+' sudah ada!');
+        document.getElementById("entri").submit()
 	}
 </script>
 </script>

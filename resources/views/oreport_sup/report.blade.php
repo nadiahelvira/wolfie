@@ -6,11 +6,11 @@
 	<div class="container-fluid">
 		<div class="row mb-2">
 		<div class="col-sm-6">
-			<h1 class="m-0">Laporan Suplier</h1>
+			<h1 class="m-0">Laporan Suplier Bahan</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item active">Laporan Suplier</li>
+				<li class="breadcrumb-item active">Laporan Suplier Bahan</li>
 			</ol>
 		</div>
 		</div>
@@ -23,17 +23,10 @@
 			<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<form method="POST" action="{{url('jasper-sup-report')}}">
+					<form method="POST" action="{{url('jasper-sup-bh-report')}}">
 					@csrf
 					<div class="form-group row">
-						<div class="col-md-1">
-							<label><strong>Gol :</strong></label>
-							
-							<select name="gol" id="gol" class="form-control gol">
-								<option value="Y" {{ session()->get('filter_gol')=='Y' ? 'selected': ''}}>Y</option>
-								<option value="Z" {{ session()->get('filter_gol')=='Z' ? 'selected': ''}}>Z</option>
-							</select>
-						</div>
+						
 						<div class="col-md-2">
 							<label><strong>Periode :</strong></label>
 							<select name="perio" id="perio" class="form-control perio" style="width: 200px">
@@ -155,6 +148,45 @@
 									"footer" => "sum",
 									"footerText" => "<b>@value</b>",
 								),
+								"SATU" => array(
+									"label" => "<=30",
+									"type" => "number",
+									"decimals" => 2,
+									"decimalPoint" => ".",
+									"thousandSeparator" => ",",
+									"footer" => "sum",
+									"footerText" => "<b>@value</b>",
+								),
+
+								"DUA" => array(
+									"label" => "60",
+									"type" => "number",
+									"decimals" => 2,
+									"decimalPoint" => ".",
+									"thousandSeparator" => ",",
+									"footer" => "sum",
+									"footerText" => "<b>@value</b>",
+								),
+
+								"TIGA" => array(
+									"label" => "90",
+									"type" => "number",
+									"decimals" => 2,
+									"decimalPoint" => ".",
+									"thousandSeparator" => ",",
+									"footer" => "sum",
+									"footerText" => "<b>@value</b>",
+								),
+								
+								"SALDO" => array(
+									"label" => "Saldo",
+									"type" => "number",
+									"decimals" => 2,
+									"decimalPoint" => ".",
+									"thousandSeparator" => ",",
+									"footer" => "sum",
+									"footerText" => "<b>@value</b>",
+								),
 							),
 							"cssClass" => array(
 								"table" => "table table-hover table-striped table-bordered compact",
@@ -208,134 +240,6 @@
 
 @section('javascripts')
 <script>
-	/*
-	$(document).ready(function() {
-	fill_datatable();
-		
-	function fill_datatable(per='')	
-	{
-			var dataTable = $('.datatable').DataTable({
-				dom: '<"row"<"col-4"B>>fltip',
-				lengthMenu: [
-					[ 10, 25, 50, -1 ],
-					[ '10 rows', '25 rows', '50 rows', 'Show all' ]
-				],
-				processing: true,
-				serverSide: true,
-				autoWidth: true,
-				//scrollX: true,
-				//'scrollY': '400px',
-				"order": [[ 0, "asc" ]],
-				ajax: 
-				{
-					url: "{{ route('get-sup-report') }}",
-					data: {
-						'perio': per,
-					},
-				},
-				columns: 
-				[
-					{data: 'DT_RowIndex', orderable: false, searchable: false },
-					{data: 'KODES', name: 'KODES'},
-					{data: 'NAMAS', name: 'NAMAS'},
-					{
-						data: 'AW', 
-						name: 'AW',
-						render: $.fn.dataTable.render.number( ',', '.', 2, '' )
-					},
-					{
-						data: 'MA', 
-						name: 'MA',
-						render: $.fn.dataTable.render.number( ',', '.', 2, '' )
-					},						
-					{
-						data: 'KE', 
-						name: 'KE',
-						render: $.fn.dataTable.render.number( ',', '.', 2, '' )
-					},
-					{
-						data: 'LN', 
-						name: 'LN',
-						render: $.fn.dataTable.render.number( ',', '.', 2, '' )
-					},
-					{
-						data: 'AK', 
-						name: 'AK',
-						render: $.fn.dataTable.render.number( ',', '.', 2, '' )
-					}
-				],
-				
-			///////////////////////////////////////////////////
-				footerCallback: function (row, data, start, end, display) {
-					var api = this.api();
-			
-					// Remove the formatting to get integer data for summation
-					var intVal = function (i) {
-						return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-					};
-			
-					// Total over this page
-					pageAwalTotal = api
-						.column(3, { page: 'current' })
-						.data()
-						.reduce(function (a, b) {
-							return intVal(a) + intVal(b);
-						}, 0);
-					pageJualTotal = api
-						.column(4, { page: 'current' })
-						.data()
-						.reduce(function (a, b) {
-							return intVal(a) + intVal(b);
-						}, 0);
-					pageBayarTotal = api
-						.column(5, { page: 'current' })
-						.data()
-						.reduce(function (a, b) {
-							return intVal(a) + intVal(b);
-						}, 0);
-					pageLainTotal = api
-						.column(6, { page: 'current' })
-						.data()
-						.reduce(function (a, b) {
-							return intVal(a) + intVal(b);
-						}, 0);
-					pageAkhirTotal = api
-						.column(7, { page: 'current' })
-						.data()
-						.reduce(function (a, b) {
-							return intVal(a) + intVal(b);
-						}, 0);
-					
-			
-					// Update footer
-					$(api.column(3).footer()).html(pageAwalTotal.toLocaleString('en-US'));
-					$(api.column(4).footer()).html(pageJualTotal.toLocaleString('en-US'));
-					$(api.column(5).footer()).html(pageBayarTotal.toLocaleString('en-US'));
-					$(api.column(6).footer()).html(pageLainTotal.toLocaleString('en-US'));
-					$(api.column(7).footer()).html(pageAkhirTotal.toLocaleString('en-US'));
-				},
-			
-			});
-		}
-		
-		$('#filter').click(function() {
-			//var acno = $('#acno').val();
-			//if (acno != '')
-			//{
-				$('.datatable').DataTable().destroy();
-				var periode = $('#perio').val();
-				fill_datatable(periode);
-			//}
-		});
-
-		$('#resetfilter').click(function() {
-			var periode = '';
-
-			$('.datatable').DataTable().destroy();
-			fill_datatable(periode);
-		});
-
-	});
-	*/
+	
 </script>
 @endsection

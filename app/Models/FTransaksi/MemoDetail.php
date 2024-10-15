@@ -15,6 +15,8 @@ class MemoDetail extends Model
 
     protected $fillable =
     [
-        "REC", "ID", "NO_BUKTI", "ACNO", "NACNO", "ACNOB", "NACNOB", "URAIAN", "DEBET", "KREDIT", "JUMLAH", "FLAG",
+        "REC", "ID", "PER",  "NO_BUKTI", "ACNO", "NACNO", "ACNOB", "NACNOB", "URAIAN",
+		"DEBET", "KREDIT", "JUMLAH", "FLAG", "KODEP", "NAMAP","PER", "created_by", "updated_by",
+		"deleted_by"
     ];
 }
